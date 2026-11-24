@@ -1,0 +1,3999 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ТОП ПОТОКА: Рейтинг Одногруппниц</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Montserrat', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            club: {
+              bg: '#06070f',
+              surface: '#0e1020',
+              elevated: '#161931',
+              border: '#24284a',
+              neon: '#6366f1',
+              purple: '#8b5cf6',
+              pink: '#ec4899',
+              gold: '#fbbf24',
+              amber: '#f59e0b',
+              emerald: '#10b981',
+              crimson: '#f43f5e',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-obsidian: #06070f;
+      --surface-card: #0e1020;
+      --neon-indigo: #6366f1;
+      --neon-pink: #ec4899;
+      --gold-accent: #fbbf24;
+    }
+
+    body {
+      background-color: var(--bg-obsidian);
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      background-image:
+        radial-gradient(circle at 14% 8%, rgba(99, 102, 241, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 86% 16%, rgba(236, 72, 153, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 50% 96%, rgba(251, 191, 36, 0.11) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+    }
+
+    .club-card {
+      background: linear-gradient(165deg, rgba(18, 21, 39, 0.95) 0%, rgba(11, 13, 25, 0.98) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(99, 102, 241, 0.28);
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.72),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    }
+
+    .top5-card {
+      background: linear-gradient(165deg, rgba(35, 27, 21, 0.96) 0%, rgba(17, 15, 31, 0.98) 100%);
+      border: 1.5px solid rgba(251, 191, 36, 0.55);
+      box-shadow:
+        0 18px 44px rgba(251, 191, 36, 0.15),
+        inset 0 1px 0 rgba(251, 191, 36, 0.25);
+    }
+
+    .rank1-card {
+      background: linear-gradient(155deg, rgba(62, 43, 14, 0.97) 0%, rgba(29, 16, 40, 0.99) 100%);
+      border: 2px solid #fbbf24;
+      box-shadow:
+        0 0 48px rgba(251, 191, 36, 0.34),
+        inset 0 0 28px rgba(251, 191, 36, 0.16);
+    }
+
+    @keyframes cardFlipReveal {
+      0% {
+        opacity: 0;
+        transform: perspective(1000px) rotateX(-65deg) scale(0.94);
+      }
+      65% {
+        opacity: 1;
+        transform: perspective(1000px) rotateX(5deg) scale(1.01);
+      }
+      100% {
+        opacity: 1;
+        transform: perspective(1000px) rotateX(0deg) scale(1);
+      }
+    }
+
+    .animate-card-reveal {
+      animation: cardFlipReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes slotPopIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .animate-slot-in {
+      animation: slotPopIn 0.2s ease-out forwards;
+    }
+
+    .verdict-stamp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 0.5rem;
+      transform: rotate(-2deg);
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #06070f;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #24284a;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-club-neon/30 selection:text-white">
+
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ НАВИГАЦИИ И СТАТУСА -->
+  <header class="w-full max-w-2xl mx-auto px-4 pt-4 pb-2 z-20">
+    <div class="flex items-center justify-between gap-2 pb-3 border-b border-white/10">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-club-neon via-club-purple to-club-pink flex items-center justify-center text-white font-display font-black text-sm shadow-lg shadow-club-neon/30 shrink-0">
+          ТОП
+        </div>
+        <div class="min-w-0">
+          <div class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-club-gold leading-tight">
+            РЕЙТИНГ ОДНОГРУППНИЦ • LIVE
+          </div>
+          <div class="font-display text-sm sm:text-base font-black uppercase tracking-wide text-white truncate leading-tight">
+            ТОП ПОТОКА
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <div
+          id="firebaseStatusPill"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-club-surface border border-club-border font-mono text-[10px] font-bold text-slate-300"
+        >
+          <span id="firebaseStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="firebaseStatusText" class="text-amber-300">Подключение...</span>
+          <button
+            id="firebaseReconnectBtn"
+            type="button"
+            class="ml-0.5 px-1.5 py-0.5 rounded bg-white/10 hover:bg-club-neon text-white text-[10px] font-extrabold transition-colors active:scale-95"
+            title="Переподключиться к серверу"
+          >
+            🔄
+          </button>
+        </div>
+
+        <button
+          id="headerExitRoomBtn"
+          type="button"
+          class="hidden px-2.5 py-1.5 rounded-xl bg-club-surface hover:bg-rose-500/20 border border-club-border hover:border-rose-500/40 text-xs font-bold text-slate-300 hover:text-rose-300 transition-colors"
+          title="Выйти на главный экран"
+        >
+          Выйти
+        </button>
+
+        <button
+          id="soundToggleBtn"
+          type="button"
+          class="p-2.5 rounded-xl bg-club-surface hover:bg-club-elevated border border-club-border text-slate-300 hover:text-white transition-colors active:scale-95"
+          aria-label="Переключить звук"
+          title="Звуковые эффекты"
+        >
+          <svg id="soundOnIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+          <svg id="soundOffIcon" class="w-4 h-4 hidden text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ОСНОВНОЙ КОНТЕЙНЕР ЭКРАНОВ -->
+  <main class="flex-1 w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 flex flex-col justify-center z-10">
+
+    <!-- Баннер автопоиска комнаты при переходе по ссылке -->
+    <div id="autoUrlSearchBanner" class="hidden mb-4 p-4 rounded-2xl club-card border-club-gold/45 flex items-center gap-3">
+      <span class="text-xl animate-spin">⏳</span>
+      <div>
+        <div class="font-display text-xs sm:text-sm font-black uppercase text-club-gold">
+          Подключаемся к комнате <span id="autoUrlCodeLabel">...</span>
+        </div>
+        <div class="text-xs text-slate-300">Проверяем сервер…</div>
+      </div>
+    </div>
+
+    <!-- ЭКРАН 1: СТАРТОВЫЙ ЭКРАН -->
+    <section id="startScreen" class="space-y-5">
+      <div class="club-card rounded-3xl p-6 sm:p-8 space-y-6">
+        <div class="space-y-2.5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-club-neon/15 border border-club-neon/40 text-indigo-300 text-[11px] font-bold uppercase tracking-wider">
+            <span>🎓 ОНЛАЙН-ШОУ ДЛЯ КОМПАНИИ</span>
+          </div>
+          <h1 class="font-display text-2xl sm:text-4xl font-black uppercase tracking-tight text-white leading-tight">
+            Узнай честный <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-pink-400 to-club-gold">рейтинг потока</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Каждый раунд игрок сам выбирает номинацию и формат (<span class="text-indigo-300 font-semibold">Обычный топ</span> или <span class="text-pink-400 font-semibold">Блиц 1 на 1 ⚡</span>), а в финале открываем места с <span class="text-club-gold font-semibold">10-го по 1-е</span> и рубимся в дуэлях за Топ-5!
+          </p>
+        </div>
+
+        <div class="p-4 sm:p-5 rounded-2xl bg-club-bg/90 border border-club-neon/40 space-y-3">
+          <div>
+            <div class="font-display text-sm sm:text-base font-black uppercase text-white">
+              Ты собираешь компанию?
+            </div>
+            <div class="text-xs text-slate-400 mt-0.5">
+              Создай зал, добавь от 5 до 15 одногруппниц, выбери круги и отправь приглашение друзьям
+            </div>
+          </div>
+          <button
+            id="goHostSetupBtn"
+            type="button"
+            class="w-full py-4 px-6 rounded-2xl font-display text-sm sm:text-base font-black uppercase tracking-wider text-white bg-gradient-to-r from-club-neon via-club-purple to-club-pink hover:opacity-95 shadow-xl shadow-club-neon/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+          >
+            <span>Создать зал (Я хост) 👑</span>
+          </button>
+        </div>
+
+        <div class="relative flex items-center">
+          <div class="flex-grow border-t border-white/10"></div>
+          <span class="flex-shrink mx-3 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+            или войти по коду
+          </span>
+          <div class="flex-grow border-t border-white/10"></div>
+        </div>
+
+        <form id="startFindRoomForm" class="p-4 sm:p-5 rounded-2xl bg-club-bg/90 border border-club-border space-y-3">
+          <label for="startRoomCodeInput" class="block text-xs font-bold uppercase tracking-wider text-slate-300">
+            5-значный код комнаты
+          </label>
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <input
+              id="startRoomCodeInput"
+              type="text"
+              maxlength="6"
+              autocomplete="off"
+              placeholder="КОД (напр. KUK77)"
+              class="flex-1 bg-club-surface border border-club-border focus:border-club-gold rounded-2xl px-4 py-4 font-mono font-extrabold uppercase tracking-[0.25em] text-club-gold placeholder-slate-600 text-2xl sm:text-3xl text-center outline-none transition-colors"
+            />
+            <button
+              id="startFindRoomBtn"
+              type="submit"
+              class="py-4 px-6 rounded-2xl font-display text-sm sm:text-base font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-lg shadow-club-gold/20 active:scale-[0.99] transition-all shrink-0"
+            >
+              Найти комнату →
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400">
+            Похожие русские буквы (К, Е, Н, О, Р, С, Т, У, Х, А, В, М) автоматически переводятся в латиницу.
+          </p>
+        </form>
+
+        <div id="startErrorBox" class="hidden p-4 rounded-2xl bg-rose-500/15 border-2 border-rose-500/50 text-rose-200 text-xs sm:text-sm font-semibold leading-relaxed space-y-3">
+          <div id="startErrorText"></div>
+          <button
+            id="startRetrySearchBtn"
+            type="button"
+            class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-display text-xs font-black uppercase tracking-wider active:scale-95 transition-all"
+          >
+            🔄 Проверить снова
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2.5 text-center">
+        <div class="club-card rounded-2xl p-3">
+          <div class="text-indigo-400 font-display font-black text-xs sm:text-sm">БЛИЦ 1 НА 1 ⚡</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Выбор формата раунда</div>
+        </div>
+        <div class="club-card rounded-2xl p-3">
+          <div class="text-club-gold font-display font-black text-xs sm:text-sm">ДУЭЛИ ТОП-5 ⚔️</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Смена мест при &gt;50%</div>
+        </div>
+        <div class="club-card rounded-2xl p-3">
+          <div class="text-pink-400 font-display font-black text-xs sm:text-sm">ТИТУЛЫ ПАЦАНОВ</div>
+          <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5">Симпы, хейтеры и разбор</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 2: ПОДГОТОВКА ЗАЛА (ХОСТ) -->
+    <section id="hostSetupScreen" class="hidden space-y-4 pb-8">
+      <div class="club-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex items-center justify-between gap-2">
+          <button
+            id="backFromHostSetupBtn"
+            type="button"
+            class="px-3 py-1.5 rounded-xl bg-club-bg hover:bg-white/10 border border-club-border text-xs font-bold text-slate-300 hover:text-white transition-colors"
+          >
+            ← Назад
+          </button>
+          <span class="px-3 py-1 rounded-full bg-club-gold/15 border border-club-gold/40 font-mono text-[11px] font-bold uppercase text-club-gold">
+            ПОДГОТОВКА ЗАЛА • ХОСТ
+          </span>
+        </div>
+
+        <div class="space-y-1">
+          <h2 class="font-display text-xl sm:text-2xl font-black uppercase text-white">
+            Настройка игрового зала
+          </h2>
+          <p class="text-xs text-slate-400">
+            Укажи свой ник, собери список от 5 до 15 одногруппниц, выбери число кругов и открой лобби.
+          </p>
+        </div>
+
+        <div>
+          <label for="hostNickInput" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            1. Твой ник (Хост) *
+          </label>
+          <input
+            id="hostNickInput"
+            type="text"
+            maxlength="20"
+            autocomplete="off"
+            placeholder="Например: Артём, Макс, Саня..."
+            class="w-full bg-club-bg border border-club-border focus:border-club-neon rounded-2xl px-4 py-3.5 text-white placeholder-slate-600 text-base font-medium outline-none transition-colors"
+          />
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <label for="setupOneNameInput" class="text-xs font-bold uppercase tracking-wider text-slate-300">
+              2. Список одногруппниц (от 5 до 15) *
+            </label>
+            <span id="setupCountBadge" class="font-mono text-xs font-bold px-3 py-1 rounded-full bg-club-elevated border border-club-border text-slate-300">
+              0 / 15
+            </span>
+          </div>
+
+          <div class="flex gap-2">
+            <input
+              id="setupOneNameInput"
+              type="text"
+              maxlength="28"
+              autocomplete="off"
+              placeholder="Имя одногруппницы (напр. Алина К.)"
+              class="flex-1 min-w-0 bg-club-bg border border-club-border focus:border-club-neon rounded-xl px-4 py-3 text-white placeholder-slate-600 text-sm font-medium outline-none transition-colors"
+            />
+            <button
+              id="setupAddOneBtn"
+              type="button"
+              class="px-4 py-3 rounded-xl bg-club-neon hover:bg-indigo-500 text-white font-bold text-xs sm:text-sm uppercase tracking-wider shrink-0 active:scale-95 transition-all"
+            >
+              Добавить
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              id="toggleBulkPasteBtn"
+              type="button"
+              class="px-3 py-1.5 rounded-lg bg-club-elevated hover:bg-white/10 border border-club-border text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+            >
+              📋 Вставить списком
+            </button>
+
+            <button
+              id="loadSavedGirlsBtn"
+              type="button"
+              class="hidden px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-xs font-semibold text-emerald-300 transition-colors"
+            >
+              Загрузить прошлый список 💾
+            </button>
+
+            <button
+              id="fillSample10Btn"
+              type="button"
+              class="px-3 py-1.5 rounded-lg bg-club-gold/15 hover:bg-club-gold/25 border border-club-gold/40 text-xs font-semibold text-club-gold transition-colors"
+            >
+              Пример (10 имён) ✨
+            </button>
+
+            <button
+              id="clearAllNamesBtn"
+              type="button"
+              class="hidden px-3 py-1.5 rounded-lg bg-white/5 hover:bg-rose-500/20 text-xs font-semibold text-slate-400 hover:text-rose-300 transition-colors ml-auto"
+            >
+              Очистить
+            </button>
+          </div>
+
+          <div id="bulkPasteDrawer" class="hidden p-3.5 rounded-2xl bg-club-bg border border-club-neon/40 space-y-2.5">
+            <div class="text-xs font-semibold text-slate-300">
+              Вставь имена через запятую или каждое с новой строки (от 5 до 15):
+            </div>
+            <textarea
+              id="bulkPasteTextarea"
+              rows="3"
+              placeholder="Алина К., Вика С., Даша М.&#10;Катя Р.&#10;Настя В."
+              class="w-full bg-club-surface border border-club-border focus:border-club-neon rounded-xl p-3 text-sm text-white placeholder-slate-600 outline-none resize-none"
+            ></textarea>
+            <div class="flex justify-end gap-2">
+              <button
+                id="cancelBulkBtn"
+                type="button"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white"
+              >
+                Отмена
+              </button>
+              <button
+                id="applyBulkBtn"
+                type="button"
+                class="px-4 py-1.5 rounded-lg bg-club-neon hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider active:scale-95 transition-all"
+              >
+                Добавить все
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="setupNamesPills"
+            class="min-h-[78px] p-3.5 rounded-2xl bg-club-bg/80 border border-dashed border-club-border flex flex-wrap gap-2 items-center"
+          >
+            <span class="text-xs text-slate-500 italic">
+              Список пока пуст. Добавь от 5 до 15 имён или нажми «Пример (10 имён)»…
+            </span>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">
+              3. Количество кругов в игре:
+            </span>
+            <span class="font-mono text-[11px] font-bold text-indigo-300">
+              Очередь рандом каждый круг
+            </span>
+          </div>
+          <div class="grid grid-cols-5 gap-1.5 p-1 rounded-xl bg-club-surface border border-club-border">
+            <button type="button" data-circles="1" class="circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all bg-club-gold text-club-bg shadow">1 круг</button>
+            <button type="button" data-circles="2" class="circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white">2 круга</button>
+            <button type="button" data-circles="3" class="circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white">3 круга</button>
+            <button type="button" data-circles="4" class="circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white">4 круга</button>
+            <button type="button" data-circles="5" class="circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white">5 кругов</button>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border space-y-2.5">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-300">
+            4. Режим обычного раунда:
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-club-surface border border-club-border">
+            <button
+              type="button"
+              data-mode="top5"
+              class="mode-select-btn py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all bg-club-neon text-white shadow"
+            >
+              🔥 Расставить Топ-5
+            </button>
+            <button
+              type="button"
+              data-mode="all"
+              class="mode-select-btn py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all text-slate-400 hover:text-white"
+            >
+              📋 Весь список
+            </button>
+          </div>
+          <p id="modeDescHint" class="text-[11px] text-slate-400">
+            В каждом обычном раунде участники выбирают 5 лучших из стопки, а автор раунда сам решает: обычный топ или Блиц 1 на 1.
+          </p>
+        </div>
+
+        <div id="setupErrorBox" class="hidden p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/45 text-rose-200 text-xs font-semibold leading-relaxed"></div>
+
+        <button
+          id="createRoomBtn"
+          type="button"
+          class="w-full py-4 px-6 rounded-2xl font-display text-sm sm:text-base font-black uppercase tracking-wider text-white bg-gradient-to-r from-club-neon via-club-purple to-club-pink hover:opacity-95 shadow-xl shadow-club-neon/30 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+        >
+          <span>Создать комнату и перейти в зал ожидания 🚀</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 3: ВВОД НИКА ДЛЯ ДРУЗЕЙ -->
+    <section id="nicknameScreen" class="hidden space-y-4 pb-8">
+      <div class="club-card rounded-3xl p-6 sm:p-8 space-y-5">
+        <div class="flex items-center justify-between gap-2">
+          <button
+            id="backFromNickScreenBtn"
+            type="button"
+            class="px-3 py-1.5 rounded-xl bg-club-bg hover:bg-white/10 border border-club-border text-xs font-bold text-slate-300 hover:text-white transition-colors"
+          >
+            ← Ввести другой код
+          </button>
+          <span class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 font-mono text-[11px] font-bold uppercase text-emerald-300">
+            ✓ КОМНАТА НАЙДЕНА
+          </span>
+        </div>
+
+        <div class="p-4 sm:p-5 rounded-2xl bg-club-bg border border-club-neon/40 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div>
+              <div class="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                КОД КОМНАТЫ
+              </div>
+              <div id="foundCodeLabel" class="font-mono text-2xl sm:text-3xl font-extrabold tracking-[0.22em] text-club-gold">
+                KUK77
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-bold text-white">
+                👑 Хост: <span id="foundHostLabel" class="text-club-gold">Артём</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">
+                📋 В списке: <strong id="foundGirlsCountLabel" class="text-white">10</strong> одногруппниц
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2.5 border-t border-white/10 space-y-1.5">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Уже в зале ожидания:
+            </div>
+            <div id="foundPlayersBadges" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+
+        <form id="friendJoinForm" class="space-y-4">
+          <div>
+            <label for="friendNickInput" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              Введи свой ник *
+            </label>
+            <input
+              id="friendNickInput"
+              type="text"
+              maxlength="20"
+              autocomplete="off"
+              placeholder="Твоё имя или прозвище..."
+              class="w-full bg-club-bg border-2 border-club-border focus:border-club-gold rounded-2xl px-4 py-4 text-white placeholder-slate-600 text-lg font-bold outline-none transition-colors"
+            />
+          </div>
+
+          <div id="nickScreenErrorBox" class="hidden p-3 rounded-xl bg-rose-500/15 border border-rose-500/45 text-rose-200 text-xs font-semibold"></div>
+
+          <button
+            id="enterLobbyBtn"
+            type="submit"
+            class="w-full py-4 px-6 rounded-2xl font-display text-sm sm:text-base font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-xl shadow-club-gold/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+          >
+            <span>Войти в комнату ожидания →</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 4: КОМНАТА ОЖИДАНИЯ (ЛОББИ) -->
+    <section id="waitingRoomScreen" class="hidden space-y-4 pb-8">
+      <div class="club-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-300">
+            КОМНАТА ОЖИДАНИЯ • ЛОББИ
+          </div>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span id="lobbyCirclesBadge" class="px-2.5 py-1 rounded-lg bg-club-gold/20 border border-club-gold/40 font-mono text-[10px] font-bold text-club-gold">
+              🔄 1 круг
+            </span>
+            <span id="lobbyModeBadge" class="px-2.5 py-1 rounded-lg bg-club-neon/20 border border-club-neon/40 font-mono text-[10px] font-bold text-indigo-200">
+              🔥 Расставить Топ-5
+            </span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-club-bg border border-club-gold/40 text-center space-y-1">
+          <div class="font-mono text-[10px] uppercase tracking-widest text-slate-400">
+            КОД КОМНАТЫ ДЛЯ ВХОДА ДРУЗЕЙ
+          </div>
+          <div id="lobbyCodeBigText" class="font-mono text-4xl sm:text-5xl font-extrabold tracking-[0.25em] text-club-gold select-all">
+            KUK77
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button
+            id="copyCodeOnlyBtn"
+            type="button"
+            class="py-3.5 px-4 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-club-gold bg-club-bg hover:bg-white/10 border border-club-gold/40 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <span>Скопировать код 📋</span>
+          </button>
+
+          <button
+            id="shareInviteBtn"
+            type="button"
+            class="py-3.5 px-4 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-white bg-gradient-to-r from-club-neon via-club-purple to-club-pink hover:opacity-95 shadow-lg shadow-club-neon/25 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <span>Поделиться приглашением 📲</span>
+          </button>
+        </div>
+
+        <div class="pt-4 border-t border-white/10 space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">
+              Участники в зале: <strong id="lobbyPlayersCount" class="text-white">1</strong>
+            </span>
+            <span id="lobbyRoundsSummary" class="font-mono text-[11px] text-indigo-300">
+              Всего раундов: 1 (очередь рандом)
+            </span>
+          </div>
+
+          <div id="lobbyPlayersGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+        </div>
+
+        <div class="pt-3 border-t border-white/10">
+          <button
+            id="toggleLobbyGirlsBtn"
+            type="button"
+            class="w-full flex items-center justify-between text-left text-xs font-bold text-slate-300 hover:text-white py-1 transition-colors"
+          >
+            <span id="lobbyGirlsTitle">📋 Список одногруппниц (10)</span>
+            <span id="lobbyGirlsChevron" class="font-mono text-indigo-400">Показать ▾</span>
+          </button>
+          <div id="lobbyGirlsPills" class="hidden flex-wrap gap-1.5 pt-3"></div>
+        </div>
+      </div>
+
+      <div id="hostLobbyPanel" class="hidden club-card rounded-3xl p-5 space-y-3 border-club-gold/45">
+        <button
+          id="hostStartGameBtn"
+          type="button"
+          disabled
+          class="w-full py-4 px-6 rounded-2xl font-display text-base sm:text-lg font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-xl shadow-club-gold/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <span>Начать игру 🚀</span>
+        </button>
+
+        <button
+          id="hostSoloTestBtn"
+          type="button"
+          class="hidden w-full py-3 px-5 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-indigo-200 bg-club-elevated hover:bg-white/10 border border-club-neon/40 active:scale-[0.99] transition-all"
+        >
+          Тестовый запуск (1 игрок)
+        </button>
+
+        <p id="hostStartStatusHint" class="text-center text-xs text-amber-300 font-semibold">
+          Ждём друзей (минимум 2 игрока для старта) или нажми «Тестовый запуск (1 игрок)»…
+        </p>
+      </div>
+
+      <div id="guestLobbyPanel" class="hidden club-card rounded-3xl p-5 sm:p-6 text-center space-y-3 border-club-neon/40">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Ты в комнате ожидания!</span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300">
+          Ждём, пока хост <strong id="guestLobbyHostName" class="text-club-gold">Хост</strong> нажмёт «Начать игру 🚀»…
+        </p>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 5: РАУНДЫ (НОМИНАЦИЯ + ВЫБОР ФОРМАТА -> ОБЫЧНЫЙ ТОП / БЛИЦ 1 НА 1) -->
+    <section id="gameplayScreen" class="hidden space-y-4 pb-10">
+      <div class="club-card rounded-2xl p-4 flex items-center justify-between gap-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="gameCircleBadge" class="px-2.5 py-1 rounded-lg bg-club-neon/20 border border-club-neon/40 font-mono text-[11px] font-bold text-indigo-300">
+            КРУГ 1 ИЗ 1
+          </span>
+          <span id="gameRoundBadge" class="font-display text-sm sm:text-base font-black uppercase text-white">
+            РАУНД 1 ИЗ 3
+          </span>
+          <span id="gameBlitzTag" class="hidden px-2.5 py-1 rounded-lg bg-pink-500/20 border border-pink-500/50 font-mono text-[11px] font-black text-pink-300 animate-pulse">
+            ⚡ БЛИЦ 1 НА 1
+          </span>
+        </div>
+
+        <button
+          id="gameInvitePill"
+          type="button"
+          class="px-2.5 py-1 rounded-lg bg-club-bg hover:bg-white/10 border border-club-border font-mono text-xs font-bold text-club-gold transition-colors"
+          title="Поделиться приглашением"
+        >
+          КОД: KUK77 📲
+        </button>
+      </div>
+
+      <!-- 5А. ЭТАП НОМИНАЦИИ С РУЧНЫМ ВЫБОРОМ ФОРМАТА -->
+      <div id="nominationStepBox" class="hidden space-y-4">
+        <div id="myTurnNominationCard" class="hidden club-card rounded-3xl p-6 sm:p-8 space-y-5 border-club-gold/45">
+          <div class="space-y-1.5">
+            <span class="inline-block px-3 py-1 rounded-full bg-club-gold/15 border border-club-gold/40 font-mono text-[11px] font-bold uppercase text-club-gold">
+              ТВОЯ ОЧЕРЕДЬ ПРИДУМАТЬ ТЕМУ
+            </span>
+            <h2 class="font-display text-xl sm:text-3xl font-black uppercase text-white leading-tight">
+              Задай номинацию и формат
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Выбери режим раунда для всей компании и напиши тему (или нажми «Подкинуть идею 🎲»).
+            </p>
+          </div>
+
+          <!-- Переключатель формата раунда: Обычный топ / Блиц 1 на 1 -->
+          <div class="space-y-1.5">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Формат этого раунда:
+            </div>
+            <div class="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-club-bg border border-club-border">
+              <button
+                type="button"
+                id="chooseNormalFormatBtn"
+                class="py-3 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase transition-all bg-club-neon text-white shadow-lg"
+              >
+                📋 Обычный топ
+              </button>
+              <button
+                type="button"
+                id="chooseBlitzFormatBtn"
+                class="py-3 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase transition-all text-slate-400 hover:text-white"
+              >
+                ⚡ Блиц 1 на 1
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <input
+              id="nominationTextInput"
+              type="text"
+              maxlength="70"
+              autocomplete="off"
+              placeholder="Например: Главная похитительница сердец потока..."
+              class="w-full bg-club-bg border-2 border-club-neon/50 focus:border-club-gold rounded-2xl px-4 py-4 text-white placeholder-slate-500 text-base sm:text-lg font-bold outline-none transition-colors"
+            />
+
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <button
+                id="randomNominationBtn"
+                type="button"
+                class="py-3.5 px-4 rounded-2xl bg-club-elevated hover:bg-white/10 border border-club-border text-xs sm:text-sm font-bold text-indigo-300 hover:text-white active:scale-95 transition-all flex items-center justify-center gap-2"
+              >
+                <span>Подкинуть идею 🎲</span>
+              </button>
+
+              <button
+                id="sendNominationBtn"
+                type="button"
+                class="flex-1 py-3.5 px-6 rounded-2xl font-display text-sm sm:text-base font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-lg shadow-club-gold/25 active:scale-[0.99] transition-all"
+              >
+                Запустить раунд →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ожидание номинации от другого участника -->
+        <div id="otherTurnNominationCard" class="hidden club-card rounded-3xl p-6 sm:p-8 text-center space-y-4">
+          <div class="w-16 h-16 mx-auto rounded-2xl bg-club-neon/20 border border-club-neon/40 flex items-center justify-center text-3xl animate-bounce">
+            ✍️
+          </div>
+          <div class="space-y-1.5">
+            <div class="font-mono text-xs uppercase tracking-widest text-indigo-300">
+              ОЖИДАНИЕ НОМИНАЦИИ
+            </div>
+            <h2 class="font-display text-xl sm:text-2xl font-black uppercase text-white">
+              <span id="nominationAuthorLabel" class="text-club-gold">Игрок</span> придумывает тему…
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto">
+              Игрок выбирает тему и режим (Обычный топ или Блиц 1 на 1).
+            </p>
+          </div>
+
+          <div id="hostSkipNominationBox" class="hidden pt-3 border-t border-white/10">
+            <button
+              id="hostAutoNominationBtn"
+              type="button"
+              class="px-4 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-xs font-bold text-amber-200 transition-colors"
+            >
+              ⏭ Пропустить игрока (тема из кубика 🎲)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5Б. ЭТАП СОСТАВЛЕНИЯ ТОПА ИЛИ БЛИЦ 1 НА 1 -->
+      <div id="rankingStepBox" class="hidden space-y-4">
+        <div class="club-card rounded-3xl p-5 border-club-gold/45 space-y-1.5">
+          <div class="flex items-center justify-between gap-2 text-[11px] font-mono text-slate-400">
+            <span id="rankStepModeHeader">НОМИНАЦИЯ РАУНДА</span>
+            <span>Автор: <strong id="rankStepAuthorLabel" class="text-indigo-300">Игрок</strong></span>
+          </div>
+          <h2 id="rankStepNominationTitle" class="font-display text-xl sm:text-2xl font-black text-club-gold leading-snug">
+            «Самая красивая»
+          </h2>
+        </div>
+
+        <div class="club-card rounded-2xl p-3.5 space-y-2">
+          <div class="flex items-center justify-between text-[11px] font-bold text-slate-400">
+            <span>СТАТУС ИГРОКОВ:</span>
+            <span id="rankReadyCounter" class="text-emerald-400">0 / 0 готовы</span>
+          </div>
+          <div id="rankPlayersReadinessGrid" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <!-- РЕЖИМ А: КОНСТРУКТОР ЛИЧНОГО ТОПА -->
+        <div id="myRankingBuilder" class="space-y-4">
+          <div class="club-card rounded-3xl p-4 sm:p-5 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h3 class="font-display text-sm sm:text-base font-black uppercase text-white">
+                  Стопка одногруппниц
+                </h3>
+                <p class="text-[11px] text-slate-400">
+                  Нажимай по порядку — поставим на <strong id="nextRankTargetHint" class="text-club-gold">1-е место</strong>
+                </p>
+              </div>
+              <span id="unrankedCountPill" class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-club-bg border border-club-border text-slate-300">
+                Осталось: 5
+              </span>
+            </div>
+
+            <div id="unrankedDeckGrid" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <div class="club-card rounded-3xl p-4 sm:p-5 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="font-display text-sm sm:text-base font-black uppercase text-white">
+                Твой топ (1 → <span id="targetRankLimitLabel">5</span>)
+              </h3>
+              <button
+                id="clearMyRankingDraftBtn"
+                type="button"
+                class="text-xs font-semibold text-slate-400 hover:text-rose-300 transition-colors"
+              >
+                Сбросить всё
+              </button>
+            </div>
+
+            <div id="orderedSlotsList" class="space-y-2"></div>
+
+            <div class="pt-2">
+              <button
+                id="confirmMyRankingBtn"
+                type="button"
+                disabled
+                class="w-full py-4 px-6 rounded-2xl font-display text-sm sm:text-base font-black uppercase tracking-wider text-white bg-gradient-to-r from-club-emerald to-teal-600 hover:opacity-95 shadow-xl shadow-emerald-500/20 active:scale-[0.99] transition-all disabled:opacity-35 disabled:cursor-not-allowed"
+              >
+                Подтвердить свой топ ✅
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- РЕЖИМ Б: СКОРОСТНОЙ БЛИЦ 1 НА 1 (5 ПАР ПО 5 СЕК) -->
+        <div id="myBlitzBuilder" class="hidden club-card rounded-3xl p-5 sm:p-6 space-y-5 border-pink-500/45">
+          <div class="flex items-center justify-between gap-2">
+            <span id="blitzPairProgressLabel" class="font-mono text-xs font-extrabold uppercase text-pink-300">
+              ⚡ ПАРА 1 ИЗ 5
+            </span>
+            <span id="blitzTimerPill" class="px-3 py-1 rounded-xl bg-rose-500/20 border border-rose-500/50 font-mono text-sm font-black text-rose-300">
+              ⏱ 5.0 сек
+            </span>
+          </div>
+
+          <div class="w-full h-2 rounded-full bg-club-bg overflow-hidden">
+            <div id="blitzTimerBar" class="h-full bg-gradient-to-r from-club-gold via-pink-500 to-rose-500 transition-all duration-100" style="width: 100%"></div>
+          </div>
+
+          <div class="text-center text-xs text-slate-300">
+            Тыкай инстинктивно — кто круче подходит под номинацию?
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-stretch">
+            <button
+              id="blitzLeftBtn"
+              type="button"
+              class="p-5 rounded-2xl bg-club-bg hover:bg-indigo-500/20 border-2 border-indigo-500/50 hover:border-indigo-400 flex flex-col items-center justify-center gap-2.5 text-center active:scale-95 transition-all"
+            >
+              <div id="blitzLeftAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center font-display text-sm font-black text-white">
+                АК
+              </div>
+              <div id="blitzLeftName" class="font-display text-lg font-black text-white">
+                Алина К.
+              </div>
+              <span class="px-2.5 py-0.5 rounded-lg bg-indigo-500/20 text-[10px] font-bold uppercase text-indigo-300">
+                Выбрать 👆
+              </span>
+            </button>
+
+            <button
+              id="blitzRightBtn"
+              type="button"
+              class="p-5 rounded-2xl bg-club-bg hover:bg-pink-500/20 border-2 border-pink-500/50 hover:border-pink-400 flex flex-col items-center justify-center gap-2.5 text-center active:scale-95 transition-all"
+            >
+              <div id="blitzRightAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-700 flex items-center justify-center font-display text-sm font-black text-white">
+                ВС
+              </div>
+              <div id="blitzRightName" class="font-display text-lg font-black text-white">
+                Вика С.
+              </div>
+              <span class="px-2.5 py-0.5 rounded-lg bg-pink-500/20 text-[10px] font-bold uppercase text-pink-300">
+                Выбрать 👆
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Экран ожидания после подтверждения -->
+        <div id="myRankingSubmittedCard" class="hidden club-card rounded-3xl p-6 text-center space-y-4 border-emerald-500/45">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl">
+            ✅
+          </div>
+          <div class="space-y-1">
+            <h3 class="font-display text-lg sm:text-xl font-black uppercase text-white">
+              Твой выбор принят!
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300">
+              Выборы игроков засекречены до конца раунда. Как только все завершат этап, игра пойдёт дальше…
+            </p>
+          </div>
+          <div id="mySubmittedSummaryPills" class="flex flex-wrap justify-center gap-1.5 pt-1"></div>
+        </div>
+
+        <!-- ПАНЕЛЬ ХОСТА: ПРОПУСК РАУНДА ПРИ ФОРС-МАЖОРЕ (РАНДОМНАЯ РАССТАНОВКА) -->
+        <div id="hostForceAdvanceBox" class="hidden club-card rounded-2xl p-4 border-amber-500/40 space-y-2 text-center">
+          <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-amber-300">
+            👑 ПАНЕЛЬ СОЗДАТЕЛЯ КОМНАТЫ (ФОРС-МАЖОР)
+          </div>
+          <button
+            id="hostForceRoundDoneBtn"
+            type="button"
+            class="w-full py-3 px-4 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-xs font-extrabold text-amber-200 transition-colors active:scale-95"
+          >
+            ⏭ Пропустить раунд (расстановка по рандому 🎲)
+          </button>
+          <p class="text-[11px] text-slate-400">
+            Если кто-то вышел или завис — всем неготовым участникам автоматически проставится случайный топ и раунд завершится.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 6: ПОШАГОВОЕ ВСКРЫТИЕ (10 -> 1), СПОРЫ И ДУЭЛИ -->
+    <section id="revealScreen" class="hidden space-y-4 pb-16">
+      <div class="club-card rounded-3xl p-5 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-club-gold">
+              ИТОГИ ПО СРЕДНЕЙ ОЦЕНКЕ (1.0 – 10.0)
+            </div>
+            <h2 class="font-display text-xl sm:text-2xl font-black uppercase text-white mt-0.5">
+              Вскрытие рейтинга потока
+            </h2>
+            <p id="revealSubtext" class="text-xs text-slate-300 mt-0.5">
+              Открываем по одному месту снизу вверх. Для мест 5–1 доступны 5 реакций и автоматическая дуэль при &gt;50% споров!
+            </p>
+          </div>
+
+          <div id="hostRevealBtnWrap" class="hidden shrink-0">
+            <button
+              id="revealNextBtn"
+              type="button"
+              class="w-full sm:w-auto py-3.5 px-5 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-xl shadow-club-gold/25 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <span>Открыть следующее место 👁️</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="guestRevealHint" class="hidden p-3 rounded-2xl bg-club-bg border border-club-neon/35 text-xs font-semibold text-indigo-300 text-center">
+          ⏳ Хост открывает карточки по одной снизу вверх… Реагируй и оспаривай места в Топ-5!
+        </div>
+
+        <div id="finalPostRevealActions" class="hidden pt-3 border-t border-white/10 space-y-2.5">
+          <button
+            id="openStatsModalBtn"
+            type="button"
+            class="w-full py-3.5 px-5 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95 shadow-lg shadow-indigo-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+          >
+            <span>Кто как голосовал и титулы пацанов 👀</span>
+          </button>
+
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <button
+              id="playMoreCircleBtn"
+              type="button"
+              class="hidden flex-1 py-3.5 px-5 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-white bg-club-elevated hover:bg-white/15 border border-club-neon/50 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+            >
+              <span>Играть ещё круг (+ рандом очередь) 🔄</span>
+            </button>
+
+            <button
+              id="copyResultsChatBtn"
+              type="button"
+              class="flex-1 py-3.5 px-5 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-lg shadow-club-gold/20 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+            >
+              <span>Скопировать итоги для чата 📋</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- АКТИВНАЯ ДУЭЛЬ 1 НА 1 -->
+      <div id="activeDuelBanner" class="hidden club-card rounded-3xl p-5 sm:p-6 space-y-4 border-2 border-rose-500 shadow-2xl shadow-rose-500/25">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <span class="px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/50 font-display text-xs font-black uppercase text-rose-300 animate-pulse">
+            ⚔️ ДУЭЛЬ ЗА МЕСТО В ТОП-5 (&gt;50% СПОРОВ!)
+          </span>
+          <span id="duelVotesCounter" class="font-mono text-xs font-bold text-slate-300">
+            Проголосовало: 0 / 0
+          </span>
+        </div>
+
+        <p id="duelPromptText" class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+          Более половины участников оспорили позицию! Решите 1 на 1: кто реально заслуживает место выше?
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            id="duelDefenderBtn"
+            type="button"
+            class="p-4 rounded-2xl bg-club-bg hover:bg-amber-500/15 border-2 border-club-gold/50 text-left space-y-2 transition-all active:scale-95"
+          >
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] font-bold uppercase text-club-gold">🛡️ ДЕРЖИТ МЕСТО</span>
+              <span id="duelDefenderVotes" class="font-mono text-sm font-black text-club-gold">0</span>
+            </div>
+            <div id="duelDefenderName" class="font-display text-base sm:text-lg font-black text-white">
+              Алина К.
+            </div>
+            <div class="text-[11px] text-slate-400">Оставить на текущей позиции</div>
+          </button>
+
+          <button
+            id="duelChallengerBtn"
+            type="button"
+            class="p-4 rounded-2xl bg-club-bg hover:bg-rose-500/15 border-2 border-rose-500/55 text-left space-y-2 transition-all active:scale-95"
+          >
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] font-bold uppercase text-rose-400">⚔️ ПРЕТЕНДЕНТКА</span>
+              <span id="duelChallengerVotes" class="font-mono text-sm font-black text-rose-400">0</span>
+            </div>
+            <div id="duelChallengerName" class="font-display text-base sm:text-lg font-black text-white">
+              Вика С.
+            </div>
+            <div class="text-[11px] text-slate-400">Поднять выше (поменять местами)</div>
+          </button>
+        </div>
+
+        <div id="duelStatusFooter" class="flex items-center justify-between gap-2 pt-2 border-t border-white/10 flex-wrap">
+          <span id="duelMyVoteHint" class="text-xs text-slate-400">Выбери одну из двух кандидаток…</span>
+          <button
+            id="hostResolveDuelBtn"
+            type="button"
+            class="hidden px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-display text-xs font-black uppercase tracking-wider active:scale-95 transition-all"
+          >
+            Подвести итог дуэли ⚔️
+          </button>
+        </div>
+      </div>
+
+      <div id="revealCardsContainer" class="space-y-3"></div>
+
+      <div id="restPlacesSpoilerBox" class="hidden club-card rounded-3xl p-4 sm:p-5 space-y-3">
+        <button
+          id="toggleRestPlacesBtn"
+          type="button"
+          class="w-full flex items-center justify-between text-left font-display text-sm font-black uppercase text-slate-300 hover:text-white"
+        >
+          <span id="restPlacesTitle">📊 Остальные места (11–15)</span>
+          <span id="restPlacesChevron" class="font-mono text-xs text-indigo-400">Показать ▾</span>
+        </button>
+        <div id="restPlacesList" class="hidden space-y-2.5 pt-2 border-t border-white/10"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО: КТО КАК ГОЛОСОВАЛ И ТИТУЛЫ ПАЦАНОВ 👀 -->
+  <div
+    id="statsModal"
+    class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+  >
+    <div class="club-card w-full max-w-2xl rounded-3xl p-5 sm:p-6 space-y-5 border-club-gold/45 my-auto max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between gap-2 pb-3 border-b border-white/10 sticky top-0 bg-[#101224]/95 backdrop-blur z-10 py-1">
+        <div>
+          <div class="font-mono text-[10px] font-bold uppercase tracking-widest text-club-gold">
+            ПОЛНЫЙ РАЗБОР ГОЛОСОВ • БЕЗ СЕКРЕТОВ
+          </div>
+          <h3 class="font-display text-lg sm:text-xl font-black uppercase text-white">
+            Кто как голосовал 👀
+          </h3>
+        </div>
+        <button
+          id="closeStatsModalBtn"
+          type="button"
+          class="w-9 h-9 rounded-xl bg-white/10 hover:bg-rose-500 text-slate-300 hover:text-white flex items-center justify-center font-bold transition-colors"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-2.5">
+        <div class="text-xs font-bold uppercase tracking-wider text-indigo-300">
+          🏅 Авто-номинации и титулы пацанов
+        </div>
+        <div id="playerTitlesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+      </div>
+
+      <div id="tasteCompatibilityBox" class="space-y-2">
+        <div class="text-xs font-bold uppercase tracking-wider text-pink-300">
+          🤝 Совпадение вкусов между друзьями
+        </div>
+        <div id="tasteCompatibilityList" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="text-xs font-bold uppercase tracking-wider text-club-gold">
+          📋 Все топы по раундам (открыто)
+        </div>
+        <div id="roundsFullBreakdownList" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ (TOAST) -->
+  <div
+    id="toastEl"
+    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300"
+  >
+    <div class="px-4 py-2.5 rounded-2xl bg-white text-club-bg font-bold text-xs sm:text-sm shadow-2xl flex items-center gap-2">
+      <span>✨</span>
+      <span id="toastMsg">Скопировано!</span>
+    </div>
+  </div>
+
+  <!-- FIREBASE / FS-SHIM + ПОЛНАЯ ИГРОВАЯ ЛОГИКА -->
+  <script type="module">
+    import {
+      initializeApp, getApps, getApp,
+      getAuth, signInAnonymously,
+      getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot
+    } from "./fs-shim.js";
+    window.__firebase_config = { backend: 'self-hosted' };
+
+    const APP_ID = 'default-app-id';
+    const SESSION_KEY = 'toppotoka_session_v8';
+    const SAVED_GIRLS_KEY = 'toppotoka_saved_girls_v1';
+    const LOCAL_ROOMS_KEY = 'toppotoka_local_rooms_v1';
+
+    const SAMPLE_10_NAMES = [
+      'Алина К.', 'Вика С.', 'Даша М.', 'Катя Р.', 'Настя В.',
+      'Соня Т.', 'Полина Л.', 'Маша Г.', 'Лера Д.', 'Ксюша Б.'
+    ];
+
+    const NOMINATION_IDEAS = [
+      'Самая красивая на всём потоке',
+      'Главная похитительница сердец универа',
+      'Лучший вайб на скучных парах',
+      'С кем бы поехал в ночной трип без планов',
+      'Королева закрытых тусовок',
+      'Самый опасный взгляд в аудитории',
+      'Тайный краш половины пацанов потока',
+      'Самая дерзкая и без тормозов',
+      'Мисс «пишу только после полуночи»',
+      'Лучшая фигура / стиль в группе',
+      'С кем бы застрял в лифте на 3 часа',
+      'Самая горячая в сторис',
+      'Внешне тихоня, но в тихом омуте черти',
+      'Кого бы выбрал на роль жены',
+      'Самая недоступная крепость потока',
+      'Лучший флирт-вайб и харизма',
+      'С кем бы пошёл на свидание вслепую',
+      'Главная разбивательница мужских сердец',
+      'Самая раскрепощённая на вечеринках',
+      'Кому бы простил любую выходку',
+      'Самый сладкий голос и смех',
+      'Мисс «уведу твоего друга и не замечу»',
+      'Идеальная спутница на курорт вдвоём',
+      'Самая загадочная и манящая',
+      'Королева ночных переписок',
+      'У кого самая дикая скрытая сторона',
+      'Лучшая улыбка, от которой таешь',
+      'Самая эффектная при входе в аудиторию',
+      'С кем бы устроил романтик на крыше',
+      'Главный магнит для мужских взглядов',
+      'Самая страстная натура по ощущениям',
+      'Кому больше всего идут вечерние платья',
+      'Мисс «опасные связи»',
+      'С кем бы точно не заскучал наедине',
+      'Самая яркая внешность без макияжа',
+      'Кого сложнее всего добиться',
+      'Главная звезда афтепати',
+      'Самый соблазнительный парфюм и стиль',
+      'С кем бы пережил зомби-апокалипсис вдвоём',
+      'Мисс «первая пишет, если понравился»',
+      'Самая огненная энергетика в компании',
+      'Кого бы первым пригласил на медляк',
+      'Самая ревнивая и собственница',
+      'Лучшие глаза на всём курсе',
+      'С кем бы сыграл в «Правду или действие» до конца',
+      'Главный краш преподов и старшекурсников',
+      'Самая непредсказуемая в отношениях',
+      'Мисс «ночной звонок бывшему»',
+      'Самая грациозная и женственная',
+      'Кому бы доверил свои самые грязные секреты',
+      'Самая горячая штучка потока',
+      'С кем бы улетел в Вегас на выходные',
+      'Главная провокаторша в общаге / чате',
+      'Самая сладкая парочка была бы с тобой',
+      'Мисс «разбила 10 сердец за семестр»',
+      'Лучший вкус в одежде — всегда с иголочки',
+      'Самая уютная, с кем хочется обниматься',
+      'Королева френдзоны (мастерски туда отправляет)',
+      'Самая дикая на танцполе',
+      'С кем бы поспорил на раздевание в дурака',
+      'Главная интриганка курса',
+      'Самая красивая походка',
+      'Мисс «могу влюбить за 5 минут разговора»',
+      'Кого бы украл со скучной лекции',
+      'Самая честная и прямая без фильтров',
+      'Лучшая напарница для ночных приключений',
+      'Королева драмы и страстей',
+      'Абсолютный эталон женственности в группе'
+    ];
+
+    const QUICK_DISPUTE_REASONS = [
+      'Засудили в первом раунде!',
+      'Объективно должна быть выше!',
+      'Недооценили её вайб!',
+      'Слишком высоко затащили!',
+      'Чисто на хайпе прошла!',
+      'Её место минимум в Топ-2!'
+    ];
+
+    const REACTION_TYPES = [
+      { key: 'base', label: 'База 👍', activeCls: 'bg-emerald-500 text-club-bg border-emerald-400 shadow-lg shadow-emerald-500/20', idleCls: 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-500/35' },
+      { key: 'queen', label: 'Королева 👑', activeCls: 'bg-club-gold text-club-bg border-amber-300 shadow-lg shadow-club-gold/25', idleCls: 'bg-club-gold/10 hover:bg-club-gold/20 text-club-gold border-club-gold/35' },
+      { key: 'underrated', label: 'Занизили 📉', activeCls: 'bg-indigo-500 text-white border-indigo-400 shadow-lg shadow-indigo-500/20', idleCls: 'bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border-indigo-500/35' },
+      { key: 'overrated', label: 'Переоценили 📈', activeCls: 'bg-amber-500 text-club-bg border-amber-400 shadow-lg shadow-amber-500/20', idleCls: 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border-amber-500/35' },
+      { key: 'dispute', label: 'Оспорить ⚖️', activeCls: 'bg-rose-500 text-white border-rose-400 shadow-lg shadow-rose-500/20', idleCls: 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border-rose-500/35' }
+    ];
+
+    const AVATAR_GRADIENTS = [
+      'from-indigo-500 to-purple-700',
+      'from-pink-500 to-rose-700',
+      'from-amber-500 to-orange-700',
+      'from-emerald-500 to-teal-700',
+      'from-violet-600 to-indigo-800',
+      'from-fuchsia-500 to-purple-700',
+      'from-cyan-500 to-blue-700',
+      'from-rose-500 to-amber-600'
+    ];
+
+    let firebaseApp = null;
+    let auth = null;
+    let db = null;
+    let localSyncChannel = null;
+
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        localSyncChannel = new BroadcastChannel('toppotoka_local_rooms_channel');
+      }
+    } catch (e) {}
+
+    function readLocalRoomsStore() {
+      try {
+        const raw = window.localStorage.getItem(LOCAL_ROOMS_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function writeLocalRoom(code, roomObj) {
+      try {
+        const store = readLocalRoomsStore();
+        store[code] = roomObj;
+        window.localStorage.setItem(LOCAL_ROOMS_KEY, JSON.stringify(store));
+      } catch (e) {}
+      try {
+        if (localSyncChannel) {
+          localSyncChannel.postMessage({ type: 'room_updated', code, room: roomObj });
+        }
+      } catch (e) {}
+    }
+
+    function applyDotPathPatch(targetObj, patch) {
+      const clone = JSON.parse(JSON.stringify(targetObj || {}));
+      Object.entries(patch || {}).forEach(([path, val]) => {
+        const parts = path.split('.');
+        let cur = clone;
+        for (let i = 0; i < parts.length - 1; i++) {
+          const part = parts[i];
+          if (!cur[part] || typeof cur[part] !== 'object') {
+            cur[part] = {};
+          }
+          cur = cur[part];
+        }
+        cur[parts[parts.length - 1]] = val;
+      });
+      return clone;
+    }
+
+    function setConnectionStatus(isOnline, labelText) {
+      const dot = document.getElementById('firebaseStatusDot');
+      const txt = document.getElementById('firebaseStatusText');
+      if (!dot || !txt) return;
+
+      if (isOnline) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        txt.textContent = labelText || 'Сервер Онлайн';
+        txt.className = 'text-emerald-400';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse';
+        txt.textContent = labelText || 'Подключение...';
+        txt.className = 'text-amber-300';
+      }
+    }
+
+    async function ensureAuth() {
+      if (!firebaseApp) {
+        firebaseApp = getApps().length > 0 ? getApp() : initializeApp(window.__firebase_config);
+        auth = getAuth(firebaseApp);
+        db = getFirestore(firebaseApp);
+      }
+      if (!auth.currentUser) {
+        await signInAnonymously(auth);
+      }
+      setConnectionStatus(true, 'Сервер Онлайн');
+      return auth.currentUser;
+    }
+
+    function getRoomRef(code) {
+      return doc(db, 'artifacts', APP_ID, 'public', 'data', 'rooms', code);
+    }
+
+    async function updateRoomFields(code, updatePayload) {
+      await ensureAuth();
+      const roomRef = getRoomRef(code);
+      await updateDoc(roomRef, updatePayload);
+
+      const baseRoom = appState.roomData;
+      if (baseRoom && baseRoom.code === code) {
+        const updated = applyDotPathPatch(baseRoom, updatePayload);
+        writeLocalRoom(code, updated);
+        appState.roomData = updated;
+        syncUiWithRoomState();
+        checkAutoAdvanceRound(updated);
+      }
+    }
+
+    const appState = {
+      soundEnabled: true,
+      playerId: '',
+      playerName: '',
+      roomCode: null,
+      roomData: null,
+      unsubscribeRoom: null,
+      isAdvancingRound: false,
+      isTriggeringDuel: false,
+      setupNames: [],
+      setupMode: 'top5',
+      setupCircles: 1,
+      pendingFoundRoom: null,
+      selectedRoundIsBlitz: false,
+      draftRoundIdx: -1,
+      draftRankedList: [],
+      blitzRoundIdx: -1,
+      blitzPairs: [],
+      blitzCurrentPairIdx: 0,
+      blitzWinsMap: {},
+      blitzDeadlineTs: 0,
+      blitzTimerInterval: null,
+      lastRevealedIdx: null,
+      expandedRoundBreakdownPlaces: new Set(),
+      openDisputePlaces: new Set(),
+      disputeDirDrafts: {},
+      disputeReasonDrafts: {},
+      lobbyGirlsExpanded: false,
+      restPlacesExpanded: false,
+      usedIdeaIndices: new Set(),
+      startRetryFn: null
+    };
+
+    const SoundFX = (() => {
+      let ctx = null;
+      function getCtx() {
+        if (!ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) ctx = new AC();
+        }
+        if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+        return ctx;
+      }
+
+      function tone(freq, type = 'sine', dur = 0.08, vol = 0.06, delay = 0) {
+        if (!appState.soundEnabled) return;
+        try {
+          const c = getCtx();
+          if (!c) return;
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, c.currentTime + delay);
+          g.gain.setValueAtTime(0.001, c.currentTime + delay);
+          g.gain.exponentialRampToValueAtTime(vol, c.currentTime + delay + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + delay + dur);
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(c.currentTime + delay);
+          osc.stop(c.currentTime + delay + dur + 0.02);
+        } catch (e) {}
+      }
+
+      return {
+        tap: () => tone(540, 'triangle', 0.06, 0.05),
+        place: (idx) => tone(440 + Math.min(idx, 12) * 35, 'sine', 0.08, 0.07),
+        lockIn: () => {
+          tone(523.25, 'triangle', 0.1, 0.08, 0);
+          tone(783.99, 'triangle', 0.14, 0.09, 0.08);
+        },
+        duelAlarm: () => {
+          tone(330, 'sawtooth', 0.12, 0.08, 0);
+          tone(440, 'sawtooth', 0.12, 0.08, 0.11);
+          tone(660, 'sawtooth', 0.18, 0.09, 0.22);
+        },
+        flipCard: () => {
+          tone(380, 'sine', 0.09, 0.08, 0);
+          tone(660, 'triangle', 0.16, 0.09, 0.07);
+        },
+        champion: () => {
+          tone(523.25, 'triangle', 0.14, 0.09, 0);
+          tone(659.25, 'triangle', 0.14, 0.09, 0.1);
+          tone(783.99, 'triangle', 0.16, 0.1, 0.2);
+          tone(1046.5, 'triangle', 0.34, 0.12, 0.32);
+        }
+      };
+    })();
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = String(str ?? '');
+      return div.innerHTML;
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function generateId(prefix = 'plr') {
+      return `${prefix}_${Math.random().toString(36).slice(2, 9)}_${Date.now().toString(36)}`;
+    }
+
+    function generateRoomCode() {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 5; i++) {
+        code += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+      }
+      return code;
+    }
+
+    function normalizeRoomCode(raw) {
+      const cyrillicToLatin = {
+        'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M',
+        'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T',
+        'У': 'Y', 'Х': 'X'
+      };
+      return String(raw || '')
+        .replace(/\s+/g, '')
+        .toUpperCase()
+        .split('')
+        .map(ch => cyrillicToLatin[ch] || ch)
+        .join('')
+        .replace(/[^A-Z0-9]/g, '')
+        .slice(0, 5);
+    }
+
+    function extractRoomCodeFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search || '');
+        const qRoom = params.get('room');
+        if (qRoom) {
+          const norm = normalizeRoomCode(qRoom);
+          if (norm.length === 5) return norm;
+        }
+        const hash = window.location.hash || '';
+        const match = hash.match(/room=([A-Za-zА-Яа-я0-9]+)/i);
+        if (match && match[1]) {
+          const norm = normalizeRoomCode(match[1]);
+          if (norm.length === 5) return norm;
+        }
+        const bare = normalizeRoomCode(hash.replace(/^#/, ''));
+        if (bare.length === 5) return bare;
+      } catch (e) {}
+      return '';
+    }
+
+    function updateUrlRoomHash(code) {
+      try {
+        if (code) {
+          window.history.replaceState(null, '', `#room=${code}`);
+        } else {
+          window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      } catch (e) {}
+    }
+
+    function getValidShareLink(code) {
+      try {
+        const href = String(window.location.href || '');
+        if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+          const base = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+          return `${base}#room=${code}`;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    const memorySessionFallback = {};
+    function readSession() {
+      try {
+        const raw = window.localStorage.getItem(SESSION_KEY);
+        return raw ? JSON.parse(raw) : { ...memorySessionFallback };
+      } catch (e) {
+        return { ...memorySessionFallback };
+      }
+    }
+
+    function writeSession(patch) {
+      const next = { ...readSession(), ...patch };
+      Object.assign(memorySessionFallback, next);
+      try {
+        window.localStorage.setItem(SESSION_KEY, JSON.stringify(next));
+      } catch (e) {}
+    }
+
+    function saveGirlsListToStorage(names) {
+      try {
+        if (Array.isArray(names) && names.length >= 5) {
+          window.localStorage.setItem(SAVED_GIRLS_KEY, JSON.stringify(names));
+        }
+      } catch (e) {}
+    }
+
+    function getSavedGirlsListFromStorage() {
+      try {
+        const raw = window.localStorage.getItem(SAVED_GIRLS_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        return Array.isArray(parsed) && parsed.length >= 5 ? parsed : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getAvatarProps(name) {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) {
+        hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+      }
+      const gradient = AVATAR_GRADIENTS[hash % AVATAR_GRADIENTS.length];
+      const parts = name.trim().split(/\s+/);
+      const initials = parts.length >= 2
+        ? (parts[0][0] + parts[1][0]).toUpperCase()
+        : name.trim().slice(0, 2).toUpperCase();
+      return { gradient, initials };
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById('toastEl');
+      document.getElementById('toastMsg').textContent = msg;
+      el.classList.remove('opacity-0', 'translate-y-4');
+      el.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        el.classList.remove('opacity-100', 'translate-y-0');
+        el.classList.add('opacity-0', 'translate-y-4');
+      }, 2800);
+    }
+
+    function copyTextSafe(text, successMsg = 'Скопировано!') {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) {
+          SoundFX.tap();
+          showToast(successMsg);
+          return;
+        }
+      } catch (e) {}
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            SoundFX.tap();
+            showToast(successMsg);
+          })
+          .catch(() => showToast('Не удалось скопировать'));
+      }
+    }
+
+    function clearBlitzTimer() {
+      if (appState.blitzTimerInterval) {
+        clearInterval(appState.blitzTimerInterval);
+        appState.blitzTimerInterval = null;
+      }
+    }
+
+    function showScreen(screenId) {
+      if (screenId !== 'gameplayScreen') {
+        clearBlitzTimer();
+      }
+      [
+        'startScreen',
+        'hostSetupScreen',
+        'nicknameScreen',
+        'waitingRoomScreen',
+        'gameplayScreen',
+        'revealScreen'
+      ].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== screenId);
+      });
+
+      const inRoom = ['waitingRoomScreen', 'gameplayScreen', 'revealScreen'].includes(screenId);
+      document.getElementById('headerExitRoomBtn').classList.toggle('hidden', !inRoom);
+    }
+
+    async function fetchRoomFromServer(code) {
+      await ensureAuth();
+      const roomRef = getRoomRef(code);
+      const roomSnap = await getDoc(roomRef);
+      if (roomSnap.exists()) return roomSnap.data();
+      const localStore = readLocalRoomsStore();
+      return localStore[code] || null;
+    }
+
+    async function handleFindRoomByCode(rawCode, isAutoFromUrl = false) {
+      const code = normalizeRoomCode(rawCode);
+      const codeInput = document.getElementById('startRoomCodeInput');
+      if (codeInput) codeInput.value = code;
+
+      const errBox = document.getElementById('startErrorBox');
+      const errText = document.getElementById('startErrorText');
+      const autoBanner = document.getElementById('autoUrlSearchBanner');
+
+      if (code.length !== 5) {
+        if (!isAutoFromUrl) {
+          errText.textContent = '⚠️ Код комнаты должен состоять ровно из 5 символов (например: KUK77).';
+          errBox.classList.remove('hidden');
+          codeInput?.focus();
+        }
+        return;
+      }
+
+      errBox.classList.add('hidden');
+      if (isAutoFromUrl) {
+        document.getElementById('autoUrlCodeLabel').textContent = code;
+        autoBanner.classList.remove('hidden');
+      }
+
+      const findBtn = document.getElementById('startFindRoomBtn');
+      const origLabel = findBtn.textContent;
+      findBtn.disabled = true;
+      findBtn.textContent = 'Поиск…';
+
+      try {
+        const roomData = await fetchRoomFromServer(code);
+        autoBanner.classList.add('hidden');
+
+        if (!roomData) {
+          appState.startRetryFn = () => handleFindRoomByCode(code, false);
+          errText.textContent = `⚠️ Комната с кодом «${code}» не найдена. Проверь 5 символов или попроси хоста нажать «Создать комнату».`;
+          errBox.classList.remove('hidden');
+          showScreen('startScreen');
+          return;
+        }
+
+        const session = readSession();
+        if (session.playerId && roomData.players && roomData.players[session.playerId]) {
+          const existing = roomData.players[session.playerId];
+          appState.playerId = session.playerId;
+          appState.playerName = existing.name;
+          appState.roomCode = code;
+          appState.roomData = roomData;
+          updateUrlRoomHash(code);
+          writeSession({ playerId: session.playerId, playerName: existing.name, roomCode: code });
+          subscribeToRoomRealtime(code);
+          syncUiWithRoomState();
+          return;
+        }
+
+        appState.pendingFoundRoom = roomData;
+        updateUrlRoomHash(code);
+        renderNicknameScreen(roomData);
+        showScreen('nicknameScreen');
+        if (!isAutoFromUrl) SoundFX.tap();
+      } catch (err) {
+        autoBanner.classList.add('hidden');
+        appState.startRetryFn = () => handleFindRoomByCode(code, false);
+        errText.textContent = `⚠️ ${err.message || 'Ошибка при поиске комнаты.'}`;
+        errBox.classList.remove('hidden');
+        showScreen('startScreen');
+      } finally {
+        findBtn.disabled = false;
+        findBtn.textContent = origLabel;
+      }
+    }
+
+    function subscribeToRoomRealtime(code) {
+      if (appState.unsubscribeRoom) {
+        appState.unsubscribeRoom();
+        appState.unsubscribeRoom = null;
+      }
+
+      ensureAuth().then(() => {
+        const roomRef = getRoomRef(code);
+        appState.unsubscribeRoom = onSnapshot(
+          roomRef,
+          (docSnap) => {
+            setConnectionStatus(true, 'Сервер Онлайн');
+            if (!docSnap.exists()) return;
+
+            const data = docSnap.data();
+            // Сбрасываем локальное состояние раскрытых форм при переходе на новый круг
+            if (appState.roomData && data.circle !== appState.roomData.circle) {
+              appState.openDisputePlaces.clear();
+              appState.disputeDirDrafts = {};
+              appState.disputeReasonDrafts = {};
+              appState.lastRevealedIdx = null;
+            }
+            appState.roomData = data;
+            syncUiWithRoomState();
+            checkAutoAdvanceRound(data);
+          },
+          () => {
+            setConnectionStatus(false, 'Переподключение...');
+          }
+        );
+      });
+    }
+
+    function leaveCurrentRoom() {
+      clearBlitzTimer();
+      if (appState.unsubscribeRoom) {
+        appState.unsubscribeRoom();
+        appState.unsubscribeRoom = null;
+      }
+      appState.roomCode = null;
+      appState.roomData = null;
+      appState.pendingFoundRoom = null;
+      appState.draftRoundIdx = -1;
+      appState.draftRankedList = [];
+      appState.blitzRoundIdx = -1;
+      appState.lastRevealedIdx = null;
+      appState.openDisputePlaces.clear();
+      writeSession({ roomCode: null });
+      updateUrlRoomHash('');
+      showScreen('startScreen');
+    }
+
+    function renderSetupNamesList() {
+      const count = appState.setupNames.length;
+      const badge = document.getElementById('setupCountBadge');
+      const clearBtn = document.getElementById('clearAllNamesBtn');
+      const loadSavedBtn = document.getElementById('loadSavedGirlsBtn');
+      const pillsBox = document.getElementById('setupNamesPills');
+
+      const savedList = getSavedGirlsListFromStorage();
+      loadSavedBtn.classList.toggle('hidden', !savedList);
+
+      badge.textContent = `${count} / 15`;
+      if (count >= 5 && count <= 15) {
+        badge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300';
+      } else if (count > 0) {
+        badge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300';
+      } else {
+        badge.className = 'font-mono text-xs font-bold px-3 py-1 rounded-full bg-club-elevated border border-club-border text-slate-300';
+      }
+
+      clearBtn.classList.toggle('hidden', count === 0);
+
+      if (count === 0) {
+        pillsBox.innerHTML = `
+          <span class="text-xs text-slate-500 italic">
+            Список пока пуст. Добавь от 5 до 15 имён или загрузи прошлый список…
+          </span>
+        `;
+        return;
+      }
+
+      pillsBox.innerHTML = '';
+      appState.setupNames.forEach((name, idx) => {
+        const pill = document.createElement('span');
+        pill.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-club-elevated border border-white/10 text-xs sm:text-sm font-semibold text-white';
+        pill.innerHTML = `
+          <span class="font-mono text-[10px] text-indigo-300">${idx + 1}.</span>
+          <span>${escapeHtml(name)}</span>
+          <button
+            type="button"
+            class="ml-1 w-5 h-5 rounded-lg bg-white/5 hover:bg-rose-500 text-slate-400 hover:text-white flex items-center justify-center text-[11px] transition-colors"
+            aria-label="Удалить ${escapeHtml(name)}"
+          >✕</button>
+        `;
+        pill.querySelector('button').addEventListener('click', () => {
+          SoundFX.tap();
+          appState.setupNames.splice(idx, 1);
+          renderSetupNamesList();
+        });
+        pillsBox.appendChild(pill);
+      });
+    }
+
+    function addNamesToSetup(rawArray) {
+      let added = 0;
+      for (const raw of rawArray) {
+        const clean = String(raw || '').trim().replace(/\s+/g, ' ');
+        if (!clean) continue;
+        if (appState.setupNames.length >= 15) {
+          showToast('Максимум 15 одногруппниц в списке!');
+          break;
+        }
+        const exists = appState.setupNames.some(n => n.toLowerCase() === clean.toLowerCase());
+        if (!exists) {
+          appState.setupNames.push(clean);
+          added++;
+        }
+      }
+      renderSetupNamesList();
+      return added;
+    }
+
+    async function handleCreateRoom() {
+      const hostInput = document.getElementById('hostNickInput');
+      const errBox = document.getElementById('setupErrorBox');
+      const hostName = hostInput.value.trim();
+
+      const showErr = (msg) => {
+        errBox.textContent = `⚠️ ${msg}`;
+        errBox.classList.remove('hidden');
+      };
+      errBox.classList.add('hidden');
+
+      if (!hostName) {
+        showErr('Введи свой ник (Хост) в поле №1!');
+        hostInput.focus();
+        return;
+      }
+
+      if (appState.setupNames.length < 5 || appState.setupNames.length > 15) {
+        showErr(`В списке должно быть от 5 до 15 одногруппниц (сейчас: ${appState.setupNames.length}).`);
+        document.getElementById('setupOneNameInput').focus();
+        return;
+      }
+
+      const btn = document.getElementById('createRoomBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Создаём зал на сервере…</span>';
+
+      try {
+        const user = await ensureAuth();
+        if (!appState.playerId) {
+          appState.playerId = generateId('plr');
+        }
+
+        saveGirlsListToStorage(appState.setupNames);
+
+        let code = generateRoomCode();
+        for (let attempt = 0; attempt < 4; attempt++) {
+          try {
+            const checkSnap = await getDoc(getRoomRef(code));
+            if (!checkSnap.exists()) break;
+            code = generateRoomCode();
+          } catch (_) {
+            break;
+          }
+        }
+
+        const roomPayload = {
+          code,
+          uid: user?.uid || 'local',
+          hostId: appState.playerId,
+          hostName,
+          girls: [...appState.setupNames],
+          mode: appState.setupMode,
+          plannedCircles: appState.setupCircles,
+          status: 'waiting',
+          players: {
+            [appState.playerId]: {
+              id: appState.playerId,
+              uid: user?.uid || 'local',
+              name: hostName,
+              joinedAt: Date.now()
+            }
+          },
+          circle: 1,
+          totalRounds: 0,
+          rounds: {},
+          currentRoundIdx: 0,
+          revealIdx: null,
+          disputes: {},
+          activeDuel: null,
+          duelResults: {},
+          customOrder: null,
+          createdAt: Date.now()
+        };
+
+        await setDoc(getRoomRef(code), roomPayload);
+        writeLocalRoom(code, roomPayload);
+
+        appState.playerName = hostName;
+        appState.roomCode = code;
+        appState.roomData = roomPayload;
+
+        writeSession({
+          playerId: appState.playerId,
+          playerName: hostName,
+          roomCode: code
+        });
+        updateUrlRoomHash(code);
+        subscribeToRoomRealtime(code);
+
+        SoundFX.lockIn();
+        showToast(`Комната ${code} создана! Список сохранён в памяти.`);
+        syncUiWithRoomState();
+      } catch (err) {
+        showErr(err.message || 'Ошибка при создании комнаты.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    function renderNicknameScreen(roomData) {
+      document.getElementById('foundCodeLabel').textContent = roomData.code;
+      document.getElementById('foundHostLabel').textContent = roomData.hostName || 'Хост';
+      document.getElementById('foundGirlsCountLabel').textContent = String((roomData.girls || []).length);
+
+      const badgesEl = document.getElementById('foundPlayersBadges');
+      badgesEl.innerHTML = '';
+      const players = Object.values(roomData.players || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+
+      if (players.length === 0) {
+        badgesEl.innerHTML = '<span class="text-xs text-slate-500">Пока никого</span>';
+      } else {
+        players.forEach(p => {
+          const isH = p.id === roomData.hostId;
+          const span = document.createElement('span');
+          span.className = `inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border ${
+            isH
+              ? 'bg-club-gold/15 border-club-gold/40 text-club-gold'
+              : 'bg-club-elevated border-white/10 text-slate-200'
+          }`;
+          span.innerHTML = `<span>${isH ? '👑' : '👤'}</span><span>${escapeHtml(p.name)}</span>`;
+          badgesEl.appendChild(span);
+        });
+      }
+
+      const session = readSession();
+      const nickInput = document.getElementById('friendNickInput');
+      if (!nickInput.value && session.playerName) {
+        nickInput.value = session.playerName;
+      }
+      document.getElementById('nickScreenErrorBox').classList.add('hidden');
+    }
+
+    async function handleFriendJoinSubmit(e) {
+      e.preventDefault();
+      const nickInput = document.getElementById('friendNickInput');
+      const errBox = document.getElementById('nickScreenErrorBox');
+      const nick = nickInput.value.trim().slice(0, 20);
+      const foundRoom = appState.pendingFoundRoom;
+
+      if (!nick) {
+        errBox.textContent = '⚠️ Введи свой ник перед входом!';
+        errBox.classList.remove('hidden');
+        nickInput.focus();
+        return;
+      }
+      if (!foundRoom) {
+        showScreen('startScreen');
+        return;
+      }
+
+      errBox.classList.add('hidden');
+      const btn = document.getElementById('enterLobbyBtn');
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Входим в зал…';
+
+      try {
+        const user = await ensureAuth();
+        if (!appState.playerId) {
+          appState.playerId = generateId('plr');
+        }
+
+        const code = foundRoom.code;
+        const playerRecord = {
+          id: appState.playerId,
+          uid: user?.uid || 'local',
+          name: nick,
+          joinedAt: Date.now()
+        };
+
+        await updateRoomFields(code, {
+          [`players.${appState.playerId}`]: playerRecord
+        });
+
+        appState.playerName = nick;
+        appState.roomCode = code;
+        if (!foundRoom.players) foundRoom.players = {};
+        foundRoom.players[appState.playerId] = playerRecord;
+        appState.roomData = foundRoom;
+
+        writeSession({
+          playerId: appState.playerId,
+          playerName: nick,
+          roomCode: code
+        });
+        updateUrlRoomHash(code);
+        subscribeToRoomRealtime(code);
+
+        SoundFX.lockIn();
+        syncUiWithRoomState();
+      } catch (err) {
+        errBox.textContent = `⚠️ ${err.message || 'Не удалось войти в комнату.'}`;
+        errBox.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origText;
+      }
+    }
+
+    function isCurrentUserHost(room) {
+      return Boolean(room && appState.playerId && room.hostId === appState.playerId);
+    }
+
+    function syncUiWithRoomState() {
+      const room = appState.roomData;
+      if (!room || !appState.roomCode) {
+        showScreen('startScreen');
+        return;
+      }
+
+      if (room.status === 'waiting') {
+        showScreen('waitingRoomScreen');
+        renderWaitingRoom(room);
+      } else if (room.status === 'nominating' || room.status === 'ranking') {
+        showScreen('gameplayScreen');
+        renderGameplayScreen(room);
+      } else if (room.status === 'reveal') {
+        showScreen('revealScreen');
+        renderRevealScreen(room);
+      }
+    }
+
+    function formatCirclesWord(n) {
+      if (n === 1) return '1 круг';
+      if (n >= 2 && n <= 4) return `${n} круга`;
+      return `${n} кругов`;
+    }
+
+    function renderWaitingRoom(room) {
+      const amHost = isCurrentUserHost(room);
+      const plannedCircles = room.plannedCircles || 1;
+
+      document.getElementById('lobbyCodeBigText').textContent = room.code;
+      document.getElementById('lobbyCirclesBadge').textContent = `🔄 ${formatCirclesWord(plannedCircles)}`;
+      document.getElementById('lobbyModeBadge').textContent =
+        room.mode === 'all' ? '📋 Весь список' : '🔥 Расставить Топ-5';
+
+      const players = Object.values(room.players || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+      const count = players.length;
+      const totalPlannedRounds = count * plannedCircles;
+      const roundWord = totalPlannedRounds === 1 ? 'раунд' : totalPlannedRounds >= 2 && totalPlannedRounds <= 4 ? 'раунда' : 'раундов';
+
+      document.getElementById('lobbyPlayersCount').textContent = String(count);
+      document.getElementById('lobbyRoundsSummary').textContent = `Всего: ${totalPlannedRounds} ${roundWord} (очередь рандом)`;
+
+      const grid = document.getElementById('lobbyPlayersGrid');
+      grid.innerHTML = '';
+
+      players.forEach(p => {
+        const isH = p.id === room.hostId;
+        const isMe = p.id === appState.playerId;
+        const av = getAvatarProps(p.name);
+
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-2xl border flex items-center justify-between gap-2.5 ${
+          isH ? 'bg-club-gold/10 border-club-gold/45' : 'bg-club-bg/90 border-white/10'
+        }`;
+        card.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${av.gradient} flex items-center justify-center font-display text-xs font-black text-white shrink-0">
+              ${av.initials}
+            </div>
+            <div class="min-w-0">
+              <div class="font-bold text-sm text-white truncate">
+                ${escapeHtml(p.name)} ${isMe ? '<span class="text-xs text-indigo-300">(ты)</span>' : ''}
+              </div>
+              <div class="text-[10px] font-semibold text-emerald-400">
+                ● В комнате ожидания
+              </div>
+            </div>
+          </div>
+          ${isH ? '<span class="px-2 py-0.5 rounded-md bg-club-gold text-club-bg font-display text-[10px] font-black uppercase shrink-0">👑 ХОСТ</span>' : ''}
+        `;
+        grid.appendChild(card);
+      });
+
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      document.getElementById('lobbyGirlsTitle').textContent = `📋 Список одногруппниц (${girls.length})`;
+      const pillsBox = document.getElementById('lobbyGirlsPills');
+      pillsBox.innerHTML = '';
+      girls.forEach((g, idx) => {
+        const pill = document.createElement('span');
+        pill.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-club-bg border border-white/10 text-xs font-medium text-slate-200';
+        pill.innerHTML = `<span class="font-mono text-[10px] text-indigo-400">${idx + 1}.</span><span>${escapeHtml(g)}</span>`;
+        pillsBox.appendChild(pill);
+      });
+
+      document.getElementById('hostLobbyPanel').classList.toggle('hidden', !amHost);
+      document.getElementById('guestLobbyPanel').classList.toggle('hidden', amHost);
+
+      if (amHost) {
+        const startBtn = document.getElementById('hostStartGameBtn');
+        const soloBtn = document.getElementById('hostSoloTestBtn');
+        const hintEl = document.getElementById('hostStartStatusHint');
+
+        if (count >= 2) {
+          startBtn.disabled = false;
+          soloBtn.classList.add('hidden');
+          hintEl.textContent = `В зале ${count} игроков (${formatCirclesWord(plannedCircles)} = ${totalPlannedRounds} раундов). Жми «Начать игру 🚀»!`;
+          hintEl.className = 'text-center text-xs text-emerald-400 font-semibold';
+        } else {
+          startBtn.disabled = true;
+          soloBtn.classList.remove('hidden');
+          hintEl.textContent = 'Ждём друзей (от 2 игроков) или нажми «Тестовый запуск (1 игрок)» для проверки!';
+          hintEl.className = 'text-center text-xs text-amber-300 font-semibold';
+        }
+      } else {
+        document.getElementById('guestLobbyHostName').textContent = room.hostName || 'Хост';
+      }
+    }
+
+    function shareInviteMessage() {
+      const room = appState.roomData;
+      if (!room) return;
+      const code = room.code;
+      const link = getValidShareLink(code);
+
+      const lines = [
+        `🔥 ТОП ПОТОКА: Рейтинг Одногруппниц`,
+        `Залетай со своего телефона!`,
+        `🔑 Код комнаты: ${code}`
+      ];
+      if (link) lines.push(`🔗 Прямая ссылка: ${link}`);
+      const message = lines.join('\n');
+
+      if (navigator.share && link) {
+        navigator.share({
+          title: 'ТОП ПОТОКА: Рейтинг Одногруппниц',
+          text: message,
+          url: link
+        }).catch(() => copyTextSafe(message, 'Приглашение скопировано для чата!'));
+      } else {
+        copyTextSafe(message, 'Приглашение скопировано для чата!');
+      }
+    }
+
+    // Генерация раундов на N кругов со случайной очередью в каждом круге
+    function buildRandomizedCircleRounds(players, numCircles, startCircleNum = 1, startRoundIdx = 0) {
+      const roundsMap = {};
+      let rIdx = startRoundIdx;
+
+      for (let c = 0; c < numCircles; c++) {
+        const circleNum = startCircleNum + c;
+        const shuffledPlayers = shuffleArray(players);
+
+        shuffledPlayers.forEach(p => {
+          roundsMap[String(rIdx)] = {
+            index: rIdx,
+            circleNum,
+            isBlitz: false,
+            authorId: p.id,
+            authorName: p.name,
+            nomination: '',
+            submissions: {}
+          };
+          rIdx++;
+        });
+      }
+
+      return { roundsMap, nextTotalRounds: rIdx };
+    }
+
+    async function startGameWithPlayers(room) {
+      if (!room || !isCurrentUserHost(room)) return;
+      const players = Object.values(room.players || {});
+      if (players.length === 0) return;
+
+      const plannedCircles = room.plannedCircles || 1;
+      const { roundsMap, nextTotalRounds } = buildRandomizedCircleRounds(players, plannedCircles, 1, 0);
+
+      try {
+        SoundFX.lockIn();
+        await updateRoomFields(room.code, {
+          circle: 1,
+          totalRounds: nextTotalRounds,
+          rounds: roundsMap,
+          currentRoundIdx: 0,
+          status: 'nominating',
+          revealIdx: null,
+          disputes: {},
+          activeDuel: null,
+          duelResults: {},
+          customOrder: null
+        });
+      } catch (err) {
+        showToast(err.message || 'Не удалось запустить игру');
+      }
+    }
+
+    function updateRoundFormatToggleUI() {
+      const normalBtn = document.getElementById('chooseNormalFormatBtn');
+      const blitzBtn = document.getElementById('chooseBlitzFormatBtn');
+      if (!normalBtn || !blitzBtn) return;
+
+      if (!appState.selectedRoundIsBlitz) {
+        normalBtn.className = 'py-3 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase transition-all bg-club-neon text-white shadow-lg';
+        blitzBtn.className = 'py-3 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase transition-all text-slate-400 hover:text-white';
+      } else {
+        normalBtn.className = 'py-3 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase transition-all text-slate-400 hover:text-white';
+        blitzBtn.className = 'py-3 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase transition-all bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-lg';
+      }
+    }
+
+    function renderGameplayScreen(room) {
+      const rIdx = room.currentRoundIdx || 0;
+      const totalRounds = room.totalRounds || Object.keys(room.rounds || {}).length || 1;
+      const currentRound = (room.rounds || {})[String(rIdx)] || {
+        circleNum: room.circle || 1,
+        isBlitz: false,
+        authorId: room.hostId,
+        authorName: room.hostName,
+        nomination: '',
+        submissions: {}
+      };
+
+      const curCircle = currentRound.circleNum || room.circle || 1;
+      const plannedCircles = room.plannedCircles || curCircle;
+
+      document.getElementById('gameCircleBadge').textContent = `КРУГ ${curCircle} ИЗ ${plannedCircles}`;
+      document.getElementById('gameRoundBadge').textContent = `РАУНД ${rIdx + 1} ИЗ ${totalRounds}`;
+      document.getElementById('gameInvitePill').textContent = `КОД: ${room.code} 📲`;
+      document.getElementById('gameBlitzTag').classList.toggle('hidden', !currentRound.isBlitz);
+
+      const nomBox = document.getElementById('nominationStepBox');
+      const rankBox = document.getElementById('rankingStepBox');
+
+      nomBox.classList.toggle('hidden', room.status !== 'nominating');
+      rankBox.classList.toggle('hidden', room.status !== 'ranking');
+
+      if (room.status === 'nominating') {
+        clearBlitzTimer();
+        const isMyTurn = currentRound.authorId === appState.playerId;
+        document.getElementById('myTurnNominationCard').classList.toggle('hidden', !isMyTurn);
+        document.getElementById('otherTurnNominationCard').classList.toggle('hidden', isMyTurn);
+        document.getElementById('nominationAuthorLabel').textContent = currentRound.authorName || 'Игрок';
+        document.getElementById('hostSkipNominationBox').classList.toggle('hidden', !isCurrentUserHost(room) || isMyTurn);
+        if (isMyTurn) updateRoundFormatToggleUI();
+      } else if (room.status === 'ranking') {
+        renderRankingStep(room, rIdx, currentRound);
+      }
+    }
+
+    function pickRandomNominationIdea() {
+      if (appState.usedIdeaIndices.size >= NOMINATION_IDEAS.length) {
+        appState.usedIdeaIndices.clear();
+      }
+      const available = [];
+      for (let i = 0; i < NOMINATION_IDEAS.length; i++) {
+        if (!appState.usedIdeaIndices.has(i)) available.push(i);
+      }
+      const chosenIdx = available[Math.floor(Math.random() * available.length)];
+      appState.usedIdeaIndices.add(chosenIdx);
+      document.getElementById('nominationTextInput').value = NOMINATION_IDEAS[chosenIdx];
+      SoundFX.tap();
+    }
+
+    async function handleSendNomination(forcedTopic = null, forcedBlitz = null) {
+      const room = appState.roomData;
+      if (!room || room.status !== 'nominating') return;
+
+      const rIdx = room.currentRoundIdx || 0;
+      const inputEl = document.getElementById('nominationTextInput');
+      const topic = (forcedTopic !== null ? forcedTopic : inputEl.value).trim().slice(0, 70);
+      const isBlitz = forcedBlitz !== null ? forcedBlitz : appState.selectedRoundIsBlitz;
+
+      if (!topic) {
+        showToast('Введи номинацию или нажми «Подкинуть идею 🎲»');
+        inputEl.focus();
+        return;
+      }
+
+      const sendBtn = document.getElementById('sendNominationBtn');
+      sendBtn.disabled = true;
+
+      try {
+        SoundFX.lockIn();
+        inputEl.value = '';
+        await updateRoomFields(room.code, {
+          [`rounds.${rIdx}.nomination`]: topic,
+          [`rounds.${rIdx}.isBlitz`]: isBlitz,
+          status: 'ranking'
+        });
+      } catch (err) {
+        showToast(err.message || 'Не удалось отправить тему');
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    function getTargetSlotCount(room) {
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      return room.mode === 'all' ? girls.length : Math.min(5, girls.length);
+    }
+
+    // Генерация случайного валидного топа (используется при пропуске раунда хостом)
+    function generateRandomRankingForRoom(room) {
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      const targetCount = getTargetSlotCount(room);
+      return shuffleArray(girls).slice(0, targetCount);
+    }
+
+    // Принудительный пропуск раунда хостом при форс-мажоре (выход участника)
+    async function handleHostForceSkipRoundWithRandom() {
+      const room = appState.roomData;
+      if (!room || !isCurrentUserHost(room) || room.status !== 'ranking') return;
+
+      const rIdx = room.currentRoundIdx || 0;
+      const currentRound = (room.rounds || {})[String(rIdx)] || {};
+      const submissions = currentRound.submissions || {};
+      const players = Object.values(room.players || {});
+
+      const patch = {};
+      let filledCount = 0;
+
+      players.forEach(p => {
+        if (!Array.isArray(submissions[p.id]) || submissions[p.id].length === 0) {
+          patch[`rounds.${rIdx}.submissions.${p.id}`] = generateRandomRankingForRoom(room);
+          filledCount++;
+        }
+      });
+
+      clearBlitzTimer();
+      SoundFX.lockIn();
+
+      try {
+        if (filledCount > 0) {
+          await updateRoomFields(room.code, patch);
+          showToast(`Раунд пропущен: проставлен рандом за ${filledCount} игроков 🎲`);
+        } else {
+          await advanceRoundOrStartReveal(room);
+        }
+      } catch (err) {
+        showToast(err.message || 'Не удалось пропустить раунд');
+      }
+    }
+
+    function generateBlitzPairs(girls) {
+      const shuffled = shuffleArray(girls);
+      const pairs = [];
+      for (let i = 0; i < 5; i++) {
+        const a = shuffled[(i * 2) % shuffled.length];
+        let b = shuffled[(i * 2 + 1) % shuffled.length];
+        if (a === b && shuffled.length > 1) {
+          b = shuffled[(i * 2 + 2) % shuffled.length];
+        }
+        pairs.push([a, b]);
+      }
+      return pairs;
+    }
+
+    function startBlitzRoundForPlayer(room, rIdx) {
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      appState.blitzRoundIdx = rIdx;
+      appState.blitzPairs = generateBlitzPairs(girls);
+      appState.blitzCurrentPairIdx = 0;
+      appState.blitzWinsMap = {};
+      girls.forEach(g => { appState.blitzWinsMap[g] = 0; });
+
+      showNextBlitzPair(room, rIdx);
+    }
+
+    function showNextBlitzPair(room, rIdx) {
+      clearBlitzTimer();
+      const pairIdx = appState.blitzCurrentPairIdx;
+      if (pairIdx >= appState.blitzPairs.length) {
+        finalizeBlitzSubmission(room, rIdx);
+        return;
+      }
+
+      const [leftGirl, rightGirl] = appState.blitzPairs[pairIdx];
+      const leftAv = getAvatarProps(leftGirl);
+      const rightAv = getAvatarProps(rightGirl);
+
+      document.getElementById('blitzPairProgressLabel').textContent = `⚡ ПАРА ${pairIdx + 1} ИЗ ${appState.blitzPairs.length}`;
+      document.getElementById('blitzLeftAvatar').className = `w-12 h-12 rounded-2xl bg-gradient-to-br ${leftAv.gradient} flex items-center justify-center font-display text-sm font-black text-white`;
+      document.getElementById('blitzLeftAvatar').textContent = leftAv.initials;
+      document.getElementById('blitzLeftName').textContent = leftGirl;
+
+      document.getElementById('blitzRightAvatar').className = `w-12 h-12 rounded-2xl bg-gradient-to-br ${rightAv.gradient} flex items-center justify-center font-display text-sm font-black text-white`;
+      document.getElementById('blitzRightAvatar').textContent = rightAv.initials;
+      document.getElementById('blitzRightName').textContent = rightGirl;
+
+      const DURATION_MS = 5000;
+      appState.blitzDeadlineTs = Date.now() + DURATION_MS;
+
+      const updateTimerUi = () => {
+        const leftMs = Math.max(0, appState.blitzDeadlineTs - Date.now());
+        document.getElementById('blitzTimerPill').textContent = `⏱ ${(leftMs / 1000).toFixed(1)} сек`;
+        document.getElementById('blitzTimerBar').style.width = `${(leftMs / DURATION_MS) * 100}%`;
+
+        if (leftMs <= 0) {
+          const autoWinner = Math.random() < 0.5 ? leftGirl : rightGirl;
+          pickBlitzWinner(autoWinner);
+        }
+      };
+
+      updateTimerUi();
+      appState.blitzTimerInterval = setInterval(updateTimerUi, 80);
+    }
+
+    function pickBlitzWinner(winnerName) {
+      clearBlitzTimer();
+      const room = appState.roomData;
+      if (!room || room.status !== 'ranking') return;
+      const rIdx = room.currentRoundIdx || 0;
+
+      appState.blitzWinsMap[winnerName] = (appState.blitzWinsMap[winnerName] || 0) + 1;
+      SoundFX.place(appState.blitzCurrentPairIdx);
+      appState.blitzCurrentPairIdx++;
+      showNextBlitzPair(room, rIdx);
+    }
+
+    async function finalizeBlitzSubmission(room, rIdx) {
+      clearBlitzTimer();
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      const sortedByWins = [...girls].sort((a, b) => (appState.blitzWinsMap[b] || 0) - (appState.blitzWinsMap[a] || 0));
+      const rankedNames = sortedByWins.slice(0, getTargetSlotCount(room));
+
+      try {
+        SoundFX.lockIn();
+        await updateRoomFields(room.code, {
+          [`rounds.${rIdx}.submissions.${appState.playerId}`]: rankedNames
+        });
+      } catch (err) {
+        showToast(err.message || 'Не удалось сохранить Блиц-выбор');
+      }
+    }
+
+    function renderRankingStep(room, rIdx, currentRound) {
+      const isBlitz = Boolean(currentRound.isBlitz);
+      document.getElementById('rankStepModeHeader').textContent = isBlitz ? '⚡ СКОРОСТНОЙ БЛИЦ-РАУНД 1 НА 1' : 'НОМИНАЦИЯ РАУНДА';
+      document.getElementById('rankStepNominationTitle').textContent = `«${currentRound.nomination || 'Номинация'}»`;
+      document.getElementById('rankStepAuthorLabel').textContent = currentRound.authorName || 'Игрок';
+
+      const players = Object.values(room.players || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+      const submissionsMap = currentRound.submissions || {};
+      const readyCount = players.filter(p => Array.isArray(submissionsMap[p.id]) && submissionsMap[p.id].length > 0).length;
+
+      document.getElementById('rankReadyCounter').textContent = `${readyCount} / ${players.length} готовы`;
+
+      const readinessGrid = document.getElementById('rankPlayersReadinessGrid');
+      readinessGrid.innerHTML = '';
+      players.forEach(p => {
+        const isReady = Array.isArray(submissionsMap[p.id]) && submissionsMap[p.id].length > 0;
+        const badge = document.createElement('span');
+        badge.className = isReady
+          ? 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-xs font-bold text-emerald-300'
+          : 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/35 text-xs font-semibold text-amber-200';
+        badge.innerHTML = `<span>${isReady ? 'Готов ✅' : 'Выбирает ⏳'}</span><span>• ${escapeHtml(p.name)}</span>`;
+        readinessGrid.appendChild(badge);
+      });
+
+      // Кнопка принудительного пропуска видна ТОЛЬКО создателю комнаты (хосту)
+      document.getElementById('hostForceAdvanceBox').classList.toggle('hidden', !isCurrentUserHost(room));
+
+      const mySubmitted = submissionsMap[appState.playerId];
+      const builderEl = document.getElementById('myRankingBuilder');
+      const blitzEl = document.getElementById('myBlitzBuilder');
+      const submittedCard = document.getElementById('myRankingSubmittedCard');
+
+      if (Array.isArray(mySubmitted) && mySubmitted.length > 0) {
+        clearBlitzTimer();
+        builderEl.classList.add('hidden');
+        blitzEl.classList.add('hidden');
+        submittedCard.classList.remove('hidden');
+
+        const summaryPills = document.getElementById('mySubmittedSummaryPills');
+        summaryPills.innerHTML = '';
+        mySubmitted.forEach((girlName, idx) => {
+          const sp = document.createElement('span');
+          sp.className = 'px-2.5 py-1 rounded-lg bg-club-bg border border-white/10 text-xs font-semibold text-slate-200';
+          sp.textContent = `${idx + 1}. ${girlName}`;
+          summaryPills.appendChild(sp);
+        });
+        return;
+      }
+
+      submittedCard.classList.add('hidden');
+
+      if (isBlitz) {
+        builderEl.classList.add('hidden');
+        blitzEl.classList.remove('hidden');
+        if (appState.blitzRoundIdx !== rIdx) {
+          startBlitzRoundForPlayer(room, rIdx);
+        }
+        return;
+      }
+
+      clearBlitzTimer();
+      blitzEl.classList.add('hidden');
+      builderEl.classList.remove('hidden');
+
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      const targetCount = getTargetSlotCount(room);
+
+      if (appState.draftRoundIdx !== rIdx) {
+        appState.draftRoundIdx = rIdx;
+        appState.draftRankedList = [];
+      } else {
+        appState.draftRankedList = appState.draftRankedList.filter(g => girls.includes(g)).slice(0, targetCount);
+      }
+
+      const chosenSet = new Set(appState.draftRankedList);
+      const unranked = girls.filter(g => !chosenSet.has(g));
+      const slotsLeft = Math.max(0, targetCount - appState.draftRankedList.length);
+
+      document.getElementById('targetRankLimitLabel').textContent = String(targetCount);
+      document.getElementById('unrankedCountPill').textContent =
+        slotsLeft > 0 ? `Осталось: ${slotsLeft}` : 'Топ собран! ✓';
+      document.getElementById('nextRankTargetHint').textContent =
+        slotsLeft > 0 ? `${appState.draftRankedList.length + 1}-е место` : 'все места заполнены';
+
+      const deckGrid = document.getElementById('unrankedDeckGrid');
+      deckGrid.innerHTML = '';
+      if (unranked.length === 0) {
+        deckGrid.innerHTML = '<div class="text-xs text-slate-400 italic py-1">Все участницы расставлены.</div>';
+      } else {
+        unranked.forEach(girlName => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.disabled = slotsLeft <= 0;
+          btn.className = slotsLeft > 0
+            ? 'px-3.5 py-2.5 rounded-xl bg-club-bg hover:bg-club-neon/25 border border-club-border hover:border-club-neon text-xs sm:text-sm font-bold text-white transition-all active:scale-95 flex items-center gap-1.5'
+            : 'px-3.5 py-2.5 rounded-xl bg-club-bg/50 border border-club-border text-xs sm:text-sm font-medium text-slate-500 cursor-not-allowed';
+          btn.innerHTML = `<span>+</span><span>${escapeHtml(girlName)}</span>`;
+          btn.addEventListener('click', () => {
+            if (appState.draftRankedList.length >= targetCount) return;
+            appState.draftRankedList.push(girlName);
+            SoundFX.place(appState.draftRankedList.length - 1);
+            renderRankingStep(appState.roomData, rIdx, currentRound);
+          });
+          deckGrid.appendChild(btn);
+        });
+      }
+
+      const slotsList = document.getElementById('orderedSlotsList');
+      slotsList.innerHTML = '';
+
+      for (let i = 0; i < targetCount; i++) {
+        const girlName = appState.draftRankedList[i];
+        const row = document.createElement('div');
+
+        if (!girlName) {
+          row.className = 'p-3 rounded-xl bg-club-bg/50 border border-dashed border-club-border flex items-center gap-3 text-slate-500';
+          row.innerHTML = `
+            <span class="w-7 h-7 rounded-lg bg-white/5 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+              ${i + 1}
+            </span>
+            <span class="text-xs italic">Нажми на имя выше, чтобы поставить на ${i + 1}-е место…</span>
+          `;
+        } else {
+          const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`;
+          row.className = `animate-slot-in p-3 rounded-xl border flex items-center justify-between gap-2 ${
+            i < 3 ? 'bg-club-elevated border-club-gold/45' : 'bg-club-bg border-club-border'
+          }`;
+          row.innerHTML = `
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-7 h-7 rounded-lg bg-club-neon/20 border border-club-neon/40 font-mono text-xs font-extrabold text-white flex items-center justify-center shrink-0">
+                ${medal}
+              </span>
+              <span class="font-bold text-sm sm:text-base text-white truncate">${escapeHtml(girlName)}</span>
+            </div>
+
+            <div class="flex items-center gap-1 shrink-0">
+              <button type="button" data-act="up" ${i === 0 ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 disabled:opacity-25 text-xs font-bold text-slate-200 flex items-center justify-center transition-colors" title="Выше">↑</button>
+              <button type="button" data-act="down" ${i === appState.draftRankedList.length - 1 ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 disabled:opacity-25 text-xs font-bold text-slate-200 flex items-center justify-center transition-colors" title="Ниже">↓</button>
+              <button type="button" data-act="del" class="w-8 h-8 rounded-lg bg-rose-500/15 hover:bg-rose-500 text-rose-300 hover:text-white text-xs font-bold flex items-center justify-center transition-colors ml-0.5" title="Убрать">✕</button>
+            </div>
+          `;
+
+          row.querySelector('[data-act="up"]').addEventListener('click', () => {
+            if (i <= 0) return;
+            [appState.draftRankedList[i - 1], appState.draftRankedList[i]] = [appState.draftRankedList[i], appState.draftRankedList[i - 1]];
+            SoundFX.tap();
+            renderRankingStep(appState.roomData, rIdx, currentRound);
+          });
+
+          row.querySelector('[data-act="down"]').addEventListener('click', () => {
+            if (i >= appState.draftRankedList.length - 1) return;
+            [appState.draftRankedList[i], appState.draftRankedList[i + 1]] = [appState.draftRankedList[i + 1], appState.draftRankedList[i]];
+            SoundFX.tap();
+            renderRankingStep(appState.roomData, rIdx, currentRound);
+          });
+
+          row.querySelector('[data-act="del"]').addEventListener('click', () => {
+            appState.draftRankedList.splice(i, 1);
+            SoundFX.tap();
+            renderRankingStep(appState.roomData, rIdx, currentRound);
+          });
+        }
+
+        slotsList.appendChild(row);
+      }
+
+      document.getElementById('confirmMyRankingBtn').disabled = appState.draftRankedList.length < targetCount;
+    }
+
+    async function handleConfirmMyRanking() {
+      const room = appState.roomData;
+      if (!room || room.status !== 'ranking') return;
+
+      const rIdx = room.currentRoundIdx || 0;
+      const targetCount = getTargetSlotCount(room);
+      if (appState.draftRankedList.length < targetCount) {
+        showToast(`Выбери все ${targetCount} мест!`);
+        return;
+      }
+
+      const btn = document.getElementById('confirmMyRankingBtn');
+      btn.disabled = true;
+
+      try {
+        SoundFX.lockIn();
+        const rankedNames = [...appState.draftRankedList];
+        await updateRoomFields(room.code, {
+          [`rounds.${rIdx}.submissions.${appState.playerId}`]: rankedNames
+        });
+      } catch (err) {
+        btn.disabled = false;
+        showToast(err.message || 'Не удалось отправить топ');
+      }
+    }
+
+    function checkAutoAdvanceRound(room) {
+      if (!room || room.status !== 'ranking' || appState.isAdvancingRound) return;
+
+      const rIdx = room.currentRoundIdx || 0;
+      const currentRound = (room.rounds || {})[String(rIdx)];
+      if (!currentRound) return;
+
+      const playerIds = Object.keys(room.players || {});
+      if (playerIds.length === 0) return;
+
+      const submissions = currentRound.submissions || {};
+      const allReady = playerIds.every(pid => Array.isArray(submissions[pid]) && submissions[pid].length > 0);
+      if (!allReady) return;
+
+      const delayMs = isCurrentUserHost(room) ? 120 : 650;
+      appState.isAdvancingRound = true;
+
+      setTimeout(async () => {
+        try {
+          const latest = appState.roomData;
+          if (!latest || latest.status !== 'ranking' || (latest.currentRoundIdx || 0) !== rIdx) {
+            return;
+          }
+          await advanceRoundOrStartReveal(latest);
+        } finally {
+          appState.isAdvancingRound = false;
+        }
+      }, delayMs);
+    }
+
+    async function advanceRoundOrStartReveal(room) {
+      const rIdx = room.currentRoundIdx || 0;
+      const totalRounds = room.totalRounds || Object.keys(room.rounds || {}).length || 1;
+
+      if (rIdx + 1 < totalRounds) {
+        await updateRoomFields(room.code, {
+          currentRoundIdx: rIdx + 1,
+          status: 'nominating'
+        });
+      } else {
+        await updateRoomFields(room.code, {
+          status: 'reveal',
+          revealIdx: null
+        });
+      }
+    }
+
+    function calculateStandings(room) {
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+      const M = girls.length;
+      const totalRounds = room.totalRounds || Object.keys(room.rounds || {}).length;
+
+      const statsMap = {};
+      girls.forEach(g => {
+        statsMap[g] = {
+          name: g,
+          totalScore: 0,
+          totalRank: 0,
+          samples: 0,
+          top1Count: 0,
+          perRound: []
+        };
+      });
+
+      for (let rIdx = 0; rIdx < totalRounds; rIdx++) {
+        const rnd = (room.rounds || {})[String(rIdx)];
+        if (!rnd) continue;
+
+        const lists = Object.values(rnd.submissions || {}).filter(arr => Array.isArray(arr) && arr.length > 0);
+        if (lists.length === 0) continue;
+
+        const roundScoreSum = {};
+        const roundSamples = {};
+        girls.forEach(g => {
+          roundScoreSum[g] = 0;
+          roundSamples[g] = 0;
+        });
+
+        lists.forEach(rankedList => {
+          const K = rankedList.length;
+          const unrankedRank = K < M ? (K + 1 + M) / 2 : M;
+
+          girls.forEach(g => {
+            const pos = rankedList.indexOf(g);
+            const effRank = pos >= 0 ? pos + 1 : unrankedRank;
+            const score10 = M > 1 ? 10 - ((effRank - 1) / (M - 1)) * 9 : 10;
+
+            statsMap[g].totalScore += score10;
+            statsMap[g].totalRank += effRank;
+            statsMap[g].samples += 1;
+            if (pos === 0) statsMap[g].top1Count += 1;
+
+            roundScoreSum[g] += score10;
+            roundSamples[g] += 1;
+          });
+        });
+
+        girls.forEach(g => {
+          if (roundSamples[g] > 0) {
+            statsMap[g].perRound.push({
+              roundIdx: rIdx,
+              nomination: rnd.nomination || `Раунд ${rIdx + 1}`,
+              isBlitz: Boolean(rnd.isBlitz),
+              avgRoundScore: roundScoreSum[g] / roundSamples[g]
+            });
+          }
+        });
+      }
+
+      const sorted = Object.values(statsMap).map(item => ({
+        ...item,
+        avgScore: item.samples > 0 ? item.totalScore / item.samples : 0,
+        avgRank: item.samples > 0 ? item.totalRank / item.samples : M
+      }));
+
+      sorted.sort((a, b) =>
+        b.avgScore - a.avgScore ||
+        a.avgRank - b.avgRank ||
+        b.top1Count - a.top1Count ||
+        a.name.localeCompare(b.name, 'ru')
+      );
+
+      if (Array.isArray(room.customOrder) && room.customOrder.length === sorted.length) {
+        const byName = {};
+        sorted.forEach(item => { byName[item.name] = item; });
+        const reordered = [];
+        room.customOrder.forEach(name => {
+          if (byName[name]) reordered.push(byName[name]);
+        });
+        if (reordered.length === sorted.length) {
+          return reordered.map((item, idx) => ({ ...item, place: idx + 1 }));
+        }
+      }
+
+      return sorted.map((item, idx) => ({
+        ...item,
+        place: idx + 1
+      }));
+    }
+
+    async function maybeTriggerDuelForPlace(room, place, standings) {
+      if (!room || room.activeDuel || appState.isTriggeringDuel) return;
+      if (place < 1 || place > 5) return;
+
+      const revealIdx = typeof room.revealIdx === 'number' ? room.revealIdx : null;
+      if (revealIdx === null || place < revealIdx) return;
+
+      if ((room.duelResults || {})[String(place)]) return;
+
+      const startPlace = Math.min(10, standings.length);
+      const challengerPlace = place + 1;
+      if (challengerPlace > startPlace || challengerPlace < revealIdx) return;
+
+      const defenderEntry = standings[place - 1];
+      const challengerEntry = standings[challengerPlace - 1];
+      if (!defenderEntry || !challengerEntry) return;
+
+      const totalPlayers = Math.max(1, Object.keys(room.players || {}).length);
+      const placeVotes = Object.values((room.disputes || {})[String(place)] || {});
+      const disputeVotesCount = placeVotes.filter(v => v && (v.vote === 'dispute' || v.vote === 'overrated' || v.vote === 'underrated')).length;
+
+      if (disputeVotesCount / totalPlayers <= 0.5) return;
+
+      appState.isTriggeringDuel = true;
+      try {
+        SoundFX.duelAlarm();
+        await updateRoomFields(room.code, {
+          activeDuel: {
+            place,
+            challengerPlace,
+            defenderName: defenderEntry.name,
+            challengerName: challengerEntry.name,
+            votes: {},
+            startedAt: Date.now()
+          }
+        });
+      } finally {
+        appState.isTriggeringDuel = false;
+      }
+    }
+
+    async function handleCastDuelVote(choice) {
+      const room = appState.roomData;
+      if (!room || !room.activeDuel) return;
+
+      SoundFX.tap();
+      try {
+        await updateRoomFields(room.code, {
+          [`activeDuel.votes.${appState.playerId}`]: choice
+        });
+      } catch (err) {
+        showToast(err.message || 'Не удалось учесть голос в дуэли');
+      }
+    }
+
+    async function handleResolveActiveDuel() {
+      const room = appState.roomData;
+      if (!room || !room.activeDuel) return;
+
+      const duel = room.activeDuel;
+      const votes = Object.values(duel.votes || {});
+      const defenderVotes = votes.filter(v => v === 'defender').length;
+      const challengerVotes = votes.filter(v => v === 'challenger').length;
+
+      const standings = calculateStandings(room);
+      const currentOrder = standings.map(s => s.name);
+
+      const challengerWon = challengerVotes > defenderVotes;
+      let nextOrder = [...currentOrder];
+
+      if (challengerWon) {
+        const idxDef = nextOrder.indexOf(duel.defenderName);
+        const idxChal = nextOrder.indexOf(duel.challengerName);
+        if (idxDef >= 0 && idxChal >= 0) {
+          [nextOrder[idxDef], nextOrder[idxChal]] = [nextOrder[idxChal], nextOrder[idxDef]];
+        }
+      }
+
+      const resultRecord = {
+        place: duel.place,
+        challengerPlace: duel.challengerPlace,
+        winnerName: challengerWon ? duel.challengerName : duel.defenderName,
+        loserName: challengerWon ? duel.defenderName : duel.challengerName,
+        challengerWon,
+        defenderVotes,
+        challengerVotes,
+        resolvedAt: Date.now()
+      };
+
+      try {
+        SoundFX.lockIn();
+        await updateRoomFields(room.code, {
+          customOrder: nextOrder,
+          activeDuel: null,
+          [`duelResults.${duel.place}`]: resultRecord
+        });
+        showToast(
+          challengerWon
+            ? `⚔️ ${duel.challengerName} вырвала #${duel.place} место в дуэли!`
+            : `🛡️ ${duel.defenderName} отстояла #${duel.place} место!`
+        );
+      } catch (err) {
+        showToast(err.message || 'Ошибка при завершении дуэли');
+      }
+    }
+
+    function renderActiveDuelBanner(room) {
+      const banner = document.getElementById('activeDuelBanner');
+      const duel = room.activeDuel;
+      if (!duel) {
+        banner.classList.add('hidden');
+        return;
+      }
+
+      banner.classList.remove('hidden');
+      const playersCount = Object.keys(room.players || {}).length;
+      const votesMap = duel.votes || {};
+      const totalVoted = Object.keys(votesMap).length;
+      const defVotes = Object.values(votesMap).filter(v => v === 'defender').length;
+      const chalVotes = Object.values(votesMap).filter(v => v === 'challenger').length;
+      const myChoice = votesMap[appState.playerId] || null;
+
+      document.getElementById('duelVotesCounter').textContent = `Проголосовало: ${totalVoted} / ${playersCount}`;
+      document.getElementById('duelPromptText').innerHTML = `Более 50% оспорили <strong class="text-club-gold">#${duel.place} место</strong>! Голосуйте 1 на 1: кто реально достойна быть выше?`;
+
+      document.getElementById('duelDefenderName').textContent = `#${duel.place} ${duel.defenderName}`;
+      document.getElementById('duelDefenderVotes').textContent = `${defVotes} гол.`;
+
+      document.getElementById('duelChallengerName').textContent = `#${duel.challengerPlace} ${duel.challengerName}`;
+      document.getElementById('duelChallengerVotes').textContent = `${chalVotes} гол.`;
+
+      const defBtn = document.getElementById('duelDefenderBtn');
+      const chalBtn = document.getElementById('duelChallengerBtn');
+
+      defBtn.className = myChoice === 'defender'
+        ? 'p-4 rounded-2xl bg-club-gold/25 border-2 border-club-gold text-left space-y-2 shadow-lg shadow-club-gold/20 transition-all'
+        : 'p-4 rounded-2xl bg-club-bg hover:bg-amber-500/15 border-2 border-club-gold/40 text-left space-y-2 transition-all active:scale-95';
+
+      chalBtn.className = myChoice === 'challenger'
+        ? 'p-4 rounded-2xl bg-rose-500/25 border-2 border-rose-400 text-left space-y-2 shadow-lg shadow-rose-500/20 transition-all'
+        : 'p-4 rounded-2xl bg-club-bg hover:bg-rose-500/15 border-2 border-rose-500/45 text-left space-y-2 transition-all active:scale-95';
+
+      document.getElementById('duelMyVoteHint').textContent = myChoice
+        ? 'Твой голос учтён! Ждём остальных или подводим итог…'
+        : 'Нажми на карточку, за кого отдаёшь голос в дуэли!';
+
+      const resolveBtn = document.getElementById('hostResolveDuelBtn');
+      resolveBtn.classList.toggle('hidden', !isCurrentUserHost(room));
+
+      if (isCurrentUserHost(room) && playersCount > 0 && totalVoted >= playersCount) {
+        setTimeout(() => {
+          if (appState.roomData?.activeDuel?.place === duel.place) {
+            handleResolveActiveDuel();
+          }
+        }, 500);
+      }
+    }
+
+    function renderRevealScreen(room) {
+      const amHost = isCurrentUserHost(room);
+      const standings = calculateStandings(room);
+      const startPlace = Math.min(10, standings.length);
+      const revealIdx = typeof room.revealIdx === 'number' ? room.revealIdx : null;
+
+      if (revealIdx !== null && revealIdx !== appState.lastRevealedIdx) {
+        if (revealIdx === 1) SoundFX.champion();
+        else SoundFX.flipCard();
+      }
+      appState.lastRevealedIdx = revealIdx;
+
+      renderActiveDuelBanner(room);
+
+      const hostBtnWrap = document.getElementById('hostRevealBtnWrap');
+      const revealBtn = document.getElementById('revealNextBtn');
+      const guestHint = document.getElementById('guestRevealHint');
+      const postActions = document.getElementById('finalPostRevealActions');
+      const playMoreBtn = document.getElementById('playMoreCircleBtn');
+      const subtext = document.getElementById('revealSubtext');
+
+      if (revealIdx === null) {
+        subtext.textContent = `Все ${startPlace} мест скрыты. Начинаем вскрытие снизу вверх с ${startPlace}-го места!`;
+        hostBtnWrap.classList.toggle('hidden', !amHost);
+        revealBtn.innerHTML = `<span>Открыть ${startPlace}-е место 👁️</span>`;
+        guestHint.classList.toggle('hidden', amHost);
+        postActions.classList.add('hidden');
+      } else if (revealIdx > 1) {
+        const nextPlace = revealIdx - 1;
+        subtext.textContent = `Открыто с ${startPlace}-го по ${revealIdx}-е место. Дальше — ${nextPlace}-е место!`;
+        hostBtnWrap.classList.toggle('hidden', !amHost || Boolean(room.activeDuel));
+        revealBtn.innerHTML = nextPlace === 1
+          ? `<span>👑 Открыть 1-е место (ФИНАЛ) 👁️</span>`
+          : `<span>Открыть ${nextPlace}-е место 👁️</span>`;
+        guestHint.classList.toggle('hidden', amHost);
+        postActions.classList.add('hidden');
+      } else {
+        subtext.textContent = '1-е место открыто! Голосуй в Топ-5, открывай «Кто как голосовал 👀» или запускай ещё круг.';
+        hostBtnWrap.classList.add('hidden');
+        guestHint.classList.add('hidden');
+        postActions.classList.remove('hidden');
+        playMoreBtn.classList.toggle('hidden', !amHost);
+      }
+
+      const container = document.getElementById('revealCardsContainer');
+      container.innerHTML = '';
+
+      standings.slice(0, startPlace).forEach(entry => {
+        const isRevealed = revealIdx !== null && entry.place >= revealIdx;
+        if (!isRevealed) {
+          container.appendChild(createClosedCard(entry.place));
+        } else {
+          container.appendChild(createRevealedCard(entry, room, standings));
+        }
+      });
+
+      const restBox = document.getElementById('restPlacesSpoilerBox');
+      const restList = document.getElementById('restPlacesList');
+      if (revealIdx === 1 && standings.length > 10) {
+        restBox.classList.remove('hidden');
+        document.getElementById('restPlacesTitle').textContent = `📊 Остальные места (11–${standings.length})`;
+        restList.classList.toggle('hidden', !appState.restPlacesExpanded);
+        document.getElementById('restPlacesChevron').textContent = appState.restPlacesExpanded ? 'Скрыть ▴' : 'Показать ▾';
+
+        restList.innerHTML = '';
+        standings.slice(10).forEach(entry => {
+          restList.appendChild(createRevealedCard(entry, room, standings));
+        });
+      } else {
+        restBox.classList.add('hidden');
+      }
+    }
+
+    function createClosedCard(place) {
+      const isTop5 = place <= 5;
+      const div = document.createElement('div');
+      div.className = `p-4 rounded-2xl border flex items-center justify-between gap-3 ${
+        isTop5 ? 'bg-club-surface/85 border-club-gold/35' : 'bg-club-surface/65 border-club-border'
+      }`;
+      div.innerHTML = `
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl ${isTop5 ? 'bg-club-gold/15 text-club-gold border border-club-gold/40' : 'bg-white/5 text-slate-400 border border-white/10'} font-display font-black text-sm flex items-center justify-center">
+            #${place}
+          </div>
+          <div>
+            <div class="font-display text-sm sm:text-base font-black uppercase text-slate-400 tracking-wider">
+              ${place === 1 ? '👑 ГЛАВНЫЙ ПОБЕДИТЕЛЬ ПОТОКА' : isTop5 ? '🔒 ТОП-5 (СКРЫТО)' : '🔒 МЕСТО В РЕЙТИНГЕ'}
+            </div>
+            <div class="text-[11px] text-slate-500">Откроется по очереди снизу вверх</div>
+          </div>
+        </div>
+        <span class="font-mono text-xs font-bold text-slate-500">???</span>
+      `;
+      return div;
+    }
+
+    function createRevealedCard(entry, room, standings) {
+      const place = entry.place;
+      const isTop5 = place <= 5;
+      const isRank1 = place === 1;
+      const av = getAvatarProps(entry.name);
+
+      const card = document.createElement('div');
+      card.className = `animate-card-reveal rounded-3xl p-4 sm:p-5 space-y-4 ${
+        isRank1 ? 'rank1-card' : isTop5 ? 'top5-card' : 'club-card'
+      }`;
+
+      const medal = place === 1 ? '👑' : place === 2 ? '🥈' : place === 3 ? '🥉' : `#${place}`;
+      const isDetailsOpen = appState.expandedRoundBreakdownPlaces.has(place);
+
+      const placeDisputesMap = (room.disputes || {})[String(place)] || {};
+      const entries = Object.entries(placeDisputesMap);
+
+      const countsByReaction = { base: 0, queen: 0, underrated: 0, overrated: 0, dispute: 0 };
+      const namesByReaction = { base: [], queen: [], underrated: [], overrated: [], dispute: [] };
+      const disputeArguments = [];
+
+      entries.forEach(([pid, v]) => {
+        if (!v || typeof v !== 'object') return;
+        const pName = v.name || room.players?.[pid]?.name || 'Игрок';
+        const rKey = v.vote === 'agree' ? 'base' : v.vote;
+        if (countsByReaction[rKey] !== undefined) {
+          countsByReaction[rKey]++;
+          namesByReaction[rKey].push(pName);
+        }
+        if (rKey === 'dispute') {
+          disputeArguments.push({
+            playerId: pid,
+            name: pName,
+            direction: v.direction || 'higher',
+            reason: v.reason || (v.direction === 'lower' ? 'Завышена в рейтинге!' : 'Занижена, должна быть выше!'),
+            ts: v.ts || 0
+          });
+        }
+      });
+
+      disputeArguments.sort((a, b) => a.ts - b.ts);
+      const rawMyVote = placeDisputesMap[appState.playerId] || null;
+      const myVoteKey = rawMyVote ? (rawMyVote.vote === 'agree' ? 'base' : rawMyVote.vote) : null;
+
+      const duelRes = (room.duelResults || {})[String(place)] || null;
+      let stampHtml = '';
+      if (isTop5) {
+        if (duelRes) {
+          if (duelRes.challengerWon) {
+            stampHtml = `<span class="verdict-stamp bg-rose-500/25 text-rose-200 border border-rose-400">Вырвала место в дуэли ⚔️</span>`;
+          } else {
+            stampHtml = `<span class="verdict-stamp bg-emerald-500/25 text-emerald-200 border border-emerald-400">Отстояла позицию 🛡️</span>`;
+          }
+        } else {
+          const totalPositive = countsByReaction.base + countsByReaction.queen;
+          const totalNegative = countsByReaction.dispute + countsByReaction.overrated + countsByReaction.underrated;
+          if (totalPositive === 0 && totalNegative === 0) {
+            stampHtml = `<span class="verdict-stamp bg-white/10 text-slate-300 border border-white/15">⏳ ЖДЁМ ОЦЕНКУ</span>`;
+          } else if (totalNegative === 0 && totalPositive > 0) {
+            stampHtml = `<span class="verdict-stamp bg-emerald-500/20 text-emerald-300 border border-emerald-500/45">ЕДИНОГЛАСНО ✅</span>`;
+          } else {
+            stampHtml = `<span class="verdict-stamp bg-rose-500/20 text-rose-300 border border-rose-500/50">ЖАРКИЙ СПОР 🔥</span>`;
+          }
+        }
+      }
+
+      const headerRow = document.createElement('div');
+      headerRow.className = 'flex items-center justify-between gap-3 flex-wrap';
+      headerRow.innerHTML = `
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-2xl ${isRank1 ? 'bg-club-gold text-club-bg' : isTop5 ? 'bg-club-gold/20 text-club-gold border border-club-gold/45' : 'bg-club-neon/20 text-indigo-300 border border-club-neon/40'} font-display font-black text-base flex items-center justify-center shrink-0">
+            ${medal}
+          </div>
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br ${av.gradient} flex items-center justify-center font-display text-xs font-black text-white shrink-0">
+            ${av.initials}
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-display text-base sm:text-xl font-black text-white truncate">${escapeHtml(entry.name)}</span>
+              ${stampHtml}
+            </div>
+            <div class="font-mono text-[11px] text-slate-300 mt-0.5">
+              Средний балл: <strong class="text-club-gold">${entry.avgScore.toFixed(1)} / 10</strong>
+              <span class="text-slate-500 mx-1">•</span>
+              Ср. место: <strong>${entry.avgRank.toFixed(1)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="toggle-rounds-btn px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 font-mono text-[11px] font-bold text-slate-300 transition-colors shrink-0"
+        >
+          ${isDetailsOpen ? 'Скрыть ▴' : 'По раундам ▾'}
+        </button>
+      `;
+
+      headerRow.querySelector('.toggle-rounds-btn').addEventListener('click', () => {
+        SoundFX.tap();
+        if (appState.expandedRoundBreakdownPlaces.has(place)) {
+          appState.expandedRoundBreakdownPlaces.delete(place);
+        } else {
+          appState.expandedRoundBreakdownPlaces.add(place);
+        }
+        renderRevealScreen(appState.roomData);
+      });
+
+      card.appendChild(headerRow);
+
+      if (isDetailsOpen) {
+        const breakdown = document.createElement('div');
+        breakdown.className = 'p-3 rounded-2xl bg-club-bg/90 border border-white/10 space-y-1.5';
+        breakdown.innerHTML = `<div class="font-mono text-[10px] font-bold uppercase text-slate-400">Оценки по раундам (из 10.0):</div>`;
+        entry.perRound.forEach(pr => {
+          const line = document.createElement('div');
+          line.className = 'flex items-center justify-between gap-2 text-xs';
+          line.innerHTML = `
+            <span class="text-slate-300 truncate">• ${pr.isBlitz ? '⚡ ' : ''}«${escapeHtml(pr.nomination)}»</span>
+            <span class="font-mono font-bold text-club-gold shrink-0">${pr.avgRoundScore.toFixed(1)}</span>
+          `;
+          breakdown.appendChild(line);
+        });
+        card.appendChild(breakdown);
+      }
+
+      if (isTop5) {
+        const disputeWrap = document.createElement('div');
+        disputeWrap.className = 'pt-3 border-t border-white/10 space-y-3';
+
+        const isFormOpen = appState.openDisputePlaces.has(place);
+        const dirDraft = appState.disputeDirDrafts[place] || 'higher';
+        const reasonDraft = appState.disputeReasonDrafts[place] || '';
+
+        const btnRow = document.createElement('div');
+        btnRow.className = 'flex items-center gap-1.5 flex-wrap';
+
+        REACTION_TYPES.forEach(rt => {
+          const cnt = countsByReaction[rt.key] || 0;
+          const isSelected = myVoteKey === rt.key || (rt.key === 'dispute' && isFormOpen);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `py-2 px-2.5 rounded-xl font-bold text-[11px] sm:text-xs transition-all flex items-center gap-1 border ${
+            isSelected ? rt.activeCls : rt.idleCls
+          }`;
+          btn.innerHTML = `<span>${rt.label}</span><span class="font-mono font-extrabold">(${cnt})</span>`;
+
+          btn.addEventListener('click', async () => {
+            SoundFX.tap();
+            if (rt.key === 'dispute') {
+              if (appState.openDisputePlaces.has(place)) {
+                appState.openDisputePlaces.delete(place);
+              } else {
+                appState.openDisputePlaces.add(place);
+              }
+              renderRevealScreen(appState.roomData);
+              return;
+            }
+
+            appState.openDisputePlaces.delete(place);
+            try {
+              await updateRoomFields(room.code, {
+                [`disputes.${place}.${appState.playerId}`]: {
+                  vote: rt.key,
+                  direction: null,
+                  reason: '',
+                  name: appState.playerName,
+                  ts: Date.now()
+                }
+              });
+              if (rt.key === 'underrated' || rt.key === 'overrated') {
+                setTimeout(() => {
+                  if (appState.roomData) {
+                    maybeTriggerDuelForPlace(appState.roomData, place, calculateStandings(appState.roomData));
+                  }
+                }, 150);
+              }
+            } catch (err) {
+              showToast(err.message || 'Не удалось сохранить реакцию');
+            }
+          });
+
+          btnRow.appendChild(btn);
+        });
+
+        disputeWrap.appendChild(btnRow);
+
+        const activeBadges = [];
+        REACTION_TYPES.forEach(rt => {
+          const nicks = namesByReaction[rt.key] || [];
+          if (nicks.length > 0) {
+            activeBadges.push(`<span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-slate-300">${rt.label.split(' ')[1]} ${escapeHtml(nicks.join(', '))}</span>`);
+          }
+        });
+        if (activeBadges.length > 0) {
+          const whoBar = document.createElement('div');
+          whoBar.className = 'flex flex-wrap gap-1.5';
+          whoBar.innerHTML = activeBadges.join('');
+          disputeWrap.appendChild(whoBar);
+        }
+
+        if (isFormOpen) {
+          const form = document.createElement('div');
+          form.className = 'p-3.5 rounded-2xl bg-club-bg border border-rose-500/45 space-y-3';
+          form.innerHTML = `
+            <div class="grid grid-cols-2 gap-1.5">
+              <button
+                type="button"
+                data-dir="higher"
+                class="dir-btn py-2 px-2.5 rounded-xl text-[11px] font-extrabold border transition-all ${
+                  dirDraft === 'higher'
+                    ? 'bg-rose-500 text-white border-rose-400'
+                    : 'bg-club-surface text-slate-300 border-club-border'
+                }"
+              >
+                Занижена 📉
+              </button>
+              <button
+                type="button"
+                data-dir="lower"
+                class="dir-btn py-2 px-2.5 rounded-xl text-[11px] font-extrabold border transition-all ${
+                  dirDraft === 'lower'
+                    ? 'bg-rose-500 text-white border-rose-400'
+                    : 'bg-club-surface text-slate-300 border-club-border'
+                }"
+              >
+                Завышена 📈
+              </button>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              ${QUICK_DISPUTE_REASONS.map(rep => `
+                <button
+                  type="button"
+                  class="quick-reason-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-rose-500/20 border border-white/10 text-[11px] font-semibold text-slate-300 hover:text-white transition-colors"
+                >${escapeHtml(rep)}</button>
+              `).join('')}
+            </div>
+
+            <div class="flex gap-2">
+              <input
+                type="text"
+                maxlength="90"
+                value="${escapeHtml(reasonDraft)}"
+                placeholder="Короткий аргумент..."
+                class="reason-input flex-1 min-w-0 bg-club-surface border border-club-border focus:border-rose-500 rounded-xl px-3 py-2 text-xs sm:text-sm text-white placeholder-slate-500 outline-none"
+              />
+              <button
+                type="button"
+                class="submit-dispute-btn px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-display text-xs font-black uppercase tracking-wider shrink-0 active:scale-95 transition-all"
+              >
+                Оспорить
+              </button>
+            </div>
+          `;
+
+          form.querySelectorAll('.dir-btn').forEach(dbtn => {
+            dbtn.addEventListener('click', () => {
+              appState.disputeDirDrafts[place] = dbtn.getAttribute('data-dir');
+              SoundFX.tap();
+              renderRevealScreen(appState.roomData);
+            });
+          });
+
+          const rInput = form.querySelector('.reason-input');
+          rInput.addEventListener('input', (e) => {
+            appState.disputeReasonDrafts[place] = e.target.value;
+          });
+
+          form.querySelectorAll('.quick-reason-btn').forEach(qbtn => {
+            qbtn.addEventListener('click', () => {
+              appState.disputeReasonDrafts[place] = qbtn.textContent;
+              rInput.value = qbtn.textContent;
+              SoundFX.tap();
+            });
+          });
+
+          form.querySelector('.submit-dispute-btn').addEventListener('click', async () => {
+            const direction = appState.disputeDirDrafts[place] || 'higher';
+            const rawReason = (appState.disputeReasonDrafts[place] || '').trim();
+            const finalReason = rawReason || (direction === 'lower' ? 'Завышена в рейтинге!' : 'Занижена, должна быть выше!');
+
+            appState.openDisputePlaces.delete(place);
+            appState.disputeReasonDrafts[place] = '';
+            SoundFX.lockIn();
+
+            try {
+              await updateRoomFields(room.code, {
+                [`disputes.${place}.${appState.playerId}`]: {
+                  vote: 'dispute',
+                  direction,
+                  reason: finalReason,
+                  name: appState.playerName,
+                  ts: Date.now()
+                }
+              });
+              showToast('Спор зафиксирован!');
+              setTimeout(() => {
+                if (appState.roomData) {
+                  maybeTriggerDuelForPlace(appState.roomData, place, calculateStandings(appState.roomData));
+                }
+              }, 150);
+            } catch (err) {
+              showToast(err.message || 'Не удалось отправить спор');
+            }
+          });
+
+          disputeWrap.appendChild(form);
+        }
+
+        if (disputeArguments.length > 0) {
+          const feedEl = document.createElement('div');
+          feedEl.className = 'space-y-1.5';
+          disputeArguments.forEach(item => {
+            const dirBadge = item.direction === 'lower'
+              ? '<span class="text-amber-300 font-bold">Завышена 📈</span>'
+              : '<span class="text-rose-400 font-bold">Занижена 📉</span>';
+            const row = document.createElement('div');
+            row.className = 'px-3 py-2 rounded-xl bg-club-bg/85 border border-white/5 text-xs text-slate-200';
+            row.innerHTML = `
+              <span class="font-bold text-white">${escapeHtml(item.name)}</span>
+              <span class="text-slate-500 mx-1">•</span>
+              ${dirBadge}:
+              <span class="ml-1">«${escapeHtml(item.reason)}»</span>
+            `;
+            feedEl.appendChild(row);
+          });
+          disputeWrap.appendChild(feedEl);
+        }
+
+        card.appendChild(disputeWrap);
+      }
+
+      return card;
+    }
+
+    async function handleRevealNextPlace() {
+      const room = appState.roomData;
+      if (!room || !isCurrentUserHost(room) || room.status !== 'reveal') return;
+      if (room.activeDuel) {
+        showToast('Сначала завершите текущую дуэль!');
+        return;
+      }
+
+      const startPlace = Math.min(10, (room.girls || []).length);
+      const current = typeof room.revealIdx === 'number' ? room.revealIdx : null;
+
+      let nextPlace = startPlace;
+      if (current !== null) {
+        if (current <= 1) return;
+        nextPlace = current - 1;
+      }
+
+      try {
+        await updateRoomFields(room.code, {
+          revealIdx: nextPlace
+        });
+      } catch (err) {
+        showToast(err.message || 'Не удалось открыть карточку');
+      }
+    }
+
+    // Полный сброс старых споров, дуэлей и перестановок при старте нового круга
+    async function handlePlayAnotherCircle() {
+      const room = appState.roomData;
+      if (!room || !isCurrentUserHost(room)) return;
+
+      const players = Object.values(room.players || {});
+      if (players.length === 0) return;
+
+      const baseIdx = room.totalRounds || Object.keys(room.rounds || {}).length || 0;
+      const nextCircle = (room.circle || 1) + 1;
+      const { roundsMap, nextTotalRounds } = buildRandomizedCircleRounds(players, 1, nextCircle, baseIdx);
+
+      appState.openDisputePlaces.clear();
+      appState.disputeDirDrafts = {};
+      appState.disputeReasonDrafts = {};
+      appState.lastRevealedIdx = null;
+
+      const updatePayload = {
+        circle: nextCircle,
+        plannedCircles: Math.max(room.plannedCircles || 1, nextCircle),
+        totalRounds: nextTotalRounds,
+        currentRoundIdx: baseIdx,
+        status: 'nominating',
+        revealIdx: null,
+        disputes: {},
+        activeDuel: null,
+        duelResults: {},
+        customOrder: null
+      };
+
+      Object.entries(roundsMap).forEach(([k, val]) => {
+        updatePayload[`rounds.${k}`] = val;
+      });
+
+      try {
+        SoundFX.lockIn();
+        await updateRoomFields(room.code, updatePayload);
+        showToast(`Запущен Круг ${nextCircle} (споры и дуэли обнулены)!`);
+      } catch (err) {
+        showToast(err.message || 'Не удалось запустить новый круг');
+      }
+    }
+
+    function openStatsAndTitlesModal() {
+      const room = appState.roomData;
+      if (!room) return;
+
+      const standings = calculateStandings(room);
+      const finalRankMap = {};
+      standings.forEach(s => { finalRankMap[s.name] = s.place; });
+
+      const players = Object.values(room.players || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+      const totalRounds = room.totalRounds || Object.keys(room.rounds || {}).length || 0;
+      const girls = Array.isArray(room.girls) ? room.girls : [];
+
+      const playerStats = players.map(p => {
+        const top1Counts = {};
+        let chaosScore = 0;
+        let alignmentScore = 0;
+        let haterCount = 0;
+        const allTopSets = [];
+
+        for (let r = 0; r < totalRounds; r++) {
+          const rnd = (room.rounds || {})[String(r)];
+          const sub = rnd?.submissions?.[p.id];
+          if (Array.isArray(sub) && sub.length > 0) {
+            allTopSets.push(new Set(sub));
+            const firstGirl = sub[0];
+            top1Counts[firstGirl] = (top1Counts[firstGirl] || 0) + 1;
+
+            sub.forEach((gName, posIdx) => {
+              const playerRank = posIdx + 1;
+              const officialPlace = finalRankMap[gName] || girls.length;
+              const diff = Math.abs(playerRank - officialPlace);
+              chaosScore += diff;
+              alignmentScore += Math.max(0, girls.length - diff);
+            });
+
+            standings.slice(0, 3).forEach(topGirl => {
+              if (!sub.includes(topGirl.name)) {
+                haterCount++;
+              }
+            });
+          }
+        }
+
+        let favGirl = null;
+        let favCount = 0;
+        Object.entries(top1Counts).forEach(([g, c]) => {
+          if (c > favCount) {
+            favCount = c;
+            favGirl = g;
+          }
+        });
+
+        return {
+          player: p,
+          favGirl,
+          favCount,
+          chaosScore,
+          alignmentScore,
+          haterCount,
+          allTopSets
+        };
+      });
+
+      const titlesGrid = document.getElementById('playerTitlesGrid');
+      titlesGrid.innerHTML = '';
+
+      if (playerStats.length > 0) {
+        const simp = [...playerStats].sort((a, b) => b.favCount - a.favCount)[0];
+        const voiceOfPeople = [...playerStats].sort((a, b) => b.alignmentScore - a.alignmentScore)[0];
+        const chaosAgent = [...playerStats].sort((a, b) => b.chaosScore - a.chaosScore)[0];
+        const hater = [...playerStats].sort((a, b) => b.haterCount - a.haterCount)[0];
+
+        const cards = [
+          {
+            badge: 'Главный симп 💘',
+            color: 'border-pink-500/45 bg-pink-500/10 text-pink-300',
+            name: simp.player.name,
+            desc: simp.favGirl ? `Ставил на 1-е место «${simp.favGirl}» (${simp.favCount} раз)` : 'Верный фанат своих фавориток'
+          },
+          {
+            badge: 'Голос народа 📢',
+            color: 'border-emerald-500/45 bg-emerald-500/10 text-emerald-300',
+            name: voiceOfPeople.player.name,
+            desc: 'Его топы максимально совпали с итоговым рейтингом потока'
+          },
+          {
+            badge: 'Агент хаоса 🌪️',
+            color: 'border-amber-500/45 bg-amber-500/10 text-amber-300',
+            name: chaosAgent.player.name,
+            desc: 'Ставил на первые места тех, кого остальные отправляли в конец'
+          },
+          {
+            badge: 'Хейтер потока 🧊',
+            color: 'border-indigo-500/45 bg-indigo-500/10 text-indigo-300',
+            name: hater.player.name,
+            desc: hater.haterCount > 0 ? `Проигнорировал фавориток Топ-3 (${hater.haterCount} раз)` : 'Хладнокровный критик без авторитетов'
+          }
+        ];
+
+        cards.forEach(c => {
+          const el = document.createElement('div');
+          el.className = `p-3.5 rounded-2xl border ${c.color} space-y-1`;
+          el.innerHTML = `
+            <div class="font-display text-xs font-black uppercase">${c.badge}</div>
+            <div class="font-bold text-sm text-white">${escapeHtml(c.name)}</div>
+            <div class="text-[11px] text-slate-300 leading-snug">${escapeHtml(c.desc)}</div>
+          `;
+          titlesGrid.appendChild(el);
+        });
+      }
+
+      const compatBox = document.getElementById('tasteCompatibilityBox');
+      const compatList = document.getElementById('tasteCompatibilityList');
+      compatList.innerHTML = '';
+
+      if (playerStats.length < 2) {
+        compatBox.classList.add('hidden');
+      } else {
+        compatBox.classList.remove('hidden');
+        for (let i = 0; i < playerStats.length; i++) {
+          for (let j = i + 1; j < playerStats.length; j++) {
+            const pA = playerStats[i];
+            const pB = playerStats[j];
+            let common = 0;
+            let totalCompared = 0;
+            const minRounds = Math.min(pA.allTopSets.length, pB.allTopSets.length);
+            for (let r = 0; r < minRounds; r++) {
+              const setA = pA.allTopSets[r];
+              const setB = pB.allTopSets[r];
+              setA.forEach(g => {
+                if (setB.has(g)) common++;
+              });
+              totalCompared += Math.max(1, setA.size);
+            }
+            const pct = totalCompared > 0 ? Math.round((common / totalCompared) * 100) : 0;
+            const pill = document.createElement('span');
+            pill.className = 'px-3 py-1.5 rounded-xl bg-club-bg border border-white/10 text-xs font-semibold text-slate-200';
+            pill.innerHTML = `${escapeHtml(pA.player.name)} + ${escapeHtml(pB.player.name)}: <strong class="text-club-gold">${pct}%</strong>`;
+            compatList.appendChild(pill);
+          }
+        }
+      }
+
+      const breakdownList = document.getElementById('roundsFullBreakdownList');
+      breakdownList.innerHTML = '';
+
+      for (let r = 0; r < totalRounds; r++) {
+        const rnd = (room.rounds || {})[String(r)];
+        if (!rnd) continue;
+
+        const rCard = document.createElement('div');
+        rCard.className = 'p-4 rounded-2xl bg-club-bg border border-white/10 space-y-2.5';
+        rCard.innerHTML = `
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <span class="font-display text-xs font-black uppercase text-club-gold">
+              Раунд ${r + 1}${rnd.isBlitz ? ' ⚡ БЛИЦ' : ''}: «${escapeHtml(rnd.nomination || 'Без темы')}»
+            </span>
+            <span class="font-mono text-[10px] text-slate-400">Автор: ${escapeHtml(rnd.authorName || 'Игрок')}</span>
+          </div>
+        `;
+
+        players.forEach(p => {
+          const sub = rnd.submissions?.[p.id];
+          const row = document.createElement('div');
+          row.className = 'text-xs text-slate-200 border-t border-white/5 pt-1.5';
+          if (Array.isArray(sub) && sub.length > 0) {
+            const formatted = sub.map((g, idx) => `${idx + 1}. ${escapeHtml(g)}`).join(' • ');
+            row.innerHTML = `<strong class="text-indigo-300">${escapeHtml(p.name)}:</strong> <span>${formatted}</span>`;
+          } else {
+            row.innerHTML = `<strong class="text-slate-400">${escapeHtml(p.name)}:</strong> <span class="italic text-slate-500">не голосовал</span>`;
+          }
+          rCard.appendChild(row);
+        });
+
+        breakdownList.appendChild(rCard);
+      }
+
+      SoundFX.tap();
+      document.getElementById('statsModal').classList.remove('hidden');
+    }
+
+    function copyResultsForChat() {
+      const room = appState.roomData;
+      if (!room) return;
+      const standings = calculateStandings(room);
+      const topLimit = Math.min(10, standings.length);
+
+      const lines = [
+        `🏆 ТОП ПОТОКА: Итоговый рейтинг одногруппниц`,
+        `🔑 Комната: ${room.code} (Кругов сыграно: ${room.circle || 1})`,
+        `━━━━━━━━━━━━━━━━━━━━`
+      ];
+
+      standings.slice(0, topLimit).forEach(item => {
+        const medal = item.place === 1 ? '👑 1.' : item.place === 2 ? '🥈 2.' : item.place === 3 ? '🥉 3.' : `${item.place}.`;
+        let stampNote = '';
+        if (item.place <= 5) {
+          const duelRes = (room.duelResults || {})[String(item.place)];
+          if (duelRes) {
+            stampNote = duelRes.challengerWon ? ' [Вырвала место в дуэли ⚔️]' : ' [Отстояла позицию 🛡️]';
+          } else {
+            const votes = Object.values((room.disputes || {})[String(item.place)] || {});
+            const disputes = votes.filter(v => v?.vote === 'dispute').length;
+            const agrees = votes.filter(v => v?.vote === 'agree' || v?.vote === 'base' || v?.vote === 'queen').length;
+            if (disputes > 0) stampNote = ' [ЖАРКИЙ СПОР 🔥]';
+            else if (agrees > 0) stampNote = ' [ЕДИНОГЛАСНО ✅]';
+          }
+        }
+        lines.push(`${medal} ${item.name} — ${item.avgScore.toFixed(1)}/10 (ср. место ${item.avgRank.toFixed(1)})${stampNote}`);
+      });
+
+      copyTextSafe(lines.join('\n'), 'Итоги рейтинга скопированы для чата!');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = readSession();
+      appState.playerId = session.playerId || generateId('plr');
+
+      await ensureAuth();
+
+      document.getElementById('firebaseReconnectBtn').addEventListener('click', async () => {
+        SoundFX.tap();
+        setConnectionStatus(false, 'Подключение...');
+        await ensureAuth();
+        showToast('Подключение к серверу активно!');
+        if (appState.roomCode) subscribeToRoomRealtime(appState.roomCode);
+      });
+
+      document.getElementById('headerExitRoomBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        leaveCurrentRoom();
+      });
+
+      document.getElementById('goHostSetupBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        document.getElementById('startErrorBox').classList.add('hidden');
+        document.getElementById('setupErrorBox').classList.add('hidden');
+        const hostInput = document.getElementById('hostNickInput');
+        if (!hostInput.value && session.playerName) {
+          hostInput.value = session.playerName;
+        }
+        renderSetupNamesList();
+        showScreen('hostSetupScreen');
+      });
+
+      const startCodeInput = document.getElementById('startRoomCodeInput');
+      startCodeInput.addEventListener('input', (e) => {
+        e.target.value = normalizeRoomCode(e.target.value);
+      });
+
+      document.getElementById('startFindRoomForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleFindRoomByCode(startCodeInput.value, false);
+      });
+
+      document.getElementById('startRetrySearchBtn').addEventListener('click', () => {
+        if (typeof appState.startRetryFn === 'function') appState.startRetryFn();
+      });
+
+      document.getElementById('backFromHostSetupBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        showScreen('startScreen');
+      });
+
+      const setupOneInput = document.getElementById('setupOneNameInput');
+      document.getElementById('setupAddOneBtn').addEventListener('click', () => {
+        const val = setupOneInput.value;
+        if (!val.trim()) return;
+        const added = addNamesToSetup([val]);
+        if (added > 0) {
+          SoundFX.tap();
+          setupOneInput.value = '';
+          document.getElementById('setupErrorBox').classList.add('hidden');
+        } else {
+          showToast('Это имя уже есть в списке');
+        }
+        setupOneInput.focus();
+      });
+
+      setupOneInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('setupAddOneBtn').click();
+        }
+      });
+
+      document.getElementById('toggleBulkPasteBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        const drawer = document.getElementById('bulkPasteDrawer');
+        drawer.classList.toggle('hidden');
+        if (!drawer.classList.contains('hidden')) {
+          document.getElementById('bulkPasteTextarea').focus();
+        }
+      });
+
+      document.getElementById('cancelBulkBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        document.getElementById('bulkPasteDrawer').classList.add('hidden');
+      });
+
+      document.getElementById('applyBulkBtn').addEventListener('click', () => {
+        const raw = document.getElementById('bulkPasteTextarea').value;
+        const added = addNamesToSetup(raw.split(/[,\n;]+/));
+        SoundFX.tap();
+        document.getElementById('bulkPasteTextarea').value = '';
+        document.getElementById('bulkPasteDrawer').classList.add('hidden');
+        if (added > 0) {
+          document.getElementById('setupErrorBox').classList.add('hidden');
+          showToast(`Добавлено имён: ${added}`);
+        }
+      });
+
+      document.getElementById('loadSavedGirlsBtn').addEventListener('click', () => {
+        const saved = getSavedGirlsListFromStorage();
+        if (!saved) return;
+        SoundFX.tap();
+        appState.setupNames = [...saved];
+        renderSetupNamesList();
+        document.getElementById('setupErrorBox').classList.add('hidden');
+        showToast(`Загружен прошлый список (${saved.length} имён)!`);
+      });
+
+      document.getElementById('fillSample10Btn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.setupNames = [...SAMPLE_10_NAMES];
+        renderSetupNamesList();
+        document.getElementById('setupErrorBox').classList.add('hidden');
+        showToast('Заполнен пример из 10 имён');
+      });
+
+      document.getElementById('clearAllNamesBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.setupNames = [];
+        renderSetupNamesList();
+      });
+
+      document.querySelectorAll('.circle-select-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.tap();
+          const num = Number(btn.getAttribute('data-circles')) || 1;
+          appState.setupCircles = num;
+          document.querySelectorAll('.circle-select-btn').forEach(b => {
+            const active = Number(b.getAttribute('data-circles')) === num;
+            b.className = active
+              ? 'circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all bg-club-gold text-club-bg shadow'
+              : 'circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white';
+          });
+        });
+      });
+
+      document.querySelectorAll('.mode-select-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          SoundFX.tap();
+          const mode = btn.getAttribute('data-mode');
+          appState.setupMode = mode;
+          document.querySelectorAll('.mode-select-btn').forEach(b => {
+            const active = b.getAttribute('data-mode') === mode;
+            b.className = active
+              ? 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all bg-club-neon text-white shadow'
+              : 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all text-slate-400 hover:text-white';
+          });
+          document.getElementById('modeDescHint').textContent = mode === 'top5'
+            ? 'В каждом обычном раунде участники выбирают 5 лучших из стопки, а автор раунда сам решает: обычный топ или Блиц 1 на 1.'
+            : 'В каждом обычном раунде участники расставляют всех одногруппниц с 1-го по последнее место.';
+        });
+      });
+
+      document.getElementById('createRoomBtn').addEventListener('click', handleCreateRoom);
+
+      document.getElementById('backFromNickScreenBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.pendingFoundRoom = null;
+        updateUrlRoomHash('');
+        showScreen('startScreen');
+      });
+
+      document.getElementById('friendJoinForm').addEventListener('submit', handleFriendJoinSubmit);
+
+      document.getElementById('copyCodeOnlyBtn').addEventListener('click', () => {
+        if (appState.roomCode) {
+          copyTextSafe(appState.roomCode, `Код ${appState.roomCode} скопирован!`);
+        }
+      });
+
+      document.getElementById('shareInviteBtn').addEventListener('click', shareInviteMessage);
+
+      document.getElementById('toggleLobbyGirlsBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.lobbyGirlsExpanded = !appState.lobbyGirlsExpanded;
+        const pills = document.getElementById('lobbyGirlsPills');
+        pills.classList.toggle('hidden', !appState.lobbyGirlsExpanded);
+        pills.classList.toggle('flex', appState.lobbyGirlsExpanded);
+        document.getElementById('lobbyGirlsChevron').textContent = appState.lobbyGirlsExpanded ? 'Скрыть ▴' : 'Показать ▾';
+      });
+
+      document.getElementById('hostStartGameBtn').addEventListener('click', () => {
+        if (appState.roomData) startGameWithPlayers(appState.roomData);
+      });
+
+      document.getElementById('hostSoloTestBtn').addEventListener('click', () => {
+        if (appState.roomData) startGameWithPlayers(appState.roomData);
+      });
+
+      // Переключатель формата раунда: Обычный топ / Блиц 1 на 1
+      document.getElementById('chooseNormalFormatBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.selectedRoundIsBlitz = false;
+        updateRoundFormatToggleUI();
+      });
+
+      document.getElementById('chooseBlitzFormatBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.selectedRoundIsBlitz = true;
+        updateRoundFormatToggleUI();
+      });
+
+      document.getElementById('gameInvitePill').addEventListener('click', shareInviteMessage);
+      document.getElementById('randomNominationBtn').addEventListener('click', pickRandomNominationIdea);
+      document.getElementById('sendNominationBtn').addEventListener('click', () => handleSendNomination(null, null));
+      document.getElementById('hostAutoNominationBtn').addEventListener('click', () => {
+        const randomTopic = NOMINATION_IDEAS[Math.floor(Math.random() * NOMINATION_IDEAS.length)];
+        handleSendNomination(randomTopic, false);
+      });
+
+      document.getElementById('blitzLeftBtn').addEventListener('click', () => {
+        const name = document.getElementById('blitzLeftName').textContent;
+        if (name) pickBlitzWinner(name);
+      });
+
+      document.getElementById('blitzRightBtn').addEventListener('click', () => {
+        const name = document.getElementById('blitzRightName').textContent;
+        if (name) pickBlitzWinner(name);
+      });
+
+      document.getElementById('clearMyRankingDraftBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.draftRankedList = [];
+        if (appState.roomData) {
+          const rIdx = appState.roomData.currentRoundIdx || 0;
+          renderRankingStep(appState.roomData, rIdx, (appState.roomData.rounds || {})[String(rIdx)]);
+        }
+      });
+
+      document.getElementById('confirmMyRankingBtn').addEventListener('click', handleConfirmMyRanking);
+      document.getElementById('hostForceRoundDoneBtn').addEventListener('click', handleHostForceSkipRoundWithRandom);
+
+      document.getElementById('revealNextBtn').addEventListener('click', handleRevealNextPlace);
+      document.getElementById('duelDefenderBtn').addEventListener('click', () => handleCastDuelVote('defender'));
+      document.getElementById('duelChallengerBtn').addEventListener('click', () => handleCastDuelVote('challenger'));
+      document.getElementById('hostResolveDuelBtn').addEventListener('click', handleResolveActiveDuel);
+
+      document.getElementById('openStatsModalBtn').addEventListener('click', openStatsAndTitlesModal);
+      document.getElementById('closeStatsModalBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        document.getElementById('statsModal').classList.add('hidden');
+      });
+      document.getElementById('statsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'statsModal') {
+          document.getElementById('statsModal').classList.add('hidden');
+        }
+      });
+
+      document.getElementById('playMoreCircleBtn').addEventListener('click', handlePlayAnotherCircle);
+      document.getElementById('copyResultsChatBtn').addEventListener('click', copyResultsForChat);
+
+      document.getElementById('toggleRestPlacesBtn').addEventListener('click', () => {
+        SoundFX.tap();
+        appState.restPlacesExpanded = !appState.restPlacesExpanded;
+        if (appState.roomData) renderRevealScreen(appState.roomData);
+      });
+
+      document.getElementById('soundToggleBtn').addEventListener('click', () => {
+        appState.soundEnabled = !appState.soundEnabled;
+        document.getElementById('soundOnIcon').classList.toggle('hidden', !appState.soundEnabled);
+        document.getElementById('soundOffIcon').classList.toggle('hidden', appState.soundEnabled);
+        if (appState.soundEnabled) SoundFX.tap();
+      });
+
+      window.addEventListener('hashchange', () => {
+        const hashCode = extractRoomCodeFromUrl();
+        if (hashCode && hashCode !== appState.roomCode) {
+          handleFindRoomByCode(hashCode, true);
+        }
+      });
+
+      const urlRoomCode = extractRoomCodeFromUrl();
+      if (urlRoomCode) {
+        await handleFindRoomByCode(urlRoomCode, true);
+      } else if (session.roomCode) {
+        await handleFindRoomByCode(session.roomCode, true);
+      }
+    });
+  </script>
+</body>
+</html>
