@@ -1,1 +1,13 @@
+{
+  "name": "top-potoka-game",
+  "version": "2.0.0",
+  "description": "ТОП ПОТОКА: Онлайн-шоу для компании",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
 
