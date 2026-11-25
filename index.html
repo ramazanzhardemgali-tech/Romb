@@ -122,32 +122,12 @@
       transform: rotate(-2deg);
     }
 
-    /* Сетка Монополии 11x11 */
     .mono-board-grid {
       display: grid;
       grid-template-columns: repeat(11, minmax(0, 1fr));
       grid-template-rows: repeat(11, minmax(0, 1fr));
-      gap: 2px;
       aspect-ratio: 1 / 1;
       width: 100%;
-    }
-
-    .mono-cell {
-      background: rgba(14, 16, 32, 0.96);
-      border: 1px solid rgba(255, 255, 255, 0.11);
-      border-radius: 5px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.12s ease, border-color 0.15s ease;
-      user-select: none;
-    }
-    .mono-cell:hover {
-      border-color: rgba(251, 191, 36, 0.7);
-      z-index: 15;
     }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -220,7 +200,7 @@
   </header>
 
   <!-- ОСНОВНОЙ КОНТЕЙНЕР ЭКРАНОВ -->
-  <main id="mainAppContainer" class="flex-1 w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 flex flex-col justify-center z-10">
+  <main class="flex-1 w-full max-w-3xl mx-auto px-4 py-4 sm:py-6 flex flex-col justify-center z-10">
 
     <!-- Баннер автопоиска комнаты при переходе по ссылке -->
     <div id="autoUrlSearchBanner" class="hidden mb-4 p-4 rounded-2xl club-card border-club-gold/45 flex items-center gap-3">
@@ -234,7 +214,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- ЭКРАН 1: ГЛАВНЫЙ ЭКРАН ИГРОВОГО ХАБА (ВИТРИНА 4 РЕЖИМОВ + ВХОД ПО КОДУ)   -->
+    <!-- ЭКРАН 1: ГЛАВНЫЙ ЭКРАН ИГРОВОГО ХАБА (4 РЕЖИМА + ВХОД ПО КОДУ)            -->
     <!-- ========================================================================= -->
     <section id="startScreen" class="space-y-5 pb-8">
       <div class="club-card rounded-3xl p-5 sm:p-7 space-y-5">
@@ -252,7 +232,38 @@
 
         <!-- ВИТРИНА ИГР (4 КАРТОЧКИ) -->
         <div class="space-y-3">
-          <!-- КАРТОЧКА 1: ТОП ПОТОКА -->
+          <!-- КАРТОЧКА 1: МОНОПОЛИЯ ПО ОДНОЙ ТРОПИНКЕ -->
+          <button
+            type="button"
+            data-select-game="monopoly"
+            class="hub-game-card w-full text-left p-4 sm:p-5 rounded-2xl bg-club-bg/95 hover:bg-club-elevated border-2 border-emerald-500/55 hover:border-emerald-400 transition-all active:scale-[0.99] group relative overflow-hidden"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3.5 min-w-0">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center text-2xl shrink-0 shadow-lg shadow-emerald-500/20">
+                  🎲
+                </div>
+                <div class="min-w-0 space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-display text-base sm:text-lg font-black uppercase text-white group-hover:text-emerald-300 transition-colors">
+                      Монополия: По одной тропинке
+                    </span>
+                    <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/40 font-mono text-[10px] font-bold uppercase text-emerald-300">
+                      СЮЖЕТ • 11 ГЕРОЕВ
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    40 клеток маршрута Атырау — Алматы, 11 героев романа со своими пассивками и ультами «Второй шанс», 32 сюжетные карточки, звёзды и аукционы.
+                  </p>
+                </div>
+              </div>
+              <span class="px-3 py-2 rounded-xl bg-emerald-400 text-club-bg font-display text-xs font-black uppercase shrink-0 self-center">
+                Создать →
+              </span>
+            </div>
+          </button>
+
+          <!-- КАРТОЧКА 2: ТОП ПОТОКА -->
           <button
             type="button"
             data-select-game="top"
@@ -283,37 +294,6 @@
             </div>
           </button>
 
-          <!-- КАРТОЧКА 2: МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ -->
-          <button
-            type="button"
-            data-select-game="monopoly"
-            class="hub-game-card w-full text-left p-4 sm:p-5 rounded-2xl bg-club-bg/95 hover:bg-club-elevated border-2 border-emerald-500/45 hover:border-emerald-400 transition-all active:scale-[0.99] group"
-          >
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-start gap-3.5 min-w-0">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-2xl shrink-0 shadow-lg shadow-emerald-500/20">
-                  🎲
-                </div>
-                <div class="min-w-0 space-y-1">
-                  <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-display text-base sm:text-lg font-black uppercase text-white group-hover:text-emerald-300 transition-colors">
-                      Монополия: По одной тропинке
-                    </span>
-                    <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/40 font-mono text-[10px] font-bold uppercase text-emerald-300">
-                      НОВИНКА • 11 ГЕРОЕВ
-                    </span>
-                  </div>
-                  <p class="text-xs text-slate-300 leading-relaxed">
-                    Онлайн-настолка на 40 клеток: 11 героев со своими способностями, аукционы ×1.2, тайный обмен 90–120%, инфляция +5% и капитал 300 000 ₸!
-                  </p>
-                </div>
-              </div>
-              <span class="px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-club-bg font-display text-xs font-black uppercase shrink-0 self-center">
-                Создать →
-              </span>
-            </div>
-          </button>
-
           <!-- КАРТОЧКА 3: ШКАЛА 1-10 (АССОЦИАЦИИ) -->
           <button
             type="button"
@@ -331,7 +311,7 @@
                       Шкала 1–10: Ассоциации
                     </span>
                     <span class="px-2 py-0.5 rounded-md bg-pink-500/20 border border-pink-500/40 font-mono text-[10px] font-bold uppercase text-pink-300">
-                      КОМПАНИЯ
+                      НОВИНКА
                     </span>
                   </div>
                   <p class="text-xs text-slate-300 leading-relaxed">
@@ -424,7 +404,7 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- ЭКРАН 2: ПОДГОТОВКА КОМНАТЫ (ХОСТ — АДАПТИРУЕТСЯ ПОД ВЫБРАННУЮ ИГРУ)       -->
+    <!-- ЭКРАН 2: ПОДГОТОВКА КОМНАТЫ (ХОСТ)                                        -->
     <!-- ========================================================================= -->
     <section id="hostSetupScreen" class="hidden space-y-4 pb-8">
       <div class="club-card rounded-3xl p-5 sm:p-7 space-y-5">
@@ -450,7 +430,7 @@
           </p>
         </div>
 
-        <!-- Поле ника хоста (общее для всех 4 игр) -->
+        <!-- Поле ника хоста -->
         <div>
           <label for="hostNickInput" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
             Твой ник (Хост) *
@@ -460,9 +440,20 @@
             type="text"
             maxlength="20"
             autocomplete="off"
-            placeholder="Например: Артём, Макс, Саня..."
+            placeholder="Например: Алишер, Думан, Артём..."
             class="w-full bg-club-bg border border-club-border focus:border-club-neon rounded-2xl px-4 py-3.5 text-white placeholder-slate-600 text-base font-medium outline-none transition-colors"
           />
+        </div>
+
+        <!-- ВЫБОР ГЕРОЯ ДЛЯ МОНОПОЛИИ (ХОСТ) -->
+        <div id="setupMonopolyHeroFields" class="hidden space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase tracking-wider text-emerald-300">
+              Выбери своего героя из «По одной тропинке» *
+            </label>
+            <span class="font-mono text-[10px] text-slate-400">11 персонажей</span>
+          </div>
+          <div id="setupMonopolyHeroesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1"></div>
         </div>
 
         <!-- НАСТРОЙКИ ТОЛЬКО ДЛЯ «ТОП ПОТОКА» -->
@@ -571,14 +562,6 @@
           </div>
         </div>
 
-        <!-- НАСТРОЙКИ ТОЛЬКО ДЛЯ «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ» -->
-        <div id="setupMonopolyOnlyFields" class="hidden p-4 rounded-2xl bg-club-bg border border-emerald-500/35 space-y-2 text-xs text-slate-300">
-          <div class="font-bold text-emerald-300">🎲 Правила «Монополия: По одной тропинке»:</div>
-          <p>• Стартовый капитал у каждого игрока: <strong class="text-club-gold">300 000 ₸</strong> (бонус за круг: <strong>+40 000 ₸</strong>).</p>
-          <p>• В общем лобби каждый игрок выберет одного из <strong>11 уникальных персонажей</strong> со своей пассивкой и активной ультой.</p>
-          <p>• Поле из <strong>40 клеток</strong>: покупка участков, аукционы <strong>×1.2</strong>, тайный обмен в коридоре <strong>90%–120%</strong>, голосование за <strong>Инфляцию +5%</strong> и 32 карточки событий.</p>
-        </div>
-
         <!-- НАСТРОЙКИ ТОЛЬКО ДЛЯ «КВИЗ-БАТТЛА» -->
         <div id="setupQuizOnlyFields" class="hidden space-y-3">
           <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border space-y-2.5">
@@ -590,9 +573,6 @@
               <button type="button" data-quiz-len="10" class="quiz-len-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all bg-club-neon text-white shadow">10 вопросов</button>
               <button type="button" data-quiz-len="15" class="quiz-len-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white">15 вопросов</button>
             </div>
-            <p class="text-[11px] text-slate-400">
-              В каждом матче перемешиваются вопросы на эрудицию и свежие процедурно-сгенерированные задачи на логику и расчёты.
-            </p>
           </div>
         </div>
 
@@ -600,8 +580,8 @@
         <div id="setupScaleOnlyFields" class="hidden p-4 rounded-2xl bg-club-bg border border-pink-500/35 space-y-1.5 text-xs text-slate-300">
           <div class="font-bold text-pink-300">🎯 Правила режима «Шкала 1–10»:</div>
           <p>• Ведущий тайно получает число от <strong>1 до 10</strong> (выбирается умным рандомом с понижением шанса повтора).</p>
-          <p>• Участники предлагают категории (например: «мультики», «машины», «фильмы»), ведущий выбирает одну и пишет пример на загаданное число.</p>
-          <p>• За точное попадание: <strong>+3 очка</strong>, за промах на ±1: <strong>+1 очко</strong>, ведущему: <strong>+1</strong> за каждого угадавшего в пределах ±1. Играть можно сколько угодно раундов подряд!</p>
+          <p>• Участники предлагают категории («мультики», «машины», «фильмы»), ведущий выбирает одну и пишет пример на загаданное число.</p>
+          <p>• За точное попадание: <strong>+3 очка</strong>, за промах на ±1: <strong>+1 очко</strong>, ведущему: <strong>+1</strong> за каждого угадавшего в пределах ±1.</p>
         </div>
 
         <div id="setupErrorBox" class="hidden p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/45 text-rose-200 text-xs font-semibold leading-relaxed"></div>
@@ -617,7 +597,7 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- ЭКРАН 3: ВВОД НИКА ДЛЯ ДРУЗЕЙ                                             -->
+    <!-- ЭКРАН 3: ВВОД НИКА ДЛЯ ДРУЗЕЙ (+ ВЫБОР ГЕРОЯ ЕСЛИ МОНОПОЛИЯ)              -->
     <!-- ========================================================================= -->
     <section id="nicknameScreen" class="hidden space-y-4 pb-8">
       <div class="club-card rounded-3xl p-6 sm:p-8 space-y-5">
@@ -675,6 +655,14 @@
               placeholder="Твоё имя или прозвище..."
               class="w-full bg-club-bg border-2 border-club-border focus:border-club-gold rounded-2xl px-4 py-4 text-white placeholder-slate-600 text-lg font-bold outline-none transition-colors"
             />
+          </div>
+
+          <!-- ВЫБОР ГЕРОЯ ПРИ ВХОДЕ В МОНОПОЛИЮ -->
+          <div id="friendMonopolyHeroFields" class="hidden space-y-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-emerald-300">
+              Выбери свободного персонажа из «По одной тропинке» *
+            </label>
+            <div id="friendMonopolyHeroesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-64 overflow-y-auto pr-1"></div>
           </div>
 
           <div id="nickScreenErrorBox" class="hidden p-3 rounded-xl bg-rose-500/15 border border-rose-500/45 text-rose-200 text-xs font-semibold"></div>
@@ -747,25 +735,6 @@
           </div>
 
           <div id="lobbyPlayersGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
-        </div>
-
-        <!-- ВЫБОР ГЕРОЯ В ЛОББИ (ТОЛЬКО ДЛЯ МОНОПОЛИИ: ПО ОДНОЙ ТРОПИНКЕ) -->
-        <div id="lobbyMonopolyHeroesWrap" class="hidden pt-4 border-t border-white/10 space-y-3">
-          <div class="flex items-center justify-between gap-2 flex-wrap">
-            <div>
-              <div class="text-xs font-bold uppercase tracking-wider text-emerald-300">
-                🎭 Выбери своего персонажа (11 героев)
-              </div>
-              <div class="text-[11px] text-slate-400">
-                У каждого героя уникальная пассивка и активная ульта! Старт: <strong class="text-club-gold">300 000 ₸</strong>
-              </div>
-            </div>
-            <span id="lobbyMyHeroBadge" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/40 font-mono text-[11px] font-bold text-emerald-300">
-              Не выбран
-            </span>
-          </div>
-
-          <div id="lobbyMonopolyHeroesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[340px] overflow-y-auto pr-1"></div>
         </div>
 
         <!-- Спойлер списка (только для игры «Топ потока») -->
@@ -1146,14 +1115,6 @@
       </div>
 
       <div id="revealCardsContainer" class="space-y-3"></div>
-
-      <div id="restPlacesSpoilerBox" class="hidden club-card rounded-3xl p-4 sm:p-5 space-y-3">
-        <button id="toggleRestPlacesBtn" type="button" class="w-full flex items-center justify-between text-left font-display text-sm font-black uppercase text-slate-300 hover:text-white">
-          <span id="restPlacesTitle">📊 Остальные места (11–15)</span>
-          <span id="restPlacesChevron" class="font-mono text-xs text-indigo-400">Показать ▾</span>
-        </button>
-        <div id="restPlacesList" class="hidden space-y-2.5 pt-2 border-t border-white/10"></div>
-      </div>
     </section>
 
     <!-- ========================================================================= -->
@@ -1186,7 +1147,6 @@
         <div id="scaleScoreboardPills" class="flex flex-wrap gap-1.5"></div>
       </div>
 
-      <!-- ФАЗА 1: КАТЕГОРИИ -->
       <div id="scalePhaseCategories" class="hidden space-y-4">
         <div id="scaleMasterCategoryCard" class="hidden club-card rounded-3xl p-6 space-y-5 border-pink-500/45">
           <div class="p-4 rounded-2xl bg-gradient-to-r from-pink-500/20 to-amber-500/20 border border-pink-500/50 text-center space-y-1">
@@ -1280,7 +1240,6 @@
         </div>
       </div>
 
-      <!-- ФАЗА 2: УГАДЫВАНИЕ ЧИСЛА ОТ 1 ДО 10 -->
       <div id="scalePhaseGuessing" class="hidden space-y-4">
         <div class="club-card rounded-3xl p-5 sm:p-6 space-y-2 border-club-gold/45 text-center">
           <div class="font-mono text-[11px] font-bold uppercase tracking-widest text-pink-300">
@@ -1335,7 +1294,6 @@
         </div>
       </div>
 
-      <!-- ФАЗА 3: ИТОГИ РАУНДА «ШКАЛА 1-10» -->
       <div id="scalePhaseResult" class="hidden space-y-4">
         <div class="club-card rounded-3xl p-6 text-center space-y-3 border-club-gold/55">
           <div class="font-mono text-xs font-bold uppercase tracking-widest text-pink-300">
@@ -1472,337 +1430,99 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- ЭКРАН 9: ИГРА 4 — «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ» (МУЛЬТИПЛЕЕР)            -->
+    <!-- ЭКРАН 9: ИГРА 4 — «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ» (АТЫРАУ — АЛМАТЫ)        -->
     <!-- ========================================================================= -->
-    <section id="monopolyGameScreen" class="hidden space-y-3 pb-16">
-      <!-- Верхняя панель статуса, кода и инфляции -->
-      <div class="club-card rounded-2xl p-3 sm:p-4 flex items-center justify-between gap-2 flex-wrap">
+    <section id="monopolyGameScreen" class="hidden space-y-4 pb-12">
+      <!-- Верхняя панель статуса Монополии -->
+      <div class="club-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-2 flex-wrap border-emerald-500/40">
         <div class="flex items-center gap-2 flex-wrap">
-          <span id="monoTurnBadge" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 font-mono text-xs font-black text-emerald-300">
-            ХОД: Игрок
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 font-mono text-[11px] font-black text-emerald-300">
+            🎲 ПО ОДНОЙ ТРОПИНКЕ
           </span>
-          <span id="monoInflationBadge" class="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/40 font-mono text-[11px] font-bold text-amber-300">
-            📈 Инфляция: +0%
+          <span class="text-xs font-bold text-slate-200">
+            Ход: <strong id="monoActiveTurnName" class="text-club-gold">Алишер</strong>
           </span>
         </div>
 
-        <div class="flex items-center gap-1.5">
-          <button
-            id="monoOpenPortfolioBtn"
-            type="button"
-            class="px-2.5 py-1 rounded-lg bg-club-elevated hover:bg-white/15 border border-indigo-400/40 font-mono text-xs font-bold text-indigo-200 transition-colors"
-          >
-            💼 Активы
-          </button>
-          <button
-            id="monoOpenTradeBtn"
-            type="button"
-            class="px-2.5 py-1 rounded-lg bg-club-elevated hover:bg-white/15 border border-pink-400/40 font-mono text-xs font-bold text-pink-200 transition-colors"
-          >
-            🤝 Обмен
-          </button>
-          <button
-            id="monoVoteInflationBtn"
-            type="button"
-            class="px-2.5 py-1 rounded-lg bg-club-elevated hover:bg-white/15 border border-amber-400/40 font-mono text-xs font-bold text-amber-300 transition-colors"
-            title="Вынести на голосование рост цен и рент на +5% (1 раз за игру)"
-          >
-            📊 +5%
-          </button>
-          <button
-            id="monoInvitePill"
-            type="button"
-            class="px-2.5 py-1 rounded-lg bg-club-bg hover:bg-white/10 border border-club-border font-mono text-xs font-bold text-club-gold transition-colors"
-          >
-            КОД 📲
-          </button>
-        </div>
+        <button
+          id="monoInvitePill"
+          type="button"
+          class="px-2.5 py-1 rounded-lg bg-club-bg hover:bg-white/10 border border-club-border font-mono text-xs font-bold text-club-gold transition-colors"
+        >
+          КОД: KUK77 📲
+        </button>
       </div>
 
-      <!-- Полоса игроков (баланс, герой, статус) -->
-      <div id="monoPlayersStrip" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+      <!-- Карточки участников и их балансов / героев -->
+      <div id="monoPlayersStrip" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
 
-      <!-- БАННЕР АКТИВНОГО ГОЛОСОВАНИЯ ЗА ИНФЛЯЦИЮ +5% -->
-      <div id="monoInflationVoteBanner" class="hidden club-card rounded-2xl p-4 border-2 border-amber-400 bg-amber-500/10 space-y-2.5">
-        <div class="flex items-center justify-between gap-2 flex-wrap">
-          <span class="font-display text-xs sm:text-sm font-black uppercase text-amber-300">
-            📊 ГОЛОСОВАНИЕ: ИНФЛЯЦИЯ +5% НА ВСЕ ЦЕНЫ И РЕНТУ!
-          </span>
-          <span id="monoInfVoteCounter" class="font-mono text-xs font-bold text-slate-300">0 / 0</span>
-        </div>
-        <p id="monoInfVoteDesc" class="text-xs text-slate-200">
-          Игрок предложил поднять цены на все участки, дома и аренду на +5%. Голосуем!
-        </p>
-        <div class="flex items-center gap-2">
-          <button id="monoInfVoteYesBtn" type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-club-bg font-display text-xs font-black uppercase">
-            ЗА (+5%) ✅
-          </button>
-          <button id="monoInfVoteNoBtn" type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-display text-xs font-black uppercase">
-            ПРОТИВ ❌
-          </button>
-        </div>
-      </div>
-
-      <!-- БАННЕР ВХОДЯЩЕГО ПРЕДЛОЖЕНИЯ ТАЙНОГО ОБМЕНА -->
-      <div id="monoIncomingTradeBanner" class="hidden club-card rounded-2xl p-4 border-2 border-pink-500 bg-pink-500/10 space-y-2.5">
-        <div class="font-display text-xs sm:text-sm font-black uppercase text-pink-300">
-          🤫 ТЕБЕ ПОСТУПИЛО ТАЙНОЕ ПРЕДЛОЖЕНИЕ ОБМЕНА!
-        </div>
-        <div id="monoIncomingTradeSummary" class="text-xs text-slate-200 leading-relaxed"></div>
-        <div class="flex items-center gap-2">
-          <button id="monoAcceptTradeBtn" type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-club-bg font-display text-xs font-black uppercase">
-            Принять сделку 🤝
-          </button>
-          <button id="monoDeclineTradeBtn" type="button" class="flex-1 py-2.5 px-3 rounded-xl bg-rose-500/80 hover:bg-rose-500 text-white font-display text-xs font-black uppercase">
-            Отклонить ✕
-          </button>
-        </div>
-      </div>
-
-      <!-- ИГРОВОЕ ПОЛЕ 11x11 (40 КЛЕТОК ПО ПЕРИМЕТРУ + ЦЕНТР УПРАВЛЕНИЯ) -->
+      <!-- ИГРОВОЕ ПОЛЕ 11x11 (40 КЛЕТОК СЮЖЕТА) + ЦЕНТРАЛЬНЫЙ ПУЛЬТ -->
       <div class="club-card rounded-3xl p-2 sm:p-3 border-emerald-500/35">
-        <div id="monoBoardGrid" class="mono-board-grid">
-          <!-- Центральная зона внутри поля 11x11 (col 2..10, row 2..10) -->
-          <div
-            style="grid-column: 2 / 11; grid-row: 2 / 11;"
-            class="rounded-2xl bg-club-bg/95 border border-white/10 p-2.5 sm:p-4 flex flex-col justify-between gap-2 overflow-y-auto"
-          >
-            <!-- Верх центра: последние события / лог хода -->
-            <div class="space-y-1">
-              <div class="flex items-center justify-between gap-1">
-                <span class="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-emerald-300">
-                  ПО ОДНОЙ ТРОПИНКЕ • LIVE
-                </span>
-                <span id="monoDiceVisualBadge" class="font-mono text-xs sm:text-sm font-black text-club-gold">
-                  🎲 — : —
-                </span>
-              </div>
-              <div id="monoEventLogBox" class="p-2 sm:p-2.5 rounded-xl bg-club-surface border border-white/10 text-[11px] sm:text-xs text-slate-200 leading-snug max-h-[68px] overflow-y-auto">
-                Игра началась! Ждём первый бросок кубиков.
-              </div>
+        <div id="monoBoardGrid" class="mono-board-grid gap-[2px] bg-club-bg/90 rounded-2xl p-1 border border-white/10 relative">
+          <!-- Центральный блок внутри поля (col 2..10, row 2..10) -->
+          <div style="grid-column: 2 / 11; grid-row: 2 / 11;" class="rounded-xl bg-[#0b0d1b]/95 border border-white/10 p-2 sm:p-4 flex flex-col justify-between overflow-hidden">
+            <div class="flex items-center justify-between gap-1 border-b border-white/10 pb-1.5">
+              <span class="font-display text-[10px] sm:text-xs font-black uppercase text-emerald-300 truncate">
+                АТЫРАУ ⇄ АЛМАТЫ
+              </span>
+              <span id="monoLastDiceBadge" class="font-mono text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded bg-white/10 text-club-gold">
+                🎲 —
+              </span>
             </div>
 
-            <!-- Середина центра: карточка активного действия (Покупка / Аукцион / Тюрьма / Ульта / Завершение хода) -->
-            <div id="monoCenterActionBox" class="flex-1 flex flex-col justify-center gap-2">
-              <!-- Обычный ход -->
-              <div id="monoTurnControlsWrap" class="hidden space-y-2 text-center">
-                <button
-                  id="monoRollDiceBtn"
-                  type="button"
-                  class="w-full py-3 sm:py-3.5 px-4 rounded-xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-lg shadow-club-gold/25 active:scale-95 transition-all"
-                >
-                  Бросить кубики 🎲
-                </button>
-
-                <div id="monoJailOptionsRow" class="hidden grid grid-cols-2 gap-1.5">
-                  <button
-                    id="monoPayJailBtn"
-                    type="button"
-                    class="py-2 px-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-[11px] font-extrabold text-amber-200"
-                  >
-                    Выйти за 15 000 ₸ 💸
-                  </button>
-                  <button
-                    id="monoRollJailBtn"
-                    type="button"
-                    class="py-2 px-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/50 text-[11px] font-extrabold text-indigo-200"
-                  >
-                    Ждать дубль 🎲
-                  </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-1.5">
-                  <button
-                    id="monoUseUltBtn"
-                    type="button"
-                    class="py-2 px-2.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 border border-purple-400/50 text-[11px] font-extrabold text-purple-200 disabled:opacity-35"
-                  >
-                    ⚡ Ульта героя
-                  </button>
-                  <button
-                    id="monoEndTurnBtn"
-                    type="button"
-                    class="hidden py-2 px-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-club-bg font-display text-[11px] font-black uppercase"
-                  >
-                    Завершить ход ✅
-                  </button>
-                </div>
+            <!-- Карточка текущей клетки / события -->
+            <div id="monoCenterCardBox" class="my-auto py-1.5 space-y-1.5 text-center overflow-y-auto">
+              <div id="monoCenterTileTitle" class="font-display text-xs sm:text-base font-black text-white leading-tight">
+                Старт • Вокзал Атырау
               </div>
-
-              <!-- Решение о покупке свободного участка -->
-              <div id="monoBuyDecisionWrap" class="hidden p-2.5 sm:p-3 rounded-xl bg-club-surface border border-emerald-400/50 space-y-2 text-center">
-                <div class="font-display text-xs sm:text-sm font-black text-white">
-                  Свободный участок: <span id="monoBuyTileName" class="text-club-gold">Улица</span>
-                </div>
-                <div class="font-mono text-xs text-emerald-300">
-                  Цена: <strong id="monoBuyTilePrice">60 000 ₸</strong> • Базовая рента: <strong id="monoBuyTileRent">4 000 ₸</strong>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <button
-                    id="monoBuyNowBtn"
-                    type="button"
-                    class="py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-club-bg font-display text-xs font-black uppercase"
-                  >
-                    Купить 🏠
-                  </button>
-                  <button
-                    id="monoStartAuctionBtn"
-                    type="button"
-                    class="py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-200 font-display text-xs font-black uppercase"
-                  >
-                    На аукцион 🔨
-                  </button>
-                </div>
+              <div id="monoCenterTileDesc" class="text-[10px] sm:text-xs text-slate-300 leading-snug px-1">
+                Нажми «Бросить кубики 🎲», чтобы сделать ход по сюжету романа.
               </div>
-
-              <!-- Открытый онлайн-аукцион (шаг x1.2) -->
-              <div id="monoAuctionWrap" class="hidden p-2.5 sm:p-3 rounded-xl bg-club-surface border-2 border-amber-400 space-y-2 text-center">
-                <div class="font-display text-xs font-black uppercase text-amber-300 animate-pulse">
-                  🔨 АУКЦИОН: <span id="monoAuctionTileName">Участок</span>
-                </div>
-                <div class="text-xs text-slate-200">
-                  Текущая ставка: <strong id="monoAuctionCurBid" class="text-club-gold font-mono">50 000 ₸</strong>
-                  <span id="monoAuctionLeader" class="text-slate-400 block text-[11px]">Лидер: —</span>
-                </div>
-                <div id="monoAuctionBtnsRow" class="grid grid-cols-2 gap-2">
-                  <button
-                    id="monoAuctionRaiseBtn"
-                    type="button"
-                    class="py-2 px-2 rounded-xl bg-club-gold text-club-bg font-display text-[11px] font-black uppercase"
-                  >
-                    Поднять (×1.2) ⬆️
-                  </button>
-                  <button
-                    id="monoAuctionPassBtn"
-                    type="button"
-                    class="py-2 px-2 rounded-xl bg-white/10 hover:bg-rose-500/30 text-slate-200 font-display text-[11px] font-black uppercase"
-                  >
-                    Пас 🏳️
-                  </button>
-                </div>
-              </div>
-
-              <!-- Ожидание чужого хода -->
-              <div id="monoWaitOtherTurnWrap" class="hidden text-center space-y-1 py-2">
-                <div class="text-xs font-bold text-slate-300">
-                  Сейчас ходит <strong id="monoOtherTurnName" class="text-club-gold">Друг</strong>…
-                </div>
-                <div class="text-[11px] text-slate-500">
-                  Нажимай на любую клетку поля, чтобы строить дома или смотреть инфо.
-                </div>
-              </div>
+              <div id="monoCenterTileMeta" class="font-mono text-[10px] text-club-gold"></div>
             </div>
 
-            <!-- Низ центра: инфо о моём герое -->
-            <div id="monoMyHeroFooter" class="p-2 rounded-xl bg-club-surface/90 border border-white/10 flex items-center justify-between gap-2 text-[10px] sm:text-xs">
-              <div class="truncate">
-                <span id="monoMyHeroEmoji">🎭</span>
-                <strong id="monoMyHeroName" class="text-white">Герой</strong>:
-                <span id="monoMyHeroPassive" class="text-slate-400">Пассивный бонус</span>
-              </div>
-              <span id="monoMyUltStatus" class="font-mono text-[10px] font-bold text-purple-300 shrink-0">Ульта: 1/1</span>
-            </div>
+            <!-- Кнопки действий активного игрока -->
+            <div id="monoActionButtonsArea" class="space-y-1.5 pt-1 border-t border-white/10"></div>
           </div>
         </div>
       </div>
 
-      <!-- Экран победы в Монополии -->
-      <div id="monoWinnerBanner" class="hidden club-card rounded-3xl p-6 text-center space-y-3 border-2 border-club-gold rank1-card">
-        <div class="text-4xl">👑</div>
-        <h2 class="font-display text-2xl font-black uppercase text-white">
-          Победитель: <span id="monoWinnerName" class="text-club-gold">Игрок</span>!
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-200">
-          Все конкуренты обанкротились — тропинка полностью под твоим контролем!
-        </p>
+      <!-- ПАНЕЛЬ МОЕГО ГЕРОЯ, УЛЬТЫ И ПОСТРОЙКИ ЗВЁЗД -->
+      <div class="club-card rounded-3xl p-4 sm:p-5 space-y-3 border-club-gold/40">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <div>
+            <div class="font-mono text-[10px] font-bold uppercase text-club-gold">ТВОЙ ПЕРСОНАЖ И СПОСОБНОСТЬ</div>
+            <div id="monoMyHeroTitle" class="font-display text-sm sm:text-base font-black text-white">Алишер</div>
+          </div>
+          <button
+            id="monoUseUltimateBtn"
+            type="button"
+            class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-95 text-white font-display text-[11px] sm:text-xs font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all disabled:opacity-35 disabled:cursor-not-allowed"
+          >
+            ⚡ Ульта «Второй шанс»
+          </button>
+        </div>
+        <p id="monoMyHeroDesc" class="text-xs text-slate-300 leading-relaxed"></p>
+
+        <!-- Мои владения (для апгрейда 1-5 звёзд и залога) -->
+        <div class="pt-2 border-t border-white/10 space-y-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Твои локации (улучшение ★ до 5 звёзд):
+          </div>
+          <div id="monoMyPropertiesList" class="flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- ЛОГ СОБЫТИЙ РОМАНА -->
+      <div class="club-card rounded-2xl p-4 space-y-2">
+        <div class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+          📜 ХРОНИКА СОБЫТИЙ («ПО ОДНОЙ ТРОПИНКЕ»):
+        </div>
+        <div id="monoLogList" class="space-y-1 max-h-36 overflow-y-auto text-xs text-slate-300"></div>
       </div>
     </section>
 
   </main>
-
-  <!-- МОДАЛЬНОЕ ОКНО: КАРТОЧКА КЛЕТКИ ПОЛЯ (ПОКУПКА / СТРОИТЕЛЬСТВО ДОМОВ И ОТЕЛЯ / ПРОДАЖА) -->
-  <div id="monoTileModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="club-card w-full max-w-md rounded-3xl p-5 space-y-4 border-emerald-400/50">
-      <div class="flex items-center justify-between gap-2">
-        <span id="monoTileModalColorBadge" class="px-2.5 py-1 rounded-lg font-mono text-[10px] font-black uppercase text-white bg-indigo-500">
-          КВАРТАЛ
-        </span>
-        <button id="closeMonoTileModalBtn" type="button" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-rose-500 text-white font-bold">✕</button>
-      </div>
-
-      <div>
-        <h3 id="monoTileModalTitle" class="font-display text-xl font-black text-white">Название клетки</h3>
-        <p id="monoTileModalOwner" class="text-xs text-slate-300 mt-0.5">Владелец: Свободно</p>
-      </div>
-
-      <div id="monoTileModalStats" class="p-3.5 rounded-2xl bg-club-bg border border-white/10 space-y-1.5 text-xs"></div>
-
-      <div id="monoTileModalActions" class="space-y-2"></div>
-    </div>
-  </div>
-
-  <!-- МОДАЛЬНОЕ ОКНО: КТО ЧЕМ ВЛАДЕЕТ (ПОРТФЕЛИ ИГРОКОВ) -->
-  <div id="monoPortfolioModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="club-card w-full max-w-lg rounded-3xl p-5 space-y-4 border-indigo-400/50 my-auto max-h-[88vh] overflow-y-auto">
-      <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-        <h3 class="font-display text-lg font-black uppercase text-white">💼 Кто чем владеет</h3>
-        <button id="closeMonoPortfolioModalBtn" type="button" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-rose-500 text-white font-bold">✕</button>
-      </div>
-      <div id="monoPortfolioList" class="space-y-3"></div>
-    </div>
-  </div>
-
-  <!-- МОДАЛЬНОЕ ОКНО: ТАЙНЫЙ ТРЕЙДИНГ (КОРИДОР 90%–120%) -->
-  <div id="monoTradeModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-    <div class="club-card w-full max-w-lg rounded-3xl p-5 space-y-4 border-pink-400/50 my-auto max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-        <div>
-          <h3 class="font-display text-lg font-black uppercase text-white">🤝 Тайный обмен с игроком</h3>
-          <p class="text-[11px] text-slate-400">О сделке узнаете только вы двое. Коридор оценки: 90%–120% от номинала.</p>
-        </div>
-        <button id="closeMonoTradeModalBtn" type="button" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-rose-500 text-white font-bold">✕</button>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-300 mb-1">Кому отправляем предложение:</label>
-          <select id="monoTradeTargetSelect" class="w-full bg-club-bg border border-club-border rounded-xl px-3 py-2.5 text-white font-bold outline-none"></select>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="p-3 rounded-2xl bg-club-bg border border-white/10 space-y-2">
-            <div class="font-bold text-emerald-300">Ты отдаёшь:</div>
-            <div id="monoTradeMyTilesList" class="space-y-1 max-h-28 overflow-y-auto"></div>
-            <div>
-              <span class="text-[11px] text-slate-400">Доплата деньгами (₸):</span>
-              <input id="monoTradeMyCashInput" type="number" min="0" step="5000" value="0" class="w-full mt-1 bg-club-surface border border-club-border rounded-lg px-2.5 py-1.5 font-mono text-white" />
-            </div>
-          </div>
-
-          <div class="p-3 rounded-2xl bg-club-bg border border-white/10 space-y-2">
-            <div class="font-bold text-club-gold">Ты просишь взамен:</div>
-            <div id="monoTradeTheirTilesList" class="space-y-1 max-h-28 overflow-y-auto"></div>
-            <div>
-              <span class="text-[11px] text-slate-400">Деньги от партнёра (₸):</span>
-              <input id="monoTradeTheirCashInput" type="number" min="0" step="5000" value="0" class="w-full mt-1 bg-club-surface border border-club-border rounded-lg px-2.5 py-1.5 font-mono text-white" />
-            </div>
-          </div>
-        </div>
-
-        <div id="monoTradeCorridorHint" class="p-2.5 rounded-xl bg-indigo-500/15 border border-indigo-500/35 text-[11px] text-indigo-200">
-          Выбери участки и суммы — проверим честный коридор 90%–120%.
-        </div>
-
-        <button
-          id="monoSendTradeBtn"
-          type="button"
-          class="w-full py-3.5 px-5 rounded-2xl font-display text-xs sm:text-sm font-black uppercase tracking-wider text-club-bg bg-gradient-to-r from-club-gold to-club-amber active:scale-95 transition-all"
-        >
-          Отправить тайное предложение 🤫
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- МОДАЛЬНОЕ ОКНО: КТО КАК ГОЛОСОВАЛ И ТИТУЛЫ ПАЦАНОВ (ДЛЯ ТОП ПОТОКА) -->
   <div
@@ -1833,13 +1553,6 @@
           🏅 Авто-номинации и титулы пацанов
         </div>
         <div id="playerTitlesGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
-      </div>
-
-      <div id="tasteCompatibilityBox" class="space-y-2">
-        <div class="text-xs font-bold uppercase tracking-wider text-pink-300">
-          🤝 Совпадение вкусов между друзьями
-        </div>
-        <div id="tasteCompatibilityList" class="flex flex-wrap gap-2"></div>
       </div>
 
       <div class="space-y-3">
@@ -1877,11 +1590,207 @@
     const USED_QUIZ_KEY = 'partyhub_used_quiz_ids_v1';
 
     const GAME_META = {
+      monopoly: { badge: '🎲 Монополия: По одной тропинке', short: 'МОНО', sub: 'АТЫРАУ — АЛМАТЫ • СЮЖЕТ РОМАНА' },
       top: { badge: '🏆 Топ Потока', short: 'ТОП', sub: 'РЕЙТИНГ ОДНОГРУППНИЦ • LIVE' },
-      monopoly: { badge: '🎲 Монополия', short: 'МОНО', sub: 'ПО ОДНОЙ ТРОПИНКЕ • LIVE' },
       scale: { badge: '🎯 Шкала 1–10', short: '1–10', sub: 'АССОЦИАЦИИ ПО ШКАЛЕ • LIVE' },
       quiz: { badge: '🧠 Квиз-Баттл', short: 'КВИЗ', sub: 'ЭРУДИЦИЯ И ЛОГИКА • LIVE' }
     };
+
+    // =========================================================================
+    // ДАННЫЕ МОНОПОЛИИ ПО РОМАНУ «ПО ОДНОЙ ТРОПИНКЕ»
+    // =========================================================================
+    const MONOPOLY_HEROES = [
+      {
+        id: 'alisher',
+        name: 'Алишер',
+        emoji: '🛵',
+        color: '#3b82f6',
+        startBonus: 0,
+        passive: 'Курьерский ритм: +50 000 ₸ сверху за каждое прохождение круга (Старта).',
+        ultName: 'Ночной заказ',
+        ultDesc: 'Мгновенный рывок на Старт (+200 000 ₸) и бесплатная покупка текущей свободной клетки.'
+      },
+      {
+        id: 'suyenish',
+        name: 'Суйениш',
+        emoji: '🧭',
+        color: '#10b981',
+        startBonus: 0,
+        passive: 'Холодный расчёт: скидка 15% на покупку любых локаций и строительство звёзд.',
+        ultName: 'Свой человек',
+        ultDesc: 'Не платит аренду в этом ходу и получает +150 000 ₸ от банка.'
+      },
+      {
+        id: 'duman',
+        name: 'Думан',
+        emoji: '🎮',
+        color: '#8b5cf6',
+        startBonus: 250000,
+        passive: 'Призовые MLBB: стартует с +250 000 ₸ в кармане и получает +20% аренды с игровых точек.',
+        ultName: 'Камбэк на миде',
+        ultDesc: 'Забирает по 75 000 ₸ с каждого соперника в качестве призовых турнира.'
+      },
+      {
+        id: 'asulan',
+        name: 'Асулан',
+        emoji: '🚗',
+        color: '#f59e0b',
+        startBonus: 0,
+        passive: 'Трасса Атырау — Алматы: при попадании на Ночное такси телепортируется бесплатно.',
+        ultName: 'Полный бак',
+        ultDesc: 'Делает дополнительный ход вне очереди с удвоенным бонусом.'
+      },
+      {
+        id: 'ramazan',
+        name: 'Рамазан',
+        emoji: '📱',
+        color: '#ec4899',
+        startBonus: 0,
+        passive: 'Инсайдер общего чата: при вытягивании Сюжетной карточки получает +40 000 ₸ сверху.',
+        ultName: 'Слив в общий чат',
+        ultDesc: 'Вытягивает сразу 2 сюжетные карточки подряд с двойным эффектом наград.'
+      },
+      {
+        id: 'zhambyl',
+        name: 'Жамбыл',
+        emoji: '🏠',
+        color: '#ef4444',
+        startBonus: 0,
+        passive: 'Хозяин хаты: аренда на его алматинских квартирах выше на +25%.',
+        ultName: 'Вписка на хате',
+        ultDesc: 'Собирает всех игроков на «Хату Жамбыла» — каждый платит ему по 60 000 ₸.'
+      },
+      {
+        id: 'erkezhan',
+        name: 'Еркежан',
+        emoji: '🔑',
+        color: '#14b8a6',
+        startBonus: 0,
+        passive: 'Съёмная квартира: не платит налоги на клетках «Событие / Расходы».',
+        ultName: '50 на 50',
+        ultDesc: 'Сравнивает свой баланс с самым богатым игроком (делит разницу пополам).'
+      },
+      {
+        id: 'damira',
+        name: 'Дамира',
+        emoji: '✨',
+        color: '#f97316',
+        startBonus: 0,
+        passive: 'Безупречная репутация: при попадании на «Разборки на кухне» выходит сразу без штрафа.',
+        ultName: 'Твёрдое слово',
+        ultDesc: 'Повышает уровень (★) одной своей случайной локации бесплатно.'
+      },
+      {
+        id: 'asylzhan',
+        name: 'Асылжан',
+        emoji: '☕',
+        color: '#06b6d4',
+        startBonus: 0,
+        passive: 'Алматинский уют: получает +30 000 ₸ каждый раз, когда кто-то тянет сюжетную карту.',
+        ultName: 'Тёплый приём',
+        ultDesc: 'Получает +250 000 ₸ из фонда поддержки.'
+      },
+      {
+        id: 'nazerke',
+        name: 'Назерке',
+        emoji: '🌸',
+        color: '#d946ef',
+        startBonus: 0,
+        passive: 'Удача вечернего парка: при дубле на кубиках получает +80 000 ₸.',
+        ultName: 'Встреча в 6 вечера',
+        ultDesc: 'Мгновенно переносится на «Парк в 6 вечера» и получает +180 000 ₸.'
+      },
+      {
+        id: 'dilnaz',
+        name: 'Дильназ',
+        emoji: '🔮',
+        color: '#6366f1',
+        startBonus: 0,
+        passive: 'Магнетизм: соперники платят на 15% больше аренды на её клетках.',
+        ultName: 'Гипноз на 2 круга',
+        ultDesc: 'Освобождает себя от уплаты любой аренды и перехватывает +120 000 ₸ у лидера.'
+      }
+    ];
+
+    // 40 клеток маршрута Атырау — Алматы по роману «По одной тропинке»
+    const MONOPOLY_BOARD = [
+      { idx: 0, type: 'start', name: 'СТАРТ • Вокзал Атырау', district: 'Старт', price: 0, rent: 0, color: '#10b981' },
+      { idx: 1, type: 'prop', name: 'Донёрная у корпуса', district: 'Атырау • Кампус', price: 60000, rent: 12000, color: '#92400e' },
+      { idx: 2, type: 'event', name: 'Сюжетная карта', district: 'Событие', price: 0, rent: 0, color: '#f59e0b' },
+      { idx: 3, type: 'prop', name: 'Курилка за корпусом', district: 'Атырау • Кампус', price: 65000, rent: 14000, color: '#92400e' },
+      { idx: 4, type: 'tax', name: 'Скинуться на общий стол', district: 'Расход', price: 0, rent: 100000, color: '#ef4444' },
+      { idx: 5, type: 'taxi', name: 'Ночной таксист (Атырау)', district: 'Телепорт', price: 150000, rent: 35000, color: '#06b6d4' },
+      { idx: 6, type: 'prop', name: 'Парковка после пар', district: 'Атырау • Центр', price: 100000, rent: 22000, color: '#0284c7' },
+      { idx: 7, type: 'event', name: 'Сюжетная карта', district: 'Событие', price: 0, rent: 0, color: '#f59e0b' },
+      { idx: 8, type: 'prop', name: 'Кофейня у набережной Урала', district: 'Атырау • Центр', price: 110000, rent: 24000, color: '#0284c7' },
+      { idx: 9, type: 'prop', name: 'Мост Европа — Азия', district: 'Атырау • Центр', price: 120000, rent: 28000, color: '#0284c7' },
+      { idx: 10, type: 'jail', name: 'Разборки на кухне', district: 'Пауза / В гостях', price: 0, rent: 0, color: '#64748b' },
+      { idx: 11, type: 'prop', name: 'Съёмная квартира Еркежан', district: 'Атырау • Квартал', price: 140000, rent: 32000, color: '#db2777' },
+      { idx: 12, type: 'prop', name: 'Компьютерный клуб • Буткемп', district: 'Киберзона', price: 150000, rent: 35000, color: '#8b5cf6' },
+      { idx: 13, type: 'prop', name: 'ТРЦ — точка заказов', district: 'Атырау • Квартал', price: 150000, rent: 35000, color: '#db2777' },
+      { idx: 14, type: 'prop', name: 'Номер на окраине', district: 'Атырау • Квартал', price: 160000, rent: 38000, color: '#db2777' },
+      { idx: 15, type: 'taxi', name: 'Ночной таксист (Трасса)', district: 'Телепорт', price: 150000, rent: 35000, color: '#06b6d4' },
+      { idx: 16, type: 'prop', name: 'Плацкарт Атырау — Алматы', district: 'Дорога в Алматы', price: 180000, rent: 42000, color: '#ea580c' },
+      { idx: 17, type: 'event', name: 'Сюжетная карта', district: 'Событие', price: 0, rent: 0, color: '#f59e0b' },
+      { idx: 18, type: 'prop', name: 'Перрон Алматы-2', district: 'Дорога в Алматы', price: 190000, rent: 45000, color: '#ea580c' },
+      { idx: 19, type: 'prop', name: 'Гостевая комната', district: 'Дорога в Алматы', price: 200000, rent: 48000, color: '#ea580c' },
+      { idx: 20, type: 'free', name: 'Общий сбор без спешки', district: 'Отдых', price: 0, rent: 0, color: '#10b981' },
+      { idx: 21, type: 'prop', name: 'Парк в 6 вечера', district: 'Алматы • Встречи', price: 220000, rent: 52000, color: '#dc2626' },
+      { idx: 22, type: 'event', name: 'Сюжетная карта', district: 'Событие', price: 0, rent: 0, color: '#f59e0b' },
+      { idx: 23, type: 'prop', name: 'Аллея на Арбате', district: 'Алматы • Встречи', price: 230000, rent: 55000, color: '#dc2626' },
+      { idx: 24, type: 'prop', name: 'Смотровая Кок-Тобе', district: 'Алматы • Встречи', price: 240000, rent: 60000, color: '#dc2626' },
+      { idx: 25, type: 'taxi', name: 'Ночной таксист (Алматы)', district: 'Телепорт', price: 150000, rent: 35000, color: '#06b6d4' },
+      { idx: 26, type: 'prop', name: 'Квартира девчонок (Асылжан и Назерке)', district: 'Алматы • Свои', price: 260000, rent: 65000, color: '#eab308' },
+      { idx: 27, type: 'prop', name: 'Балкон с видом на горы', district: 'Алматы • Свои', price: 270000, rent: 68000, color: '#eab308' },
+      { idx: 28, type: 'prop', name: 'Арена турнира MLBB', district: 'Киберзона', price: 280000, rent: 72000, color: '#8b5cf6' },
+      { idx: 29, type: 'prop', name: 'Хата Жамбыла', district: 'Алматы • Свои', price: 290000, rent: 75000, color: '#eab308' },
+      { idx: 30, type: 'gotojail', name: 'Срочный вызов на кухню!', district: 'В разборки', price: 0, rent: 0, color: '#f43f5e' },
+      { idx: 31, type: 'prop', name: 'Кампус Сатпаева', district: 'Алматы • Центр', price: 300000, rent: 80000, color: '#16a34a' },
+      { idx: 32, type: 'prop', name: 'Главный корпус КБТУ', district: 'Алматы • Центр', price: 320000, rent: 85000, color: '#16a34a' },
+      { idx: 33, type: 'event', name: 'Сюжетная карта', district: 'Событие', price: 0, rent: 0, color: '#f59e0b' },
+      { idx: 34, type: 'prop', name: 'Ночной проспект Достык', district: 'Алматы • Центр', price: 340000, rent: 90000, color: '#16a34a' },
+      { idx: 35, type: 'taxi', name: 'Ночной таксист (Достык)', district: 'Телепорт', price: 150000, rent: 35000, color: '#06b6d4' },
+      { idx: 36, type: 'event', name: 'Сюжетная карта', district: 'Событие', price: 0, rent: 0, color: '#f59e0b' },
+      { idx: 37, type: 'prop', name: 'Пентхаус на Аль-Фараби', district: 'Элита Алматы', price: 370000, rent: 105000, color: '#4f46e5' },
+      { idx: 38, type: 'tax', name: 'Закрыть счёт за всю компанию', district: 'Крупный расход', price: 0, rent: 150000, color: '#ef4444' },
+      { idx: 39, type: 'prop', name: 'Финал тропинки • Горный курорт', district: 'Элита Алматы', price: 420000, rent: 125000, color: '#4f46e5' }
+    ];
+
+    // 32 сюжетные карточки романа «По одной тропинке»
+    const MONOPOLY_EVENTS = [
+      { text: 'Рамазан случайно слил переписку в общий чат — пришлось откупаться шаурмой на всех.', delta: -60000 },
+      { text: 'Победа в финале турнира Mobile Legends! Призовые залетают на счёт.', delta: 150000 },
+      { text: 'На столе в прихожей нашёлся запасной ключ от съёмной квартиры — сэкономил на гостинице.', delta: 90000 },
+      { text: 'Афуза написала ровно в полночь: разговор затянулся до утра, настроение на максимум!', delta: 110000 },
+      { text: 'Алина неожиданно встретила тебя у входа в корпус и угостила кофе.', delta: 70000 },
+      { text: 'Ночная смена курьером по Атырау закрыта без единого опоздания.', delta: 120000 },
+      { text: 'Спонтанный билет на поезд Атырау — Алматы в последний вагон.', delta: -85000 },
+      { text: 'На хате у Жамбыла собралась вся компания — скинулись на ужин.', delta: -50000 },
+      { text: 'Еркежан помогла разрулить спорный вопрос без лишнего шума.', delta: 80000 },
+      { text: 'Встреча в парке в 6 вечера прошла лучше, чем планировалось.', delta: 100000 },
+      { text: 'Суйениш подсказал выгодный вариант без лишних переплат.', delta: 95000 },
+      { text: 'Разборки на кухне затянулись до 4 утра — платишь за ночное такси.', delta: -70000 },
+      { text: 'Асылжан и Назерке накрыли стол в алматинской квартире для гостей из Атырау.', delta: 85000 },
+      { text: 'Дильназ загадочно улыбнулась и перевернула расклад в твою пользу.', delta: 130000 },
+      { text: 'Дамира напомнила об обещании — пришлось держать слово и платить.', delta: -65000 },
+      { text: 'Асулан подкинул на машине прямо до нужного адреса без пробок.', delta: 75000 },
+      { text: 'Думан затащил решающую катку 1 в 5 на миде — ставка сыграла!', delta: 140000 },
+      { text: 'Забытый рюкзак в донёрной у корпуса вернули в целости и сохранности.', delta: 50000 },
+      { text: 'Случайный взгляд в курилке всё поставил на свои места.', delta: 60000 },
+      { text: 'Перевод от друзей за билеты на обратную дорогу.', delta: 115000 },
+      { text: 'Внезапный дождь на Арбате — пришлось брать такси по повышенному тарифу.', delta: -55000 },
+      { text: 'Афуза передала привет через общих знакомых — день сразу задался.', delta: 90000 },
+      { text: 'Алина оставила короткое голосовое сообщение перед самой парой.', delta: 65000 },
+      { text: 'Штраф за опоздание на утреннюю пару после ночных посиделок.', delta: -45000 },
+      { text: 'Выгодная подработка в ТРЦ в выходной день.', delta: 125000 },
+      { text: 'Общий чат гудит до утра: твоя шутка собрала все реакции.', delta: 70000 },
+      { text: 'Потерял наушник по дороге от Сатпаева до КБТУ.', delta: -60000 },
+      { text: 'Неожиданный бонус за закрытый без хвостов модуль.', delta: 135000 },
+      { text: 'В гостевой комнате нашлась заначка на чёрный день.', delta: 80000 },
+      { text: 'Пришлось выручать друга в сложной ситуации посреди ночи.', delta: -75000 },
+      { text: 'Прогулка по ночному Достыку подарила крутую идею для проекта.', delta: 110000 },
+      { text: 'Одна тропинка снова свела всех героев в одной точке!', delta: 160000 }
+    ];
 
     const SAMPLE_10_NAMES = [
       'Алина К.', 'Вика С.', 'Даша М.', 'Катя Р.', 'Настя В.',
@@ -1909,198 +1818,9 @@
       'Самая горячая в сторис',
       'Внешне тихоня, но в тихом омуте черти',
       'Кого бы выбрал на роль жены',
-      'Самая недоступная крепость потока',
-      'Лучший флирт-вайб и харизма',
-      'С кем бы пошёл на свидание вслепую',
-      'Главная разбивательница мужских сердец',
-      'Самая раскрепощённая на вечеринках',
-      'Кому бы простил любую выходку',
-      'Самый сладкий голос и смех',
-      'Мисс «уведу твоего друга и не замечу»',
-      'Идеальная спутница на курорт вдвоём',
-      'Самая загадочная и манящая',
-      'Королева ночных переписок',
-      'У кого самая дикая скрытая сторона',
-      'Лучшая улыбка, от которой таешь',
-      'Самая эффектная при входе в аудиторию',
-      'С кем бы устроил романтик на крыше',
-      'Главный магнит для мужских взглядов'
+      'Самая недоступная крепость потока'
     ];
 
-    // =========================================================================
-    // ДАННЫЕ ДЛЯ «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ» (11 ГЕРОЕВ, 40 КЛЕТОК, 32 КАРТЫ)
-    // =========================================================================
-    const MONOPOLY_START_CASH = 300000;
-    const MONOPOLY_PASS_GO = 40000;
-    const MONOPOLY_JAIL_BAIL = 15000;
-
-    const MONOPOLY_HEROES = [
-      { id: 'tycoon', emoji: '🎩', name: 'Магнат', passive: '+15% бонус при проходе «Старта» (+46 000 ₸)', ultName: 'Дивиденды', ultDesc: 'Мгновенно получить по 8 000 ₸ за каждый свой участок' },
-      { id: 'architect', emoji: '🏗️', name: 'Зодчий', passive: 'Строительство домов и отелей дешевле на 20%', ultName: 'Экспресс-стройка', ultDesc: 'Бесплатно поставить +1★ на свой случайный участок' },
-      { id: 'diplomat', emoji: '🕊️', name: 'Дипломат', passive: 'Скидка 25% на оплату чужой аренды', ultName: 'Иммунитет', ultDesc: 'Освободиться от следующей оплаты аренды (щит на 1 раз)' },
-      { id: 'raider', emoji: '🐺', name: 'Рейдер', passive: 'Чужие платят вам на 15% больше аренды', ultName: 'Сбор дани', ultDesc: 'Забрать по 10 000 ₸ у каждого соперника' },
-      { id: 'gambler', emoji: '🎰', name: 'Авантюрист', passive: 'При дубле кубиков получаете +12 000 ₸ из банка', ultName: 'Джекпот', ultDesc: 'Выиграть в казино от 25 000 до 50 000 ₸' },
-      { id: 'lawyer', emoji: '⚖️', name: 'Юрист', passive: 'Бесплатный выход из Изолятора (0 ₸ вместо 15 000 ₸)', ultName: 'Амнистия', ultDesc: 'Списать налоги и получить компенсацию 25 000 ₸' },
-      { id: 'broker', emoji: '📈', name: 'Брокер', passive: 'Покупка свободных земель дешевле на 10%', ultName: 'Инсайд', ultDesc: 'Получить +30 000 ₸ на биржевой сделке' },
-      { id: 'landlord', emoji: '🏘️', name: 'Рантье', passive: '+5 000 ₸ пассивного дохода в начале каждого своего хода', ultName: 'Сверхприбыль', ultDesc: 'Удвоить кассу: +25 000 ₸ из фонда недвижимости' },
-      { id: 'scout', emoji: '🧭', name: 'Следопыт', passive: 'Двойной бонус на клетках Событие/Риск (+10 000 ₸ сверху)', ultName: 'Телепорт', ultDesc: 'Мгновенно переместиться на клетку «Старт» (+40 000 ₸)' },
-      { id: 'banker', emoji: '🏦', name: 'Банкир', passive: 'Кэшбэк 15% с любой покупки или стройки', ultName: 'Кредитный транш', ultDesc: 'Получить из резерва банка 35 000 ₸' },
-      { id: 'strategist', emoji: '♟️', name: 'Стратег', passive: 'Защита от первой потери на клетке Риск/Налог', ultName: 'Перехват', ultDesc: 'Получить +20 000 ₸ и дополнительный бросок кубиков' }
-    ];
-
-    const MONOPOLY_GROUP_COLORS = {
-      brown: '#92400e',
-      sky: '#0284c7',
-      pink: '#db2777',
-      orange: '#ea580c',
-      red: '#dc2626',
-      yellow: '#ca8a04',
-      green: '#16a34a',
-      blue: '#2563eb',
-      station: '#6366f1',
-      utility: '#14b8a6'
-    };
-
-    // 40 клеток поля по периметру (индексы 0..39)
-    const MONOPOLY_TILES = [
-      { idx: 0, type: 'go', name: 'СТАРТ', short: 'СТАРТ', icon: '🚩' },
-      { idx: 1, type: 'prop', group: 'brown', name: 'Старый дворик', short: 'Дворик', price: 30000, rent: 3000, houseCost: 15000 },
-      { idx: 2, type: 'chance', name: 'Событие', short: 'Событие', icon: '🎁' },
-      { idx: 3, type: 'prop', group: 'brown', name: 'Уютная кофейня', short: 'Кофейня', price: 35000, rent: 4000, houseCost: 15000 },
-      { idx: 4, type: 'tax', name: 'Подоходный налог', short: 'Налог 20к', amount: 20000, icon: '💸' },
-      { idx: 5, type: 'station', group: 'station', name: 'Южный вокзал', short: 'Юж.Вокзал', price: 60000, rent: 10000, icon: '🚆' },
-      { idx: 6, type: 'prop', group: 'sky', name: 'Сквер Дружбы', short: 'Сквер', price: 45000, rent: 5000, houseCost: 20000 },
-      { idx: 7, type: 'risk', name: 'Риск', short: 'Риск', icon: '⚡' },
-      { idx: 8, type: 'prop', group: 'sky', name: 'Книжный бульвар', short: 'Бульвар', price: 45000, rent: 5000, houseCost: 20000 },
-      { idx: 9, type: 'prop', group: 'sky', name: 'Арт-квартал', short: 'Арт-кв.', price: 50000, rent: 6000, houseCost: 20000 },
-      { idx: 10, type: 'jail', name: 'ИЗОЛЯТОР', short: 'ИЗОЛЯТОР', icon: '⛓️' },
-      { idx: 11, type: 'prop', group: 'pink', name: 'Студгородок', short: 'Студгор.', price: 60000, rent: 7000, houseCost: 25000 },
-      { idx: 12, type: 'utility', group: 'utility', name: 'Электросеть', short: 'Электро', price: 55000, rent: 9000, icon: '💡' },
-      { idx: 13, type: 'prop', group: 'pink', name: 'Кинотеатр «Мир»', short: 'Кино Мир', price: 60000, rent: 7000, houseCost: 25000 },
-      { idx: 14, type: 'prop', group: 'pink', name: 'Фуд-корт Плаза', short: 'Фуд-корт', price: 65000, rent: 8000, houseCost: 25000 },
-      { idx: 15, type: 'station', group: 'station', name: 'Западный экспресс', short: 'Зап.Экспр', price: 60000, rent: 10000, icon: '🚄' },
-      { idx: 16, type: 'prop', group: 'orange', name: 'Спорт-арена', short: 'Арена', price: 75000, rent: 9000, houseCost: 30000 },
-      { idx: 17, type: 'chance', name: 'Событие', short: 'Событие', icon: '🎁' },
-      { idx: 18, type: 'prop', group: 'orange', name: 'Автодром', short: 'Автодром', price: 75000, rent: 9000, houseCost: 30000 },
-      { idx: 19, type: 'prop', group: 'orange', name: 'Экстрим-парк', short: 'Экстрим', price: 80000, rent: 10000, houseCost: 30000 },
-      { idx: 20, type: 'parking', name: 'ПРИВАЛ', short: 'ПРИВАЛ', icon: '⛺' },
-      { idx: 21, type: 'prop', group: 'red', name: 'Проспект Победы', short: 'Победы', price: 90000, rent: 11000, houseCost: 35000 },
-      { idx: 22, type: 'risk', name: 'Риск', short: 'Риск', icon: '⚡' },
-      { idx: 23, type: 'prop', group: 'red', name: 'Театральная пл.', short: 'Театр.пл', price: 90000, rent: 11000, houseCost: 35000 },
-      { idx: 24, type: 'prop', group: 'red', name: 'Гранд-Отель', short: 'Гранд', price: 95000, rent: 12000, houseCost: 35000 },
-      { idx: 25, type: 'station', group: 'station', name: 'Северный хаб', short: 'Сев.Хаб', price: 60000, rent: 10000, icon: '🚇' },
-      { idx: 26, type: 'prop', group: 'yellow', name: 'IT-Технопарк', short: 'Технопарк', price: 105000, rent: 13000, houseCost: 40000 },
-      { idx: 27, type: 'prop', group: 'yellow', name: 'Бизнес-центр', short: 'БЦ Центр', price: 105000, rent: 13000, houseCost: 40000 },
-      { idx: 28, type: 'utility', group: 'utility', name: 'Водоканал', short: 'Водоканал', price: 55000, rent: 9000, icon: '💧' },
-      { idx: 29, type: 'prop', group: 'yellow', name: 'Небоскрёб «Апекс»', short: 'Апекс', price: 110000, rent: 14000, houseCost: 40000 },
-      { idx: 30, type: 'gotojail', name: 'В ИЗОЛЯТОР', short: 'В ТЮРЬМУ', icon: '🚨' },
-      { idx: 31, type: 'prop', group: 'green', name: 'Изумрудный сад', short: 'Изумруд', price: 120000, rent: 15000, houseCost: 45000 },
-      { idx: 32, type: 'prop', group: 'green', name: 'Яхт-клуб', short: 'Яхт-клуб', price: 120000, rent: 15000, houseCost: 45000 },
-      { idx: 33, type: 'chance', name: 'Событие', short: 'Событие', icon: '🎁' },
-      { idx: 34, type: 'prop', group: 'green', name: 'Резиденция Парк', short: 'Резиденц.', price: 125000, rent: 16000, houseCost: 45000 },
-      { idx: 35, type: 'station', group: 'station', name: 'Космопорт', short: 'Космопорт', price: 60000, rent: 10000, icon: '🚀' },
-      { idx: 36, type: 'risk', name: 'Риск', short: 'Риск', icon: '⚡' },
-      { idx: 37, type: 'prop', group: 'blue', name: 'Золотая миля', short: 'Зол.Миля', price: 140000, rent: 18000, houseCost: 50000 },
-      { idx: 38, type: 'tax', name: 'Налог на роскошь', short: 'Роскошь 30к', amount: 30000, icon: '💎' },
-      { idx: 39, type: 'prop', group: 'blue', name: 'Олимп Плаза', short: 'Олимп', price: 160000, rent: 22000, houseCost: 50000 }
-    ];
-
-    // 32 карточки Событий и Рисков
-    const MONOPOLY_CARDS = [
-      { text: 'Удачная инвестиция в стартап: +25 000 ₸', delta: 25000 },
-      { text: 'Возврат налогового вычета: +18 000 ₸', delta: 18000 },
-      { text: 'Победа в городском тендере: +30 000 ₸', delta: 30000 },
-      { text: 'Кэшбэк от партнёров: +12 000 ₸', delta: 12000 },
-      { text: 'Дивиденды по акциям: +20 000 ₸', delta: 20000 },
-      { text: 'Вы нашли забытый сейф: +35 000 ₸', delta: 35000 },
-      { text: 'Премия за лучший квартал: +22 000 ₸', delta: 22000 },
-      { text: 'Продажа редкого коллекционного авто: +28 000 ₸', delta: 28000 },
-      { text: 'Бонус за развитие инфраструктуры: +15 000 ₸', delta: 15000 },
-      { text: 'Грант на благоустройство тропинки: +24 000 ₸', delta: 24000 },
-      { text: 'Срочный ремонт фасада: -15 000 ₸', delta: -15000 },
-      { text: 'Штраф за нарушение правил застройки: -20 000 ₸', delta: -20000 },
-      { text: 'Внеплановая аудиторская проверка: -18 000 ₸', delta: -18000 },
-      { text: 'Сбор на благотворительный вечер: -12 000 ₸', delta: -12000 },
-      { text: 'Падение котировок на бирже: -25 000 ₸', delta: -25000 },
-      { text: 'Оплата страховки недвижимости: -14 000 ₸', delta: -14000 },
-      { text: 'Переезд на клетку «Старт» (+40 000 ₸)!', moveTo: 0, delta: 40000 },
-      { text: 'Срочный вызов в Изолятор!', gotoJail: true },
-      { text: 'Каждый игрок скидывается вам по 8 000 ₸ на общий проект!', fromEach: 8000 },
-      { text: 'Вы угощаете всю компанию: по 6 000 ₸ каждому игроку!', toEach: 6000 },
-      { text: 'Скидка от подрядчиков: +16 000 ₸ в бюджет', delta: 16000 },
-      { text: 'Арендаторы оставили чаевые: +14 000 ₸', delta: 14000 },
-      { text: 'Выигрыш в лотерею тропинки: +27 000 ₸', delta: 27000 },
-      { text: 'Компенсация за задержку рейса: +11 000 ₸', delta: 11000 },
-      { text: 'Оплата коммунальных счетов: -13 000 ₸', delta: -13000 },
-      { text: 'Затраты на рекламу квартала: -17 000 ₸', delta: -17000 },
-      { text: 'Покупка антиквариата: -22 000 ₸', delta: -22000 },
-      { text: 'Подарок от тайного покровителя: +32 000 ₸', delta: 32000 },
-      { text: 'Прорыв трубы на объекте: -19 000 ₸', delta: -19000 },
-      { text: 'Субсидия малому бизнесу: +21 000 ₸', delta: 21000 },
-      { text: 'Юбилей компании: каждый дарит вам по 5 000 ₸!', fromEach: 5000 },
-      { text: 'Спонсорство турнира: -15 000 ₸', delta: -15000 }
-    ];
-
-    function formatTenge(val) {
-      return `${Math.round(Number(val) || 0).toLocaleString('ru-RU')} ₸`;
-    }
-
-    function getMonopolyGridCoords(tileIdx) {
-      if (tileIdx >= 0 && tileIdx <= 10) return { row: 11, col: 11 - tileIdx };
-      if (tileIdx >= 11 && tileIdx <= 19) return { row: 21 - tileIdx, col: 1 };
-      if (tileIdx >= 20 && tileIdx <= 30) return { row: 1, col: tileIdx - 19 };
-      return { row: tileIdx - 29, col: 11 };
-    }
-
-    function getInflationMultiplier(ms) {
-      const pct = ms?.inflationPct || 0;
-      return 1 + pct / 100;
-    }
-
-    function getTileEffectivePrice(tile, ms) {
-      if (!tile || !tile.price) return 0;
-      return Math.round(tile.price * getInflationMultiplier(ms));
-    }
-
-    function getTileEffectiveHouseCost(tile, ms) {
-      if (!tile || !tile.houseCost) return 0;
-      return Math.round(tile.houseCost * getInflationMultiplier(ms));
-    }
-
-    function playerHasGroupMonopoly(ms, playerId, group) {
-      if (!group || group === 'station' || group === 'utility') return false;
-      const groupTiles = MONOPOLY_TILES.filter(t => t.group === group);
-      return groupTiles.length > 0 && groupTiles.every(t => ms.owners?.[String(t.idx)]?.ownerId === playerId);
-    }
-
-    function getTileEffectiveRent(tile, ms) {
-      if (!tile || !tile.rent) return 0;
-      const mult = getInflationMultiplier(ms);
-      const ownerInfo = ms.owners?.[String(tile.idx)];
-      if (!ownerInfo) return Math.round(tile.rent * mult);
-
-      if (tile.group === 'station') {
-        const ownedStations = MONOPOLY_TILES.filter(t => t.group === 'station' && ms.owners?.[String(t.idx)]?.ownerId === ownerInfo.ownerId).length;
-        return Math.round(tile.rent * Math.pow(2, Math.max(0, ownedStations - 1)) * mult);
-      }
-      if (tile.group === 'utility') {
-        const ownedUtils = MONOPOLY_TILES.filter(t => t.group === 'utility' && ms.owners?.[String(t.idx)]?.ownerId === ownerInfo.ownerId).length;
-        return Math.round(tile.rent * (ownedUtils >= 2 ? 2.5 : 1) * mult);
-      }
-
-      const stars = ownerInfo.stars || 0;
-      const hasMono = playerHasGroupMonopoly(ms, ownerInfo.ownerId, tile.group);
-      let base = tile.rent;
-      if (stars === 0) {
-        base = hasMono ? tile.rent * 2 : tile.rent;
-      } else {
-        const starMults = [1, 3, 7, 14, 24, 38]; // 1..4 дома, 5 = отель
-        base = tile.rent * (starMults[Math.min(5, stars)] || 1);
-      }
-      return Math.round(base * mult);
-    }
-
-    // Банк вопросов на эрудицию + гибридный генератор логических задач
     const STATIC_QUIZ_BANK = [
       { id: 'q1', cat: 'География', q: 'Какая страна имеет самую длинную береговую линию в мире?', opts: ['Канада', 'Россия', 'Индонезия', 'Австралия'], ans: 0 },
       { id: 'q2', cat: 'Наука', q: 'Какой химический элемент обозначается символом Au?', opts: ['Серебро', 'Золото', 'Алюминий', 'Аргон'], ans: 1 },
@@ -2121,11 +1841,7 @@
       { id: 'q17', cat: 'Наука', q: 'Какой газ преобладает в атмосфере Земли?', opts: ['Кислород', 'Азот', 'Углекислый газ', 'Аргон'], ans: 1 },
       { id: 'q18', cat: 'Игры', q: 'Как зовут главного героя серии игр The Legend of Zelda?', opts: ['Зельда', 'Линк', 'Ганон', 'Эпона'], ans: 1 },
       { id: 'q19', cat: 'География', q: 'Какое озеро является самым глубоким на планете?', opts: ['Танганьика', 'Верхнее', 'Байкал', 'Виктория'], ans: 2 },
-      { id: 'q20', cat: 'Эрудиция', q: 'Сколько минут длится один период в хоккее с шайбой?', opts: ['15', '20', '25', '30'], ans: 1 },
-      { id: 'q21', cat: 'Наука', q: 'Какая скорость света в вакууме (округлённо)?', opts: ['150 000 км/с', '300 000 км/с', '450 000 км/с', '1 000 000 км/с'], ans: 1 },
-      { id: 'q22', cat: 'Кино', q: 'Кто снял фильм «Начало» (Inception)?', opts: ['Кристофер Нолан', 'Дени Вильнёв', 'Квентин Тарантино', 'Дэвид Финчер'], ans: 0 },
-      { id: 'q23', cat: 'Авто', q: 'Что означает буква «M» в спортивном подразделении BMW M?', opts: ['Master', 'Motorsport', 'Machine', 'Maximum'], ans: 1 },
-      { id: 'q24', cat: 'Эрудиция', q: 'Сколько градусов в сумме углов любого треугольника на плоскости?', opts: ['90°', '180°', '270°', '360°'], ans: 1 }
+      { id: 'q20', cat: 'Эрудиция', q: 'Сколько минут длится один период в хоккее с шайбой?', opts: ['15', '20', '25', '30'], ans: 1 }
     ];
 
     function generateProceduralLogicQuestion(seedIndex) {
@@ -2135,41 +1851,20 @@
         const step = 4 + Math.floor(Math.random() * 9);
         const seq = [start, start + step, start + step * 2, start + step * 3];
         const correct = start + step * 4;
-        const wrongs = [correct + step, correct - 2, correct + 3];
-        const allOpts = shuffleArray([correct, ...wrongs]).map(String);
-        return {
-          id: `gen_seq_${Date.now()}_${seedIndex}`,
-          cat: 'Логика • Ряды',
-          q: `Продолжи числовой ряд: ${seq.join(', ')}, … ?`,
-          opts: allOpts,
-          ans: allOpts.indexOf(String(correct))
-        };
+        const allOpts = shuffleArray([correct, correct + step, correct - 2, correct + 3]).map(String);
+        return { id: `gen_seq_${Date.now()}_${seedIndex}`, cat: 'Логика • Ряды', q: `Продолжи числовой ряд: ${seq.join(', ')}, … ?`, opts: allOpts, ans: allOpts.indexOf(String(correct)) };
       } else if (type === 1) {
         const pct = [15, 20, 25, 30, 40][Math.floor(Math.random() * 5)];
         const base = [120, 160, 200, 240, 300, 400][Math.floor(Math.random() * 6)];
         const correct = (base * pct) / 100;
-        const wrongs = [correct + 10, Math.max(5, correct - 15), correct * 2];
-        const allOpts = shuffleArray([correct, ...wrongs]).map(String);
-        return {
-          id: `gen_pct_${Date.now()}_${seedIndex}`,
-          cat: 'Логика • Счёт',
-          q: `Чему равны ${pct}% от числа ${base}?`,
-          opts: allOpts,
-          ans: allOpts.indexOf(String(correct))
-        };
+        const allOpts = shuffleArray([correct, correct + 10, Math.max(5, correct - 15), correct * 2]).map(String);
+        return { id: `gen_pct_${Date.now()}_${seedIndex}`, cat: 'Логика • Счёт', q: `Чему равны ${pct}% от числа ${base}?`, opts: allOpts, ans: allOpts.indexOf(String(correct)) };
       } else {
         const speed = [60, 75, 80, 90, 100][Math.floor(Math.random() * 5)];
         const hours = [2, 3, 4][Math.floor(Math.random() * 3)];
         const correct = speed * hours;
-        const wrongs = [correct + speed, correct - 40, speed + hours * 10];
-        const allOpts = shuffleArray([correct, ...wrongs]).map(n => `${n} км`);
-        return {
-          id: `gen_spd_${Date.now()}_${seedIndex}`,
-          cat: 'Логика • Задача',
-          q: `Машина едет со скоростью ${speed} км/ч. Какое расстояние она проедет за ${hours} ч?`,
-          opts: allOpts,
-          ans: allOpts.indexOf(`${correct} км`)
-        };
+        const allOpts = shuffleArray([correct, correct + speed, correct - 40, speed + hours * 10]).map(n => `${n} км`);
+        return { id: `gen_spd_${Date.now()}_${seedIndex}`, cat: 'Логика • Задача', q: `Машина едет со скоростью ${speed} км/ч. Какое расстояние она проедет за ${hours} ч?`, opts: allOpts, ans: allOpts.indexOf(`${correct} км`) };
       }
     }
 
@@ -2258,7 +1953,6 @@
       await ensureAuth();
       const roomRef = getRoomRef(code);
       await updateDoc(roomRef, updatePayload);
-
       const baseRoom = appState.roomData;
       if (baseRoom && baseRoom.code === code) {
         const updated = applyDotPathPatch(baseRoom, updatePayload);
@@ -2277,7 +1971,8 @@
       unsubscribeRoom: null,
       isAdvancingRound: false,
       isTriggeringDuel: false,
-      selectedHubGameType: 'top',
+      selectedHubGameType: 'monopoly',
+      selectedMonopolyHeroId: 'alisher',
       setupNames: [],
       setupMode: 'top5',
       setupCircles: 1,
@@ -2298,18 +1993,12 @@
       disputeDirDrafts: {},
       disputeReasonDrafts: {},
       lobbyGirlsExpanded: false,
-      restPlacesExpanded: false,
       usedIdeaIndices: new Set(),
       startRetryFn: null,
       scaleSelectedCategory: '',
       scaleSelectedNumber: null,
       quizTimerInterval: null,
-      quizActiveQuestionIdx: -1,
-      quizQuestionStartTs: 0,
-      // Монополия UI state
-      monoSelectedTileIdx: null,
-      monoTradeMySelected: new Set(),
-      monoTradeTheirSelected: new Set()
+      quizActiveQuestionIdx: -1
     };
 
     const SoundFX = (() => {
@@ -2499,12 +2188,8 @@
     }
 
     function showScreen(screenId) {
-      if (screenId !== 'gameplayScreen') {
-        if (appState.blitzTimerInterval) { clearInterval(appState.blitzTimerInterval); appState.blitzTimerInterval = null; }
-      }
-      if (screenId !== 'quizGameScreen') {
-        if (appState.quizTimerInterval) { clearInterval(appState.quizTimerInterval); appState.quizTimerInterval = null; }
-      }
+      if (screenId !== 'gameplayScreen' && appState.blitzTimerInterval) { clearInterval(appState.blitzTimerInterval); appState.blitzTimerInterval = null; }
+      if (screenId !== 'quizGameScreen' && appState.quizTimerInterval) { clearInterval(appState.quizTimerInterval); appState.quizTimerInterval = null; }
       [
         'startScreen',
         'hostSetupScreen',
@@ -2518,15 +2203,6 @@
       ].forEach(id => {
         document.getElementById(id).classList.toggle('hidden', id !== screenId);
       });
-
-      const mainEl = document.getElementById('mainAppContainer');
-      if (screenId === 'monopolyGameScreen') {
-        mainEl.classList.remove('max-w-2xl');
-        mainEl.classList.add('max-w-3xl');
-      } else {
-        mainEl.classList.remove('max-w-3xl');
-        mainEl.classList.add('max-w-2xl');
-      }
 
       const inRoom = ['waitingRoomScreen', 'gameplayScreen', 'revealScreen', 'scaleGameScreen', 'quizGameScreen', 'monopolyGameScreen'].includes(screenId);
       document.getElementById('headerExitRoomBtn').classList.toggle('hidden', !inRoom);
@@ -2666,6 +2342,43 @@
       showScreen('startScreen');
     }
 
+    // Рендер карточек героев «По одной тропинке» (для хоста или входящего друга)
+    function renderMonopolyHeroPicker(gridEl, takenHeroIds = []) {
+      gridEl.innerHTML = '';
+      if (takenHeroIds.includes(appState.selectedMonopolyHeroId)) {
+        const firstFree = MONOPOLY_HEROES.find(h => !takenHeroIds.includes(h.id));
+        if (firstFree) appState.selectedMonopolyHeroId = firstFree.id;
+      }
+
+      MONOPOLY_HEROES.forEach(hero => {
+        const isTaken = takenHeroIds.includes(hero.id);
+        const isSelected = !isTaken && appState.selectedMonopolyHeroId === hero.id;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.disabled = isTaken;
+        btn.className = isTaken
+          ? 'p-3 rounded-xl bg-club-bg/40 border border-white/5 text-left opacity-40 cursor-not-allowed'
+          : isSelected
+            ? 'p-3 rounded-xl bg-emerald-500/20 border-2 border-emerald-400 text-left transition-all'
+            : 'p-3 rounded-xl bg-club-bg hover:bg-white/10 border border-club-border text-left transition-all';
+
+        btn.innerHTML = `
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-display text-xs sm:text-sm font-black text-white">${hero.emoji} ${escapeHtml(hero.name)}</span>
+            ${isTaken ? '<span class="text-[10px] font-mono text-rose-400">ЗАНЯТ</span>' : isSelected ? '<span class="text-[10px] font-mono text-emerald-300">✓ ВЫБРАН</span>' : ''}
+          </div>
+          <div class="text-[11px] text-slate-300 mt-1 leading-snug">${escapeHtml(hero.passive)}</div>
+        `;
+        btn.addEventListener('click', () => {
+          if (isTaken) return;
+          SoundFX.tap();
+          appState.selectedMonopolyHeroId = hero.id;
+          renderMonopolyHeroPicker(gridEl, takenHeroIds);
+        });
+        gridEl.appendChild(btn);
+      });
+    }
+
     function openHostSetupForGame(gameType) {
       appState.selectedHubGameType = gameType;
       document.getElementById('startErrorBox').classList.add('hidden');
@@ -2674,18 +2387,19 @@
       const meta = GAME_META[gameType] || GAME_META.top;
       document.getElementById('setupGameTypeBadge').textContent = `${meta.badge.toUpperCase()} • ХОСТ`;
 
+      document.getElementById('setupMonopolyHeroFields').classList.toggle('hidden', gameType !== 'monopoly');
       document.getElementById('setupTopOnlyFields').classList.toggle('hidden', gameType !== 'top');
-      document.getElementById('setupMonopolyOnlyFields').classList.toggle('hidden', gameType !== 'monopoly');
       document.getElementById('setupQuizOnlyFields').classList.toggle('hidden', gameType !== 'quiz');
       document.getElementById('setupScaleOnlyFields').classList.toggle('hidden', gameType !== 'scale');
 
-      if (gameType === 'top') {
+      if (gameType === 'monopoly') {
+        document.getElementById('setupScreenTitle').textContent = 'Монополия: По одной тропинке';
+        document.getElementById('setupScreenDesc').textContent = 'Выбери своего персонажа из романа и открой комнату на маршрут Атырау — Алматы.';
+        renderMonopolyHeroPicker(document.getElementById('setupMonopolyHeroesGrid'), []);
+      } else if (gameType === 'top') {
         document.getElementById('setupScreenTitle').textContent = 'Настройка «Топ Потока»';
         document.getElementById('setupScreenDesc').textContent = 'Собери список от 5 до 15 имён, выбери круги и открой лобби.';
         renderSetupNamesList();
-      } else if (gameType === 'monopoly') {
-        document.getElementById('setupScreenTitle').textContent = 'Настройка «Монополия: По одной тропинке»';
-        document.getElementById('setupScreenDesc').textContent = 'Создай комнату — выбор персонажей из 11 героев будет в общем лобби!';
       } else if (gameType === 'scale') {
         document.getElementById('setupScreenTitle').textContent = 'Настройка «Шкала 1–10»';
         document.getElementById('setupScreenDesc').textContent = 'Укажи свой ник и позови друзей — список имён здесь не нужен.';
@@ -2780,6 +2494,14 @@
         if (gameType === 'top') saveGirlsListToStorage(appState.setupNames);
 
         const code = generateRoomCode();
+        const playerRecord = {
+          id: appState.playerId,
+          uid: user?.uid || 'local',
+          name: hostName,
+          heroId: gameType === 'monopoly' ? appState.selectedMonopolyHeroId : null,
+          joinedAt: Date.now()
+        };
+
         const roomPayload = {
           code,
           gameType,
@@ -2791,15 +2513,7 @@
           plannedCircles: appState.setupCircles,
           quizLength: appState.setupQuizLength,
           status: 'waiting',
-          players: {
-            [appState.playerId]: {
-              id: appState.playerId,
-              uid: user?.uid || 'local',
-              name: hostName,
-              heroId: gameType === 'monopoly' ? MONOPOLY_HEROES[0].id : null,
-              joinedAt: Date.now()
-            }
-          },
+          players: { [appState.playerId]: playerRecord },
           circle: 1,
           totalRounds: 0,
           rounds: {},
@@ -2811,7 +2525,7 @@
           customOrder: null,
           scaleState: null,
           quizState: null,
-          monopolyState: null,
+          monoState: null,
           createdAt: Date.now()
         };
 
@@ -2844,13 +2558,24 @@
       const badgesEl = document.getElementById('foundPlayersBadges');
       badgesEl.innerHTML = '';
       const players = Object.values(roomData.players || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+      const takenHeroIds = [];
+
       players.forEach(p => {
+        if (p.heroId) takenHeroIds.push(p.heroId);
         const isH = p.id === roomData.hostId;
+        const heroObj = p.heroId ? MONOPOLY_HEROES.find(h => h.id === p.heroId) : null;
         const span = document.createElement('span');
         span.className = `inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border ${isH ? 'bg-club-gold/15 border-club-gold/40 text-club-gold' : 'bg-club-elevated border-white/10 text-slate-200'}`;
-        span.innerHTML = `<span>${isH ? '👑' : '👤'}</span><span>${escapeHtml(p.name)}</span>`;
+        span.innerHTML = `<span>${isH ? '👑' : '👤'}</span><span>${escapeHtml(p.name)}${heroObj ? ` (${heroObj.emoji} ${heroObj.name})` : ''}</span>`;
         badgesEl.appendChild(span);
       });
+
+      const isMono = roomData.gameType === 'monopoly';
+      const monoHeroBox = document.getElementById('friendMonopolyHeroFields');
+      monoHeroBox.classList.toggle('hidden', !isMono);
+      if (isMono) {
+        renderMonopolyHeroPicker(document.getElementById('friendMonopolyHeroesGrid'), takenHeroIds);
+      }
 
       const session = readSession();
       const nickInput = document.getElementById('friendNickInput');
@@ -2876,16 +2601,14 @@
         const user = await ensureAuth();
         if (!appState.playerId) appState.playerId = generateId('plr');
 
-        // Автовыбор первого свободного героя, если комната по Монополии
-        let autoHeroId = null;
-        if (foundRoom.gameType === 'monopoly') {
-          const takenSet = new Set(Object.values(foundRoom.players || {}).map(p => p.heroId).filter(Boolean));
-          const freeHero = MONOPOLY_HEROES.find(h => !takenSet.has(h.id)) || MONOPOLY_HEROES[0];
-          autoHeroId = freeHero.id;
-        }
-
         const code = foundRoom.code;
-        const playerRecord = { id: appState.playerId, uid: user?.uid || 'local', name: nick, heroId: autoHeroId, joinedAt: Date.now() };
+        const playerRecord = {
+          id: appState.playerId,
+          uid: user?.uid || 'local',
+          name: nick,
+          heroId: foundRoom.gameType === 'monopoly' ? appState.selectedMonopolyHeroId : null,
+          joinedAt: Date.now()
+        };
         await updateRoomFields(code, { [`players.${appState.playerId}`]: playerRecord });
 
         appState.playerName = nick;
@@ -2958,13 +2681,15 @@
       const players = Object.values(room.players || {}).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
       const count = players.length;
 
-      document.getElementById('lobbyMonopolyHeroesWrap').classList.toggle('hidden', gType !== 'monopoly');
-      document.getElementById('lobbyGirlsSpoilerWrap').classList.toggle('hidden', gType !== 'top');
-
-      if (gType === 'top') {
+      if (gType === 'monopoly') {
+        document.getElementById('lobbyExtraBadge').textContent = '🗺️ 40 клеток • 32 события';
+        document.getElementById('lobbyRoundsSummary').textContent = 'Атырау — Алматы';
+        document.getElementById('lobbyGirlsSpoilerWrap').classList.add('hidden');
+      } else if (gType === 'top') {
         const plannedCircles = room.plannedCircles || 1;
         document.getElementById('lobbyExtraBadge').textContent = `🔄 ${plannedCircles} кр.`;
         document.getElementById('lobbyRoundsSummary').textContent = `Всего раундов: ${count * plannedCircles}`;
+        document.getElementById('lobbyGirlsSpoilerWrap').classList.remove('hidden');
 
         const girls = Array.isArray(room.girls) ? room.girls : [];
         document.getElementById('lobbyGirlsTitle').textContent = `📋 Список одногруппниц (${girls.length})`;
@@ -2976,17 +2701,15 @@
           pill.innerHTML = `<span class="font-mono text-[10px] text-indigo-400">${idx + 1}.</span><span>${escapeHtml(g)}</span>`;
           pillsBox.appendChild(pill);
         });
-      } else if (gType === 'monopoly') {
-        document.getElementById('lobbyExtraBadge').textContent = '💰 300 000 ₸';
-        document.getElementById('lobbyRoundsSummary').textContent = '40 клеток • 11 героев';
-        renderLobbyMonopolyHeroPicker(room, players);
       } else if (gType === 'scale') {
         document.getElementById('lobbyExtraBadge').textContent = '♾️ Свободные раунды';
         document.getElementById('lobbyRoundsSummary').textContent = 'Умный рандом ведущего';
+        document.getElementById('lobbyGirlsSpoilerWrap').classList.add('hidden');
       } else {
         const qLen = room.quizLength || 10;
         document.getElementById('lobbyExtraBadge').textContent = `❓ ${qLen} вопросов`;
         document.getElementById('lobbyRoundsSummary').textContent = 'Эрудиция + Логика';
+        document.getElementById('lobbyGirlsSpoilerWrap').classList.add('hidden');
       }
 
       document.getElementById('lobbyPlayersCount').textContent = String(count);
@@ -2997,9 +2720,7 @@
         const isH = p.id === room.hostId;
         const isMe = p.id === appState.playerId;
         const av = getAvatarProps(p.name);
-        const heroObj = gType === 'monopoly' ? MONOPOLY_HEROES.find(h => h.id === p.heroId) : null;
-        const subText = heroObj ? `${heroObj.emoji} ${heroObj.name}` : '● Готов к игре';
-
+        const heroObj = p.heroId ? MONOPOLY_HEROES.find(h => h.id === p.heroId) : null;
         const card = document.createElement('div');
         card.className = `p-3 rounded-2xl border flex items-center justify-between gap-2.5 ${isH ? 'bg-club-gold/10 border-club-gold/45' : 'bg-club-bg/90 border-white/10'}`;
         card.innerHTML = `
@@ -3007,7 +2728,7 @@
             <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${av.gradient} flex items-center justify-center font-display text-xs font-black text-white shrink-0">${heroObj ? heroObj.emoji : av.initials}</div>
             <div class="min-w-0">
               <div class="font-bold text-sm text-white truncate">${escapeHtml(p.name)} ${isMe ? '<span class="text-xs text-indigo-300">(ты)</span>' : ''}</div>
-              <div class="text-[11px] font-semibold text-emerald-400 truncate">${escapeHtml(subText)}</div>
+              <div class="text-[10px] font-semibold text-emerald-400">${heroObj ? `Герой: ${escapeHtml(heroObj.name)}` : '● Готов к игре'}</div>
             </div>
           </div>
           ${isH ? '<span class="px-2 py-0.5 rounded-md bg-club-gold text-club-bg font-display text-[10px] font-black uppercase shrink-0">👑 ХОСТ</span>' : ''}
@@ -3039,52 +2760,6 @@
       }
     }
 
-    function renderLobbyMonopolyHeroPicker(room, players) {
-      const takenByOther = {};
-      players.forEach(p => {
-        if (p.id !== appState.playerId && p.heroId) takenByOther[p.heroId] = p.name;
-      });
-      const myHeroId = room.players?.[appState.playerId]?.heroId || null;
-      const myHeroObj = MONOPOLY_HEROES.find(h => h.id === myHeroId);
-      document.getElementById('lobbyMyHeroBadge').textContent = myHeroObj ? `${myHeroObj.emoji} ${myHeroObj.name}` : 'Выбери героя';
-
-      const grid = document.getElementById('lobbyMonopolyHeroesGrid');
-      grid.innerHTML = '';
-
-      MONOPOLY_HEROES.forEach(h => {
-        const isMine = myHeroId === h.id;
-        const lockedBy = takenByOther[h.id];
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.disabled = Boolean(lockedBy);
-
-        if (isMine) {
-          btn.className = 'p-3 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 text-left space-y-1 transition-all';
-        } else if (lockedBy) {
-          btn.className = 'p-3 rounded-2xl bg-club-bg/40 border border-white/5 text-left space-y-1 opacity-45 cursor-not-allowed';
-        } else {
-          btn.className = 'p-3 rounded-2xl bg-club-bg hover:bg-white/10 border border-club-border text-left space-y-1 transition-all active:scale-[0.99]';
-        }
-
-        btn.innerHTML = `
-          <div class="flex items-center justify-between gap-1">
-            <span class="font-display text-xs sm:text-sm font-black text-white">${h.emoji} ${escapeHtml(h.name)}</span>
-            ${isMine ? '<span class="px-1.5 py-0.5 rounded bg-emerald-400 text-club-bg font-mono text-[9px] font-black">ТВОЙ ✓</span>' : lockedBy ? `<span class="font-mono text-[10px] text-rose-300">Занял: ${escapeHtml(lockedBy)}</span>` : ''}
-          </div>
-          <div class="text-[11px] text-slate-300 leading-tight">🔹 ${escapeHtml(h.passive)}</div>
-          <div class="text-[10px] text-purple-300 leading-tight">⚡ Ульта «${escapeHtml(h.ultName)}»: ${escapeHtml(h.ultDesc)}</div>
-        `;
-
-        btn.addEventListener('click', async () => {
-          if (lockedBy || isMine) return;
-          SoundFX.tap();
-          await updateRoomFields(room.code, { [`players.${appState.playerId}.heroId`]: h.id });
-        });
-
-        grid.appendChild(btn);
-      });
-    }
-
     function shareInviteMessage() {
       const room = appState.roomData;
       if (!room) return;
@@ -3113,53 +2788,40 @@
       const gType = room.gameType || 'top';
 
       if (gType === 'monopoly') {
-        const turnOrder = shuffleArray(players).map(p => p.id);
-        const usedHeroes = new Set(players.map(p => p.heroId).filter(Boolean));
+        const turnOrder = players.map(p => p.id);
         const monoPlayers = {};
-
         players.forEach((p, idx) => {
-          let hId = p.heroId;
-          if (!hId) {
-            const free = MONOPOLY_HEROES.find(h => !usedHeroes.has(h.id)) || MONOPOLY_HEROES[idx % MONOPOLY_HEROES.length];
-            hId = free.id;
-            usedHeroes.add(hId);
-          }
+          const hero = MONOPOLY_HEROES.find(h => h.id === p.heroId) || MONOPOLY_HEROES[idx % MONOPOLY_HEROES.length];
           monoPlayers[p.id] = {
             id: p.id,
             name: p.name,
-            heroId: hId,
-            cash: MONOPOLY_START_CASH,
+            heroId: hero.id,
             pos: 0,
-            inJail: false,
-            jailTurns: 0,
-            bankrupt: false,
+            money: 1500000 + (hero.startBonus || 0),
             ultUsed: false,
-            rentShield: false,
-            riskShield: hId === 'strategist'
+            jailTurns: 0,
+            hypnosisTurns: 0,
+            bankrupt: false
           };
         });
 
         SoundFX.lockIn();
         await updateRoomFields(room.code, {
           status: 'playing',
-          monopolyState: {
+          monoState: {
             turnOrder,
-            currentTurnIdx: 0,
-            turnPhase: 'roll', // 'roll' | 'buy_or_auction' | 'auction' | 'end'
-            doublesCount: 0,
+            turnIdx: 0,
+            phase: 'roll', // 'roll' | 'action' | 'auction'
             lastDice: [0, 0],
-            inflationPct: 0,
-            inflationUsedBy: {},
-            activeInflationVote: null,
-            owners: {}, // tileIdx -> { ownerId, stars: 0..5 }
+            properties: {}, // tileIdx -> { ownerId, stars: 0..5 }
             auction: null,
-            pendingTrade: null,
-            winnerId: null,
-            log: [`Игра началась! Первый ход за игроком ${monoPlayers[turnOrder[0]].name}.`]
-          }
+            activeCardTitle: 'Старт • Вокзал Атырау',
+            activeCardDesc: `Первым ходит ${players[0].name}. Маршрут «По одной тропинке» открыт!`,
+            activeCardMeta: 'Стартовый капитал: 1 500 000 ₸',
+            logs: [`🎲 Матч «По одной тропинке» начался! Участников: ${players.length}.`]
+          },
+          monoPlayers
         });
-        // Сохраняем начальные профили игроков монополии
-        await updateRoomFields(room.code, { 'monopolyState.mPlayers': monoPlayers });
         return;
       }
 
@@ -3210,961 +2872,481 @@
     // =========================================================================
     // ЛОГИКА ИГРЫ 4: «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ»
     // =========================================================================
-    function getMonoCurrentPlayer(ms) {
-      if (!ms || !Array.isArray(ms.turnOrder) || !ms.mPlayers) return null;
-      const pid = ms.turnOrder[ms.currentTurnIdx % ms.turnOrder.length];
-      return ms.mPlayers[pid] || null;
+    function formatMoney(val) {
+      return `${Math.round(val).toLocaleString('ru-RU')} ₸`;
     }
 
-    function appendMonoLog(ms, line) {
-      const prev = Array.isArray(ms.log) ? ms.log : [];
-      return [line, ...prev].slice(0, 8);
+    function getBoardGridCoords(tileIdx) {
+      // 0..10: нижний ряд справа налево (row 11, col 11..1)
+      if (tileIdx >= 0 && tileIdx <= 10) return { row: 11, col: 11 - tileIdx };
+      // 11..20: левый столбец снизу вверх (col 1, row 10..1)
+      if (tileIdx >= 11 && tileIdx <= 20) return { row: 11 - (tileIdx - 10), col: 1 };
+      // 21..30: верхний ряд слева направо (row 1, col 2..11)
+      if (tileIdx >= 21 && tileIdx <= 30) return { row: 1, col: 1 + (tileIdx - 20) };
+      // 31..39: правый столбец сверху вниз (col 11, row 2..10)
+      return { row: 1 + (tileIdx - 30), col: 11 };
     }
 
     function renderMonopolyGameScreen(room) {
-      const ms = room.monopolyState;
-      if (!ms || !ms.mPlayers) return;
+      const ms = room.monoState;
+      const mpMap = room.monoPlayers || {};
+      if (!ms) return;
+
+      const turnOrder = ms.turnOrder || [];
+      const activePlayerId = turnOrder[ms.turnIdx % Math.max(1, turnOrder.length)];
+      const activePlayer = mpMap[activePlayerId];
+      const amActive = activePlayerId === appState.playerId;
 
       document.getElementById('monoInvitePill').textContent = `КОД: ${room.code} 📲`;
-      document.getElementById('monoInflationBadge').textContent = `📈 Инфляция: +${ms.inflationPct || 0}%`;
+      document.getElementById('monoActiveTurnName').textContent = activePlayer ? activePlayer.name : 'Игрок';
 
-      const curPlayer = getMonoCurrentPlayer(ms);
-      const isMyTurn = curPlayer && curPlayer.id === appState.playerId && !ms.winnerId;
-      document.getElementById('monoTurnBadge').textContent = ms.winnerId
-        ? `🏆 ПОБЕДА`
-        : `ХОД: ${curPlayer ? curPlayer.name : '—'}`;
+      const d = ms.lastDice || [0, 0];
+      document.getElementById('monoLastDiceBadge').textContent = d[0] > 0 ? `🎲 ${d[0]} + ${d[1]} = ${d[0] + d[1]}` : '🎲 —';
 
-      // Полоса игроков
+      // Карточки участников
       const strip = document.getElementById('monoPlayersStrip');
       strip.innerHTML = '';
-      const orderedPlayers = (ms.turnOrder || []).map(id => ms.mPlayers[id]).filter(Boolean);
-      orderedPlayers.forEach(mp => {
-        const hero = MONOPOLY_HEROES.find(h => h.id === mp.heroId) || MONOPOLY_HEROES[0];
-        const isActive = curPlayer && curPlayer.id === mp.id && !ms.winnerId;
+      turnOrder.forEach(pid => {
+        const p = mpMap[pid];
+        if (!p) return;
+        const hero = MONOPOLY_HEROES.find(h => h.id === p.heroId) || MONOPOLY_HEROES[0];
+        const isTurn = pid === activePlayerId;
+        const tile = MONOPOLY_BOARD[p.pos || 0];
         const card = document.createElement('div');
-        card.className = `p-2.5 rounded-xl border text-xs transition-all ${
-          mp.bankrupt
-            ? 'bg-club-bg/40 border-white/5 opacity-45'
-            : isActive
-              ? 'bg-emerald-500/15 border-emerald-400 shadow-lg shadow-emerald-500/15'
-              : 'bg-club-surface border-white/10'
-        }`;
+        card.className = `p-3 rounded-2xl border flex items-center justify-between gap-2 ${isTurn ? 'bg-emerald-500/15 border-emerald-400 shadow-lg shadow-emerald-500/10' : 'bg-club-bg/90 border-white/10'}`;
         card.innerHTML = `
-          <div class="flex items-center justify-between gap-1">
-            <span class="font-bold text-white truncate">${hero.emoji} ${escapeHtml(mp.name)}</span>
-            ${mp.inJail ? '<span class="text-[10px] text-rose-400">⛓️</span>' : ''}
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style="background:${hero.color}33; border:1px solid ${hero.color}">${hero.emoji}</div>
+            <div class="min-w-0">
+              <div class="font-bold text-xs sm:text-sm text-white truncate">
+                ${escapeHtml(p.name)} <span class="text-slate-400 font-normal">(${escapeHtml(hero.name)})</span>
+              </div>
+              <div class="text-[10px] text-slate-400 truncate">📍 ${escapeHtml(tile?.name || 'Старт')}</div>
+            </div>
           </div>
-          <div class="font-mono text-xs font-extrabold ${mp.bankrupt ? 'text-rose-400' : 'text-club-gold'} mt-0.5">
-            ${mp.bankrupt ? 'БАНКРОТ' : formatTenge(mp.cash)}
+          <div class="text-right shrink-0">
+            <div class="font-mono text-xs sm:text-sm font-black ${p.money < 0 ? 'text-rose-400' : 'text-club-gold'}">${formatMoney(p.money)}</div>
+            ${isTurn ? '<span class="text-[9px] font-mono font-bold text-emerald-300 uppercase">● ХОДИТ</span>' : ''}
           </div>
         `;
         strip.appendChild(card);
       });
 
-      // Баннер голосования за инфляцию
-      const infBanner = document.getElementById('monoInflationVoteBanner');
-      if (ms.activeInflationVote) {
-        infBanner.classList.remove('hidden');
-        const votes = ms.activeInflationVote.votes || {};
-        const alivePlayers = orderedPlayers.filter(p => !p.bankrupt);
-        document.getElementById('monoInfVoteCounter').textContent = `${Object.keys(votes).length} / ${alivePlayers.length}`;
-        document.getElementById('monoInfVoteDesc').textContent =
-          `${ms.activeInflationVote.proposerName} предложил поднять цены и ренту на +5%!`;
-      } else {
-        infBanner.classList.add('hidden');
-      }
-
-      // Баннер входящего тайного обмена (видит только адресат!)
-      const tradeBanner = document.getElementById('monoIncomingTradeBanner');
-      if (ms.pendingTrade && ms.pendingTrade.toId === appState.playerId) {
-        tradeBanner.classList.remove('hidden');
-        const pt = ms.pendingTrade;
-        const giveNames = (pt.fromTiles || []).map(idx => MONOPOLY_TILES[idx]?.short).join(', ') || 'нет участков';
-        const wantNames = (pt.toTiles || []).map(idx => MONOPOLY_TILES[idx]?.short).join(', ') || 'нет участков';
-        document.getElementById('monoIncomingTradeSummary').innerHTML =
-          `<strong>${escapeHtml(pt.fromName)}</strong> предлагает: <span class="text-emerald-300">${escapeHtml(giveNames)} + ${formatTenge(pt.fromCash)}</span> в обмен на ваши: <span class="text-club-gold">${escapeHtml(wantNames)} + ${formatTenge(pt.toCash)}</span>.`;
-      } else {
-        tradeBanner.classList.add('hidden');
-      }
-
-      // Рендер 40 клеток поля 11x11
+      // Отрисовка 40 клеток поля вокруг центра
       const boardGrid = document.getElementById('monoBoardGrid');
-      boardGrid.querySelectorAll('.mono-cell').forEach(el => el.remove());
+      boardGrid.querySelectorAll('.mono-tile-cell').forEach(el => el.remove());
 
-      const playerColors = {};
-      const chipColors = ['#fbbf24', '#34d399', '#60a5fa', '#f472b6', '#a78bfa', '#fb923c'];
-      orderedPlayers.forEach((p, idx) => { playerColors[p.id] = chipColors[idx % chipColors.length]; });
-
-      MONOPOLY_TILES.forEach(tile => {
-        const { row, col } = getMonopolyGridCoords(tile.idx);
-        const ownerInfo = ms.owners?.[String(tile.idx)];
-        const ownerPlayer = ownerInfo ? ms.mPlayers[ownerInfo.ownerId] : null;
-        const groupColor = MONOPOLY_GROUP_COLORS[tile.group] || null;
+      MONOPOLY_BOARD.forEach(tile => {
+        const { row, col } = getBoardGridCoords(tile.idx);
+        const propState = (ms.properties || {})[String(tile.idx)];
+        const ownerObj = propState?.ownerId ? mpMap[propState.ownerId] : null;
+        const ownerHero = ownerObj ? MONOPOLY_HEROES.find(h => h.id === ownerObj.heroId) : null;
 
         const cell = document.createElement('div');
-        cell.className = 'mono-cell p-0.5 sm:p-1';
+        cell.className = 'mono-tile-cell rounded-md bg-club-surface border border-white/10 p-0.5 flex flex-col justify-between overflow-hidden relative select-none';
         cell.style.gridRow = String(row);
         cell.style.gridColumn = String(col);
 
-        if (ownerPlayer) {
-          cell.style.borderColor = playerColors[ownerPlayer.id] || '#fbbf24';
-          cell.style.boxShadow = `inset 0 0 8px ${playerColors[ownerPlayer.id]}33`;
-        }
-
-        const stars = ownerInfo?.stars || 0;
-        const starsText = stars === 5 ? '👑' : stars > 0 ? '★'.repeat(stars) : '';
-        const priceOrRent = tile.type === 'prop' || tile.type === 'station' || tile.type === 'utility'
-          ? (ownerInfo ? `${Math.round(getTileEffectiveRent(tile, ms) / 1000)}к` : `${Math.round(getTileEffectivePrice(tile, ms) / 1000)}к`)
-          : (tile.icon || '');
-
-        // Фишки игроков на этой клетке
-        const playersHere = orderedPlayers.filter(p => !p.bankrupt && p.pos === tile.idx);
+        const playersHere = turnOrder.map(pid => mpMap[pid]).filter(p => p && (p.pos || 0) === tile.idx);
         const tokensHtml = playersHere.map(p => {
           const h = MONOPOLY_HEROES.find(x => x.id === p.heroId) || MONOPOLY_HEROES[0];
-          return `<span title="${escapeHtml(p.name)}" class="text-[10px] sm:text-xs leading-none drop-shadow">${h.emoji}</span>`;
+          return `<span title="${escapeHtml(p.name)}" class="text-[10px] sm:text-xs leading-none">${h.emoji}</span>`;
         }).join('');
 
+        const starsHtml = propState?.stars > 0 ? `<span class="text-[7px] text-club-gold leading-none">${'★'.repeat(propState.stars)}</span>` : '';
+
         cell.innerHTML = `
-          ${groupColor ? `<div style="background:${groupColor}" class="h-1 sm:h-1.5 w-full rounded-sm shrink-0"></div>` : ''}
-          <div class="text-[7px] sm:text-[9px] font-bold text-white leading-tight truncate text-center px-0.5">
-            ${escapeHtml(tile.short)}
-          </div>
-          ${starsText ? `<div class="text-[7px] text-amber-300 text-center leading-none">${starsText}</div>` : ''}
-          <div class="flex items-center justify-center gap-0.5 flex-wrap min-h-[12px]">
-            ${tokensHtml}
-          </div>
-          <div class="font-mono text-[7px] sm:text-[8px] font-extrabold ${ownerInfo ? 'text-emerald-300' : 'text-slate-400'} text-center leading-none">
-            ${priceOrRent}
-          </div>
+          <div class="h-1.5 w-full rounded-sm shrink-0" style="background:${ownerHero ? ownerHero.color : tile.color}"></div>
+          <div class="text-[6px] sm:text-[7px] font-bold text-slate-200 leading-[1.05] text-center line-clamp-2 px-0.5">${escapeHtml(tile.name)}</div>
+          <div class="flex items-center justify-center gap-0.5 min-h-[12px]">${tokensHtml}${starsHtml}</div>
         `;
-
-        cell.addEventListener('click', () => {
-          SoundFX.tap();
-          openMonoTileModal(tile.idx);
-        });
-
+        cell.title = `${tile.name}${tile.price > 0 ? ` • Цена: ${formatMoney(tile.price)}` : ''}`;
         boardGrid.appendChild(cell);
       });
 
-      // Лог и кубики в центре поля
-      const d = ms.lastDice || [0, 0];
-      document.getElementById('monoDiceVisualBadge').textContent = d[0] > 0 ? `🎲 ${d[0]} : ${d[1]}` : '🎲 — : —';
-      document.getElementById('monoEventLogBox').innerHTML = (ms.log || [])
-        .map((line, i) => `<div class="${i === 0 ? 'text-white font-semibold' : 'text-slate-400'}">• ${escapeHtml(line)}</div>`)
-        .join('');
+      // Центральная карточка информации
+      document.getElementById('monoCenterTileTitle').textContent = ms.activeCardTitle || 'По одной тропинке';
+      document.getElementById('monoCenterTileDesc').textContent = ms.activeCardDesc || '';
+      document.getElementById('monoCenterTileMeta').textContent = ms.activeCardMeta || '';
 
-      // Управление центром поля
-      const turnControls = document.getElementById('monoTurnControlsWrap');
-      const buyWrap = document.getElementById('monoBuyDecisionWrap');
-      const auctionWrap = document.getElementById('monoAuctionWrap');
-      const waitWrap = document.getElementById('monoWaitOtherTurnWrap');
+      // Кнопки действий в центре
+      const actionsArea = document.getElementById('monoActionButtonsArea');
+      actionsArea.innerHTML = '';
 
-      turnControls.classList.add('hidden');
-      buyWrap.classList.add('hidden');
-      auctionWrap.classList.add('hidden');
-      waitWrap.classList.add('hidden');
+      if (ms.phase === 'auction' && ms.auction) {
+        const auc = ms.auction;
+        const myP = mpMap[appState.playerId];
+        const nextBid = (auc.currentBid || 0) + 20000;
+        const canBid = myP && myP.money >= nextBid && !(auc.passed || {})[appState.playerId];
 
-      if (ms.winnerId) {
-        const winP = ms.mPlayers[ms.winnerId];
-        document.getElementById('monoWinnerBanner').classList.remove('hidden');
-        document.getElementById('monoWinnerName').textContent = winP ? winP.name : 'Чемпион';
-      } else {
-        document.getElementById('monoWinnerBanner').classList.add('hidden');
+        const info = document.createElement('div');
+        info.className = 'text-[10px] sm:text-xs text-amber-300 font-bold text-center';
+        info.textContent = `🔨 Аукцион за «${auc.tileName}»: ставка ${formatMoney(auc.currentBid)} (${auc.leaderName || 'никто'})`;
+        actionsArea.appendChild(info);
 
-        if (ms.turnPhase === 'auction' && ms.auction) {
-          auctionWrap.classList.remove('hidden');
-          const aTile = MONOPOLY_TILES[ms.auction.tileIdx];
-          const leaderP = ms.auction.leaderId ? ms.mPlayers[ms.auction.leaderId] : null;
-          const nextBid = Math.round(ms.auction.currentBid * 1.2);
-          document.getElementById('monoAuctionTileName').textContent = aTile ? aTile.name : 'Участок';
-          document.getElementById('monoAuctionCurBid').textContent = formatTenge(ms.auction.currentBid);
-          document.getElementById('monoAuctionLeader').textContent = leaderP ? `Лидер: ${leaderP.name}` : 'Ставок пока нет';
+        const row = document.createElement('div');
+        row.className = 'flex gap-1.5 justify-center';
+        row.innerHTML = `
+          <button type="button" id="monoAucBidBtn" ${!canBid ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl bg-club-gold text-club-bg font-display text-[10px] sm:text-xs font-black uppercase disabled:opacity-35">+20 000 ₸</button>
+          <button type="button" id="monoAucPassBtn" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-rose-500/30 text-slate-200 font-display text-[10px] sm:text-xs font-black uppercase">Пас</button>
+        `;
+        row.querySelector('#monoAucBidBtn').addEventListener('click', () => handleMonopolyAuctionBid(room));
+        row.querySelector('#monoAucPassBtn').addEventListener('click', () => handleMonopolyAuctionPass(room));
+        actionsArea.appendChild(row);
+      } else if (!amActive) {
+        const waitEl = document.createElement('div');
+        waitEl.className = 'text-center text-[11px] text-slate-400 font-semibold py-1';
+        waitEl.textContent = `⏳ Ждём ход игрока ${activePlayer?.name || ''}…`;
+        actionsArea.appendChild(waitEl);
+      } else if (ms.phase === 'roll') {
+        const rollBtn = document.createElement('button');
+        rollBtn.type = 'button';
+        rollBtn.className = 'w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 text-club-bg font-display text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg active:scale-95 transition-all';
+        rollBtn.textContent = 'Бросить кубики 🎲';
+        rollBtn.addEventListener('click', () => handleMonopolyRollDice(room));
+        actionsArea.appendChild(rollBtn);
+      } else if (ms.phase === 'action') {
+        const curTile = MONOPOLY_BOARD[activePlayer?.pos || 0];
+        const propState = (ms.properties || {})[String(curTile.idx)];
+        const isBuyable = (curTile.type === 'prop' || curTile.type === 'taxi') && !propState;
+        const hero = MONOPOLY_HEROES.find(h => h.id === activePlayer?.heroId) || MONOPOLY_HEROES[0];
+        const finalPrice = hero.id === 'suyenish' ? Math.round(curTile.price * 0.85) : curTile.price;
 
-          const myMp = ms.mPlayers[appState.playerId];
-          const passed = Boolean(ms.auction.passed?.[appState.playerId]);
-          const btnsRow = document.getElementById('monoAuctionBtnsRow');
-          btnsRow.classList.toggle('hidden', !myMp || myMp.bankrupt || passed);
-          const raiseBtn = document.getElementById('monoAuctionRaiseBtn');
-          raiseBtn.textContent = `Поднять (${formatTenge(nextBid)}) ⬆️`;
-          raiseBtn.disabled = !myMp || myMp.cash < nextBid || ms.auction.leaderId === appState.playerId;
-        } else if (isMyTurn) {
-          if (ms.turnPhase === 'buy_or_auction') {
-            buyWrap.classList.remove('hidden');
-            const curTile = MONOPOLY_TILES[curPlayer.pos];
-            let price = getTileEffectivePrice(curTile, ms);
-            if (curPlayer.heroId === 'broker') price = Math.round(price * 0.9);
-            document.getElementById('monoBuyTileName').textContent = curTile.name;
-            document.getElementById('monoBuyTilePrice').textContent = formatTenge(price);
-            document.getElementById('monoBuyTileRent').textContent = formatTenge(getTileEffectiveRent(curTile, ms));
-            document.getElementById('monoBuyNowBtn').disabled = curPlayer.cash < price;
-          } else {
-            turnControls.classList.remove('hidden');
-            const rollBtn = document.getElementById('monoRollDiceBtn');
-            const jailRow = document.getElementById('monoJailOptionsRow');
-            const endBtn = document.getElementById('monoEndTurnBtn');
-            const ultBtn = document.getElementById('monoUseUltBtn');
+        const row = document.createElement('div');
+        row.className = 'flex flex-wrap gap-1.5 justify-center';
 
-            if (ms.turnPhase === 'roll') {
-              if (curPlayer.inJail) {
-                rollBtn.classList.add('hidden');
-                jailRow.classList.remove('hidden');
-                const bailCost = curPlayer.heroId === 'lawyer' ? 0 : MONOPOLY_JAIL_BAIL;
-                document.getElementById('monoPayJailBtn').textContent = bailCost === 0 ? 'Выйти бесплатно (Юрист) ⚖️' : `Выйти за 15 000 ₸ 💸`;
-                document.getElementById('monoPayJailBtn').disabled = curPlayer.cash < bailCost;
-              } else {
-                rollBtn.classList.remove('hidden');
-                jailRow.classList.add('hidden');
-              }
-              endBtn.classList.add('hidden');
-            } else {
-              rollBtn.classList.add('hidden');
-              jailRow.classList.add('hidden');
-              endBtn.classList.remove('hidden');
-            }
+        if (isBuyable) {
+          const canAfford = (activePlayer?.money || 0) >= finalPrice;
+          const buyBtn = document.createElement('button');
+          buyBtn.type = 'button';
+          buyBtn.disabled = !canAfford;
+          buyBtn.className = 'px-3 py-2 rounded-xl bg-club-gold text-club-bg font-display text-[10px] sm:text-xs font-black uppercase disabled:opacity-35';
+          buyBtn.textContent = `Купить (${formatMoney(finalPrice)})`;
+          buyBtn.addEventListener('click', () => handleMonopolyBuyProperty(room, curTile, finalPrice));
+          row.appendChild(buyBtn);
 
-            ultBtn.disabled = Boolean(curPlayer.ultUsed);
-          }
+          const aucBtn = document.createElement('button');
+          aucBtn.type = 'button';
+          aucBtn.className = 'px-3 py-2 rounded-xl bg-indigo-500/25 border border-indigo-400/50 text-indigo-200 font-display text-[10px] sm:text-xs font-black uppercase';
+          aucBtn.textContent = 'На аукцион 🔨';
+          aucBtn.addEventListener('click', () => handleMonopolyStartAuction(room, curTile));
+          row.appendChild(aucBtn);
+        }
+
+        const endTurnBtn = document.createElement('button');
+        endTurnBtn.type = 'button';
+        endTurnBtn.className = 'px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-display text-[10px] sm:text-xs font-black uppercase';
+        endTurnBtn.textContent = 'Завершить ход →';
+        endTurnBtn.addEventListener('click', () => handleMonopolyNextTurn(room));
+        row.appendChild(endTurnBtn);
+
+        actionsArea.appendChild(row);
+      }
+
+      // Панель моего героя и его владений
+      const myMonoPlayer = mpMap[appState.playerId];
+      if (myMonoPlayer) {
+        const myHero = MONOPOLY_HEROES.find(h => h.id === myMonoPlayer.heroId) || MONOPOLY_HEROES[0];
+        document.getElementById('monoMyHeroTitle').textContent = `${myHero.emoji} ${myHero.name}`;
+        document.getElementById('monoMyHeroDesc').textContent = `${myHero.passive} | Ульта «${myHero.ultName}»: ${myHero.ultDesc}`;
+
+        const ultBtn = document.getElementById('monoUseUltimateBtn');
+        ultBtn.disabled = Boolean(myMonoPlayer.ultUsed) || !amActive;
+        ultBtn.textContent = myMonoPlayer.ultUsed ? '✓ Ульта использована' : `⚡ ${myHero.ultName}`;
+
+        const myPropsBox = document.getElementById('monoMyPropertiesList');
+        myPropsBox.innerHTML = '';
+        const myOwnedTiles = MONOPOLY_BOARD.filter(t => (ms.properties || {})[String(t.idx)]?.ownerId === appState.playerId);
+
+        if (myOwnedTiles.length === 0) {
+          myPropsBox.innerHTML = `<span class="text-xs text-slate-500 italic">Пока нет купленных локаций…</span>`;
         } else {
-          waitWrap.classList.remove('hidden');
-          document.getElementById('monoOtherTurnName').textContent = curPlayer ? curPlayer.name : 'Игрок';
+          myOwnedTiles.forEach(t => {
+            const st = (ms.properties || {})[String(t.idx)];
+            const stars = st.stars || 0;
+            const starCost = Math.round(t.price * 0.5);
+            const canUpgrade = amActive && t.type === 'prop' && stars < 5 && myMonoPlayer.money >= starCost;
+
+            const pill = document.createElement('div');
+            pill.className = 'px-2.5 py-1.5 rounded-xl bg-club-bg border border-white/10 text-xs flex items-center gap-2';
+            pill.innerHTML = `
+              <span class="font-bold text-white">${escapeHtml(t.name)}</span>
+              <span class="text-club-gold font-mono">${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}</span>
+              ${t.type === 'prop' && stars < 5 ? `<button type="button" ${!canUpgrade ? 'disabled' : ''} class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold disabled:opacity-30">+★ (${formatMoney(starCost)})</button>` : ''}
+            `;
+            const upBtn = pill.querySelector('button');
+            if (upBtn) {
+              upBtn.addEventListener('click', () => handleMonopolyUpgradeStar(room, t, starCost));
+            }
+            myPropsBox.appendChild(pill);
+          });
         }
       }
 
-      // Инфо о моём герое внизу
-      const me = ms.mPlayers[appState.playerId];
-      if (me) {
-        const myHero = MONOPOLY_HEROES.find(h => h.id === me.heroId) || MONOPOLY_HEROES[0];
-        document.getElementById('monoMyHeroEmoji').textContent = myHero.emoji;
-        document.getElementById('monoMyHeroName').textContent = myHero.name;
-        document.getElementById('monoMyHeroPassive').textContent = myHero.passive;
-        document.getElementById('monoMyUltStatus').textContent = me.ultUsed ? 'Ульта: Использована' : `⚡ ${myHero.ultName}: Готова`;
-      }
+      // Хроника событий
+      const logList = document.getElementById('monoLogList');
+      logList.innerHTML = '';
+      (ms.logs || []).slice().reverse().forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'border-b border-white/5 pb-1';
+        div.textContent = entry;
+        logList.appendChild(div);
+      });
     }
 
-    async function handleMonoRollDice() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms) return;
-      const cur = getMonoCurrentPlayer(ms);
-      if (!cur || cur.id !== appState.playerId || ms.turnPhase !== 'roll') return;
+    async function handleMonopolyRollDice(room) {
+      const ms = room.monoState;
+      const mp = (room.monoPlayers || {})[appState.playerId];
+      if (!ms || !mp || ms.phase !== 'roll') return;
 
       const d1 = Math.floor(Math.random() * 6) + 1;
       const d2 = Math.floor(Math.random() * 6) + 1;
-      const isDouble = d1 === d2;
       const steps = d1 + d2;
+      const isDouble = d1 === d2;
+      const hero = MONOPOLY_HEROES.find(h => h.id === mp.heroId) || MONOPOLY_HEROES[0];
 
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      const p = nextMs.mPlayers[cur.id];
-      nextMs.lastDice = [d1, d2];
+      let nextMoney = mp.money;
+      const newLogs = [...(ms.logs || [])];
+      let nextPos = ((mp.pos || 0) + steps) % 40;
 
-      // Пассивка Рантье в начале броска
-      if (p.heroId === 'landlord') {
-        p.cash += 5000;
+      // Проверка прохождения Старта
+      if ((mp.pos || 0) + steps >= 40) {
+        const passBonus = 200000 + (hero.id === 'alisher' ? 50000 : 0);
+        nextMoney += passBonus;
+        newLogs.push(`🏁 ${mp.name} прошёл Старт и получил +${formatMoney(passBonus)}.`);
       }
 
-      // Если игрок в Изоляторе и пытается выбросить дубль
-      if (p.inJail) {
-        if (isDouble) {
-          p.inJail = false;
-          p.jailTurns = 0;
-          nextMs.log = appendMonoLog(nextMs, `${p.name} выбросил дубль [${d1}:${d2}] и вышел из Изолятора!`);
+      if (isDouble && hero.id === 'nazerke') {
+        nextMoney += 80000;
+        newLogs.push(`🌸 Пассивка Назерке: дубль приносит +80 000 ₸!`);
+      }
+
+      const landedTile = MONOPOLY_BOARD[nextPos];
+      let cardTitle = landedTile.name;
+      let cardDesc = `${mp.name} выбросил ${d1}+${d2}=${steps} и попал на «${landedTile.name}».`;
+      let cardMeta = '';
+
+      if (landedTile.type === 'gotojail') {
+        nextPos = 10;
+        cardTitle = 'Разборки на кухне!';
+        cardDesc = `${mp.name} отправляется на кухню до выяснения обстоятельств.`;
+        newLogs.push(`🔥 ${mp.name} попал на «Разборки на кухне»!`);
+      } else if (landedTile.type === 'tax') {
+        if (hero.id === 'erkezhan') {
+          cardDesc += ' Но пассивка Еркежан освобождает от расхода!';
+          newLogs.push(`🔑 Еркежан избежала расхода на клетке «${landedTile.name}».`);
         } else {
-          p.jailTurns = (p.jailTurns || 0) + 1;
-          if (p.jailTurns >= 3) {
-            p.inJail = false;
-            p.jailTurns = 0;
-            nextMs.log = appendMonoLog(nextMs, `${p.name} отсидел 3 хода и вышел из Изолятора.`);
+          nextMoney -= landedTile.rent;
+          cardDesc += ` Списано ${formatMoney(landedTile.rent)}.`;
+          newLogs.push(`💸 ${mp.name} оплатил ${formatMoney(landedTile.rent)} (${landedTile.name}).`);
+        }
+      } else if (landedTile.type === 'event') {
+        const ev = MONOPOLY_EVENTS[Math.floor(Math.random() * MONOPOLY_EVENTS.length)];
+        const extraRamazan = hero.id === 'ramazan' ? 40000 : 0;
+        nextMoney += ev.delta + extraRamazan;
+        cardTitle = '📜 Сюжетная карта';
+        cardDesc = ev.text;
+        cardMeta = `${ev.delta >= 0 ? '+' : ''}${formatMoney(ev.delta)}${extraRamazan ? ' (+40 000 ₸ инсайдеру Рамазану)' : ''}`;
+        newLogs.push(`📜 ${mp.name}: ${ev.text} (${cardMeta})`);
+      } else if (landedTile.type === 'taxi') {
+        if (hero.id === 'asulan') {
+          nextPos = (nextPos + 10) % 40;
+          cardTitle = `🚕 Ночной таксист Асулана`;
+          cardDesc = `Асулан бесплатно домчал по трассе до клетки «${MONOPOLY_BOARD[nextPos].name}»!`;
+          newLogs.push(`🚗 Асулан бесплатно проехал на ночном такси до «${MONOPOLY_BOARD[nextPos].name}».`);
+        } else {
+          cardMeta = `Цена маршрута: ${formatMoney(landedTile.price)}`;
+        }
+      } else if (landedTile.type === 'prop') {
+        const propState = (ms.properties || {})[String(landedTile.idx)];
+        if (!propState) {
+          const buyPrice = hero.id === 'suyenish' ? Math.round(landedTile.price * 0.85) : landedTile.price;
+          cardMeta = `Свободно • Цена: ${formatMoney(buyPrice)} | Аренда: ${formatMoney(landedTile.rent)}`;
+        } else if (propState.ownerId === appState.playerId) {
+          cardMeta = `Это твоя локация (${propState.stars || 0} ★)`;
+        } else {
+          const ownerPlayer = (room.monoPlayers || {})[propState.ownerId];
+          const ownerHero = ownerPlayer ? MONOPOLY_HEROES.find(h => h.id === ownerPlayer.heroId) : null;
+          let rentAmount = landedTile.rent * (1 + (propState.stars || 0) * 0.6);
+          if (ownerHero?.id === 'zhambyl' && landedTile.idx >= 26) rentAmount *= 1.25;
+          if (ownerHero?.id === 'duman' && (landedTile.idx === 12 || landedTile.idx === 28)) rentAmount *= 1.2;
+          if (ownerHero?.id === 'dilnaz') rentAmount *= 1.15;
+          rentAmount = Math.round(rentAmount);
+
+          if ((mp.hypnosisTurns || 0) > 0) {
+            cardDesc += ' Гипноз Дильназ освобождает от оплаты аренды!';
           } else {
-            nextMs.turnPhase = 'end';
-            nextMs.log = appendMonoLog(nextMs, `${p.name} не выбросил дубль [${d1}:${d2}] и остаётся в Изоляторе.`);
-            SoundFX.tap();
-            await updateRoomFields(room.code, { monopolyState: nextMs });
-            return;
-          }
-        }
-      }
-
-      // Проверка 3 дублей подряд
-      if (isDouble) {
-        nextMs.doublesCount = (nextMs.doublesCount || 0) + 1;
-        if (p.heroId === 'gambler') p.cash += 12000;
-        if (nextMs.doublesCount >= 3) {
-          p.pos = 10;
-          p.inJail = true;
-          p.jailTurns = 0;
-          nextMs.doublesCount = 0;
-          nextMs.turnPhase = 'end';
-          nextMs.log = appendMonoLog(nextMs, `${p.name} выбросил 3 дубля подряд и отправляется в Изолятор!`);
-          SoundFX.duelAlarm();
-          await updateRoomFields(room.code, { monopolyState: nextMs });
-          return;
-        }
-      } else {
-        nextMs.doublesCount = 0;
-      }
-
-      // Перемещение по полю
-      const oldPos = p.pos;
-      const newPos = (oldPos + steps) % 40;
-      if (oldPos + steps >= 40) {
-        const goBonus = p.heroId === 'tycoon' ? Math.round(MONOPOLY_PASS_GO * 1.15) : MONOPOLY_PASS_GO;
-        p.cash += goBonus;
-        nextMs.log = appendMonoLog(nextMs, `${p.name} прошёл «Старт» и получил +${formatTenge(goBonus)}!`);
-      }
-      p.pos = newPos;
-
-      const tile = MONOPOLY_TILES[newPos];
-      nextMs.log = appendMonoLog(nextMs, `${p.name} выбросил [${d1}:${d2}] (${steps}) → «${tile.name}».`);
-
-      await applyMonoTileLanding(room.code, nextMs, p, tile, isDouble);
-    }
-
-    async function applyMonoTileLanding(code, nextMs, p, tile, isDouble) {
-      if (tile.type === 'gotojail') {
-        p.pos = 10;
-        p.inJail = true;
-        p.jailTurns = 0;
-        nextMs.doublesCount = 0;
-        nextMs.turnPhase = 'end';
-        nextMs.log = appendMonoLog(nextMs, `🚨 ${p.name} отправлен в Изолятор!`);
-        SoundFX.duelAlarm();
-      } else if (tile.type === 'tax') {
-        if (p.riskShield) {
-          p.riskShield = false;
-          nextMs.log = appendMonoLog(nextMs, `♟️ Стратег защитил ${p.name} от уплаты налога!`);
-        } else {
-          const taxAmt = Math.round(tile.amount * getInflationMultiplier(nextMs));
-          p.cash -= taxAmt;
-          nextMs.log = appendMonoLog(nextMs, `💸 ${p.name} оплатил налог: -${formatTenge(taxAmt)}.`);
-        }
-        nextMs.turnPhase = isDouble ? 'roll' : 'end';
-        SoundFX.tap();
-      } else if (tile.type === 'chance' || tile.type === 'risk') {
-        const card = MONOPOLY_CARDS[Math.floor(Math.random() * MONOPOLY_CARDS.length)];
-        nextMs.log = appendMonoLog(nextMs, `🃏 ${tile.name}: ${card.text}`);
-
-        if (card.gotoJail) {
-          p.pos = 10;
-          p.inJail = true;
-          p.jailTurns = 0;
-          nextMs.doublesCount = 0;
-          nextMs.turnPhase = 'end';
-          SoundFX.duelAlarm();
-        } else {
-          if (card.moveTo !== undefined) p.pos = card.moveTo;
-          if (card.delta) {
-            if (card.delta < 0 && p.riskShield) {
-              p.riskShield = false;
-              nextMs.log = appendMonoLog(nextMs, `♟️ Щит Стратега отменил штраф!`);
-            } else {
-              p.cash += card.delta;
-              if (card.delta > 0 && p.heroId === 'scout') p.cash += 10000;
-            }
-          }
-          if (card.fromEach) {
-            Object.values(nextMs.mPlayers).forEach(other => {
-              if (other.id !== p.id && !other.bankrupt) {
-                other.cash -= card.fromEach;
-                p.cash += card.fromEach;
-              }
+            nextMoney -= rentAmount;
+            const ownerNextMoney = (ownerPlayer?.money || 0) + rentAmount;
+            cardDesc += ` Аренда владельцу (${ownerPlayer?.name}): ${formatMoney(rentAmount)}.`;
+            newLogs.push(`💰 ${mp.name} заплатил ${formatMoney(rentAmount)} игроку ${ownerPlayer?.name} за «${landedTile.name}».`);
+            await updateRoomFields(room.code, {
+              [`monoPlayers.${propState.ownerId}.money`]: ownerNextMoney
             });
           }
-          if (card.toEach) {
-            Object.values(nextMs.mPlayers).forEach(other => {
-              if (other.id !== p.id && !other.bankrupt) {
-                p.cash -= card.toEach;
-                other.cash += card.toEach;
-              }
-            });
-          }
-          nextMs.turnPhase = isDouble ? 'roll' : 'end';
-          SoundFX.flipCard();
         }
-      } else if (tile.type === 'prop' || tile.type === 'station' || tile.type === 'utility') {
-        const ownerInfo = nextMs.owners?.[String(tile.idx)];
-        if (!ownerInfo) {
-          nextMs.turnPhase = 'buy_or_auction';
-          nextMs.pendingDouble = isDouble;
-          SoundFX.place(2);
-        } else if (ownerInfo.ownerId !== p.id) {
-          const ownerP = nextMs.mPlayers[ownerInfo.ownerId];
-          if (ownerP && !ownerP.bankrupt) {
-            if (p.rentShield) {
-              p.rentShield = false;
-              nextMs.log = appendMonoLog(nextMs, `🕊️ Дипломат активировал иммунитет и не платит аренду!`);
-            } else {
-              let rent = getTileEffectiveRent(tile, nextMs);
-              if (p.heroId === 'diplomat') rent = Math.round(rent * 0.75);
-              if (ownerP.heroId === 'raider') rent = Math.round(rent * 1.15);
-              p.cash -= rent;
-              ownerP.cash += rent;
-              nextMs.log = appendMonoLog(nextMs, `💰 ${p.name} заплатил аренду ${formatTenge(rent)} игроку ${ownerP.name}.`);
-            }
-          }
-          nextMs.turnPhase = isDouble ? 'roll' : 'end';
-          SoundFX.tap();
-        } else {
-          nextMs.turnPhase = isDouble ? 'roll' : 'end';
-          SoundFX.tap();
-        }
-      } else {
-        nextMs.turnPhase = isDouble ? 'roll' : 'end';
-        SoundFX.tap();
       }
 
-      checkMonopolyBankruptcies(nextMs);
-      await updateRoomFields(code, { monopolyState: nextMs });
-    }
-
-    function checkMonopolyBankruptcies(nextMs) {
-      Object.values(nextMs.mPlayers).forEach(mp => {
-        if (mp.bankrupt) return;
-        if (mp.cash < 0) {
-          // Автопродажа звёзд и участков по 50% номинала для покрытия долга
-          const ownedTiles = Object.entries(nextMs.owners || {}).filter(([, info]) => info.ownerId === mp.id);
-          for (const [idxStr, info] of ownedTiles) {
-            if (mp.cash >= 0) break;
-            const tile = MONOPOLY_TILES[Number(idxStr)];
-            while (info.stars > 0 && mp.cash < 0) {
-              info.stars--;
-              mp.cash += Math.round((tile.houseCost || 10000) * 0.5);
-            }
-            if (mp.cash < 0) {
-              mp.cash += Math.round((tile.price || 20000) * 0.5);
-              delete nextMs.owners[idxStr];
-            }
-          }
-        }
-        if (mp.cash < 0) {
-          mp.bankrupt = true;
-          mp.cash = 0;
-          Object.entries(nextMs.owners || {}).forEach(([idxStr, info]) => {
-            if (info.ownerId === mp.id) delete nextMs.owners[idxStr];
-          });
-          nextMs.log = appendMonoLog(nextMs, `💀 ${mp.name} обанкротился и выбывает из игры!`);
-        }
+      SoundFX.flipCard();
+      await updateRoomFields(room.code, {
+        [`monoPlayers.${appState.playerId}.pos`]: nextPos,
+        [`monoPlayers.${appState.playerId}.money`]: nextMoney,
+        [`monoPlayers.${appState.playerId}.hypnosisTurns`]: Math.max(0, (mp.hypnosisTurns || 0) - 1),
+        'monoState.lastDice': [d1, d2],
+        'monoState.phase': 'action',
+        'monoState.activeCardTitle': cardTitle,
+        'monoState.activeCardDesc': cardDesc,
+        'monoState.activeCardMeta': cardMeta,
+        'monoState.logs': newLogs.slice(-25)
       });
-
-      const alive = Object.values(nextMs.mPlayers).filter(mp => !mp.bankrupt);
-      if (alive.length === 1 && Object.keys(nextMs.mPlayers).length > 1) {
-        nextMs.winnerId = alive[0].id;
-        SoundFX.champion();
-      }
     }
 
-    async function handleMonoBuyTile() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || ms.turnPhase !== 'buy_or_auction') return;
-      const cur = getMonoCurrentPlayer(ms);
-      if (!cur || cur.id !== appState.playerId) return;
-
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      const p = nextMs.mPlayers[cur.id];
-      const tile = MONOPOLY_TILES[p.pos];
-      let price = getTileEffectivePrice(tile, nextMs);
-      if (p.heroId === 'broker') price = Math.round(price * 0.9);
-      if (p.cash < price) return;
-
-      p.cash -= price;
-      if (p.heroId === 'banker') p.cash += Math.round(price * 0.15);
-
-      if (!nextMs.owners) nextMs.owners = {};
-      nextMs.owners[String(tile.idx)] = { ownerId: p.id, stars: 0 };
-      nextMs.turnPhase = nextMs.pendingDouble ? 'roll' : 'end';
-      nextMs.log = appendMonoLog(nextMs, `🏠 ${p.name} купил «${tile.name}» за ${formatTenge(price)}!`);
+    async function handleMonopolyBuyProperty(room, tile, price) {
+      const ms = room.monoState;
+      const mp = (room.monoPlayers || {})[appState.playerId];
+      if (!ms || !mp || mp.money < price) return;
 
       SoundFX.lockIn();
-      await updateRoomFields(room.code, { monopolyState: nextMs });
+      const newLogs = [...(ms.logs || []), `🏠 ${mp.name} приобрёл локацию «${tile.name}» за ${formatMoney(price)}.`];
+      await updateRoomFields(room.code, {
+        [`monoPlayers.${appState.playerId}.money`]: mp.money - price,
+        [`monoState.properties.${tile.idx}`]: { ownerId: appState.playerId, stars: 0 },
+        'monoState.activeCardMeta': `Куплено игроком ${mp.name}!`,
+        'monoState.logs': newLogs.slice(-25)
+      });
     }
 
-    async function handleMonoStartAuction() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || ms.turnPhase !== 'buy_or_auction') return;
-      const cur = getMonoCurrentPlayer(ms);
-      if (!cur || cur.id !== appState.playerId) return;
+    async function handleMonopolyUpgradeStar(room, tile, cost) {
+      const ms = room.monoState;
+      const mp = (room.monoPlayers || {})[appState.playerId];
+      const st = (ms.properties || {})[String(tile.idx)];
+      if (!ms || !mp || !st || st.ownerId !== appState.playerId || (st.stars || 0) >= 5 || mp.money < cost) return;
 
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      const tile = MONOPOLY_TILES[cur.pos];
-      const startBid = Math.max(5000, Math.round(getTileEffectivePrice(tile, nextMs) * 0.5));
+      const nextStars = (st.stars || 0) + 1;
+      SoundFX.place(nextStars);
+      const newLogs = [...(ms.logs || []), `⭐ ${mp.name} улучшил «${tile.name}» до ${nextStars} ★!`];
+      await updateRoomFields(room.code, {
+        [`monoPlayers.${appState.playerId}.money`]: mp.money - cost,
+        [`monoState.properties.${tile.idx}.stars`]: nextStars,
+        'monoState.logs': newLogs.slice(-25)
+      });
+    }
 
-      nextMs.turnPhase = 'auction';
-      nextMs.auction = {
-        tileIdx: tile.idx,
-        currentBid: startBid,
-        leaderId: null,
-        passed: {}
-      };
-      nextMs.log = appendMonoLog(nextMs, `🔨 Аукцион за «${tile.name}»! Старт: ${formatTenge(startBid)}.`);
-
+    async function handleMonopolyStartAuction(room, tile) {
+      const ms = room.monoState;
       SoundFX.duelAlarm();
-      await updateRoomFields(room.code, { monopolyState: nextMs });
+      await updateRoomFields(room.code, {
+        'monoState.phase': 'auction',
+        'monoState.auction': {
+          tileIdx: tile.idx,
+          tileName: tile.name,
+          currentBid: Math.round(tile.price * 0.5),
+          leaderId: null,
+          leaderName: 'Никто',
+          passed: {}
+        }
+      });
     }
 
-    async function handleMonoAuctionRaise() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || ms.turnPhase !== 'auction' || !ms.auction) return;
-      const myMp = ms.mPlayers[appState.playerId];
-      if (!myMp || myMp.bankrupt) return;
-
-      const nextBid = Math.round(ms.auction.currentBid * 1.2);
-      if (myMp.cash < nextBid) return;
-
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      nextMs.auction.currentBid = nextBid;
-      nextMs.auction.leaderId = myMp.id;
-      nextMs.log = appendMonoLog(nextMs, `⬆️ ${myMp.name} поднял ставку до ${formatTenge(nextBid)}!`);
-
-      SoundFX.place(3);
-      await resolveOrUpdateAuction(room.code, nextMs);
-    }
-
-    async function handleMonoAuctionPass() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || ms.turnPhase !== 'auction' || !ms.auction) return;
-
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      if (!nextMs.auction.passed) nextMs.auction.passed = {};
-      nextMs.auction.passed[appState.playerId] = true;
-      nextMs.log = appendMonoLog(nextMs, `🏳️ ${ms.mPlayers[appState.playerId]?.name || 'Игрок'} спасовал на аукционе.`);
+    async function handleMonopolyAuctionBid(room) {
+      const ms = room.monoState;
+      const auc = ms?.auction;
+      const mp = (room.monoPlayers || {})[appState.playerId];
+      if (!auc || !mp) return;
+      const nextBid = (auc.currentBid || 0) + 20000;
+      if (mp.money < nextBid) return;
 
       SoundFX.tap();
-      await resolveOrUpdateAuction(room.code, nextMs);
+      await updateRoomFields(room.code, {
+        'monoState.auction.currentBid': nextBid,
+        'monoState.auction.leaderId': appState.playerId,
+        'monoState.auction.leaderName': mp.name
+      });
     }
 
-    async function resolveOrUpdateAuction(code, nextMs) {
-      const alivePlayers = Object.values(nextMs.mPlayers).filter(p => !p.bankrupt);
-      const activeBidders = alivePlayers.filter(p => !nextMs.auction.passed?.[p.id]);
+    async function handleMonopolyAuctionPass(room) {
+      const ms = room.monoState;
+      const auc = ms?.auction;
+      if (!auc) return;
+      const nextPassed = { ...(auc.passed || {}), [appState.playerId]: true };
+      const allIds = ms.turnOrder || [];
+      const activeBidders = allIds.filter(id => !nextPassed[id]);
 
-      if (activeBidders.length === 0 || (activeBidders.length === 1 && nextMs.auction.leaderId === activeBidders[0].id)) {
-        const winnerId = nextMs.auction.leaderId;
-        const tile = MONOPOLY_TILES[nextMs.auction.tileIdx];
-        if (winnerId && nextMs.mPlayers[winnerId]) {
-          const winP = nextMs.mPlayers[winnerId];
-          winP.cash -= nextMs.auction.currentBid;
-          if (!nextMs.owners) nextMs.owners = {};
-          nextMs.owners[String(tile.idx)] = { ownerId: winP.id, stars: 0 };
-          nextMs.log = appendMonoLog(nextMs, `🔨 Аукцион выиграл ${winP.name} за ${formatTenge(nextMs.auction.currentBid)}!`);
-        } else {
-          nextMs.log = appendMonoLog(nextMs, `🔨 Никто не выкупил «${tile.name}» на аукционе.`);
+      if (activeBidders.length <= 1) {
+        const winnerId = auc.leaderId || activeBidders[0] || null;
+        const patch = { 'monoState.phase': 'action', 'monoState.auction': null };
+        if (winnerId && auc.leaderId) {
+          const winnerP = (room.monoPlayers || {})[winnerId];
+          patch[`monoPlayers.${winnerId}.money`] = Math.max(0, (winnerP?.money || 0) - auc.currentBid);
+          patch[`monoState.properties.${auc.tileIdx}`] = { ownerId: winnerId, stars: 0 };
+          patch['monoState.logs'] = [...(ms.logs || []), `🔨 ${winnerP?.name} забрал «${auc.tileName}» с аукциона за ${formatMoney(auc.currentBid)}!`].slice(-25);
         }
-        nextMs.auction = null;
-        nextMs.turnPhase = nextMs.pendingDouble ? 'roll' : 'end';
         SoundFX.lockIn();
-      }
-      await updateRoomFields(code, { monopolyState: nextMs });
-    }
-
-    async function handleMonoUseUlt() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms) return;
-      const cur = getMonoCurrentPlayer(ms);
-      if (!cur || cur.id !== appState.playerId || cur.ultUsed) return;
-
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      const p = nextMs.mPlayers[cur.id];
-      p.ultUsed = true;
-      const hero = MONOPOLY_HEROES.find(h => h.id === p.heroId) || MONOPOLY_HEROES[0];
-
-      const myTiles = Object.entries(nextMs.owners || {}).filter(([, info]) => info.ownerId === p.id);
-
-      if (p.heroId === 'tycoon') {
-        const gain = myTiles.length * 8000;
-        p.cash += gain;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Магната: +${formatTenge(gain)} дивидендов!`);
-      } else if (p.heroId === 'architect') {
-        const upgradeable = myTiles.filter(([idxStr, info]) => MONOPOLY_TILES[Number(idxStr)]?.type === 'prop' && (info.stars || 0) < 5);
-        if (upgradeable.length > 0) {
-          const [chosenIdx] = upgradeable[Math.floor(Math.random() * upgradeable.length)];
-          nextMs.owners[chosenIdx].stars = (nextMs.owners[chosenIdx].stars || 0) + 1;
-          nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Зодчего: бесплатная звезда на «${MONOPOLY_TILES[Number(chosenIdx)].name}»!`);
-        } else {
-          p.cash += 25000;
-          nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Зодчего: +25 000 ₸ строительного гранта!`);
-        }
-      } else if (p.heroId === 'diplomat') {
-        p.rentShield = true;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Дипломата: активирован иммунитет от следующей аренды!`);
-      } else if (p.heroId === 'raider') {
-        let stolen = 0;
-        Object.values(nextMs.mPlayers).forEach(other => {
-          if (other.id !== p.id && !other.bankrupt) {
-            other.cash -= 10000;
-            stolen += 10000;
-          }
-        });
-        p.cash += stolen;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Рейдера: собрано ${formatTenge(stolen)} дани!`);
-      } else if (p.heroId === 'gambler') {
-        const win = 25000 + Math.floor(Math.random() * 6) * 5000;
-        p.cash += win;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Авантюриста: джекпот +${formatTenge(win)}!`);
-      } else if (p.heroId === 'lawyer') {
-        p.cash += 25000;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Юриста: амнистия +25 000 ₸!`);
-      } else if (p.heroId === 'broker') {
-        p.cash += 30000;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Брокера: инсайд +30 000 ₸!`);
-      } else if (p.heroId === 'landlord') {
-        p.cash += 25000;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Рантье: сверхприбыль +25 000 ₸!`);
-      } else if (p.heroId === 'scout') {
-        p.pos = 0;
-        p.cash += MONOPOLY_PASS_GO;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Следопыта: телепорт на «Старт» (+40 000 ₸)!`);
-      } else if (p.heroId === 'banker') {
-        p.cash += 35000;
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Банкира: кредитный транш +35 000 ₸!`);
+        await updateRoomFields(room.code, patch);
       } else {
-        p.cash += 20000;
-        nextMs.turnPhase = 'roll';
-        nextMs.log = appendMonoLog(nextMs, `⚡ Ульта Стратега: +20 000 ₸ и дополнительный бросок!`);
+        await updateRoomFields(room.code, { 'monoState.auction.passed': nextPassed });
       }
-
-      SoundFX.champion();
-      await updateRoomFields(room.code, { monopolyState: nextMs });
     }
 
-    async function handleMonoEndTurn() {
+    async function handleMonopolyUseUltimate() {
       const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms) return;
-      const cur = getMonoCurrentPlayer(ms);
-      if (!cur || cur.id !== appState.playerId) return;
+      const ms = room?.monoState;
+      const mp = (room?.monoPlayers || {})[appState.playerId];
+      if (!ms || !mp || mp.ultUsed) return;
 
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      const len = nextMs.turnOrder.length;
-      let nextIdx = (nextMs.currentTurnIdx + 1) % len;
-      for (let i = 0; i < len; i++) {
-        const candId = nextMs.turnOrder[nextIdx];
-        if (!nextMs.mPlayers[candId]?.bankrupt) break;
-        nextIdx = (nextIdx + 1) % len;
+      const hero = MONOPOLY_HEROES.find(h => h.id === mp.heroId) || MONOPOLY_HEROES[0];
+      const patch = {
+        [`monoPlayers.${appState.playerId}.ultUsed`]: true
+      };
+      const logs = [...(ms.logs || []), `⚡ ${mp.name} активировал ульту «${hero.ultName}» (${hero.name})!`];
+
+      if (hero.id === 'alisher') {
+        patch[`monoPlayers.${appState.playerId}.pos`] = 0;
+        patch[`monoPlayers.${appState.playerId}.money`] = mp.money + 200000;
+      } else if (hero.id === 'suyenish' || hero.id === 'asylzhan') {
+        patch[`monoPlayers.${appState.playerId}.money`] = mp.money + 200000;
+      } else if (hero.id === 'nazerke') {
+        patch[`monoPlayers.${appState.playerId}.pos`] = 21;
+        patch[`monoPlayers.${appState.playerId}.money`] = mp.money + 180000;
+      } else if (hero.id === 'dilnaz') {
+        patch[`monoPlayers.${appState.playerId}.hypnosisTurns`] = 2;
+        patch[`monoPlayers.${appState.playerId}.money`] = mp.money + 120000;
+      } else {
+        patch[`monoPlayers.${appState.playerId}.money`] = mp.money + 150000;
       }
 
-      nextMs.currentTurnIdx = nextIdx;
-      nextMs.turnPhase = 'roll';
-      nextMs.doublesCount = 0;
-      nextMs.pendingDouble = false;
-      const nextP = nextMs.mPlayers[nextMs.turnOrder[nextIdx]];
-      nextMs.log = appendMonoLog(nextMs, `➡️ Ход переходит к игроку ${nextP ? nextP.name : 'Игрок'}.`);
+      patch['monoState.logs'] = logs.slice(-25);
+      SoundFX.champion();
+      await updateRoomFields(room.code, patch);
+      showToast(`Ульта «${hero.ultName}» активирована!`);
+    }
+
+    async function handleMonopolyNextTurn(room) {
+      const ms = room.monoState;
+      if (!ms) return;
+      const total = Math.max(1, (ms.turnOrder || []).length);
+      const nextIdx = ((ms.turnIdx || 0) + 1) % total;
+      const nextPlayerId = ms.turnOrder[nextIdx];
+      const nextPlayer = (room.monoPlayers || {})[nextPlayerId];
 
       SoundFX.tap();
-      await updateRoomFields(room.code, { monopolyState: nextMs });
-    }
-
-    function openMonoTileModal(tileIdx) {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms) return;
-      const tile = MONOPOLY_TILES[tileIdx];
-      if (!tile) return;
-
-      const ownerInfo = ms.owners?.[String(tileIdx)];
-      const ownerP = ownerInfo ? ms.mPlayers[ownerInfo.ownerId] : null;
-      const color = MONOPOLY_GROUP_COLORS[tile.group] || '#6366f1';
-
-      const badge = document.getElementById('monoTileModalColorBadge');
-      badge.style.background = color;
-      badge.textContent = tile.group ? tile.group.toUpperCase() : 'ОСОБАЯ КЛЕТКА';
-
-      document.getElementById('monoTileModalTitle').textContent = tile.name;
-      document.getElementById('monoTileModalOwner').textContent = ownerP
-        ? `Владелец: ${ownerP.name} (${ownerInfo.stars === 5 ? '👑 Отель' : `${ownerInfo.stars || 0}★`})`
-        : 'Владелец: Свободно';
-
-      const statsEl = document.getElementById('monoTileModalStats');
-      const actionsEl = document.getElementById('monoTileModalActions');
-      actionsEl.innerHTML = '';
-
-      if (tile.type === 'prop' || tile.type === 'station' || tile.type === 'utility') {
-        const price = getTileEffectivePrice(tile, ms);
-        const rent = getTileEffectiveRent(tile, ms);
-        const hCost = tile.houseCost ? getTileEffectiveHouseCost(tile, ms) : 0;
-        statsEl.innerHTML = `
-          <div class="flex justify-between"><span>Номинал участка:</span><strong class="text-white">${formatTenge(price)}</strong></div>
-          <div class="flex justify-between"><span>Текущая аренда:</span><strong class="text-emerald-300">${formatTenge(rent)}</strong></div>
-          ${hCost ? `<div class="flex justify-between"><span>Цена улучшения (+1★):</span><strong class="text-club-gold">${formatTenge(hCost)}</strong></div>` : ''}
-        `;
-
-        if (ownerInfo && ownerInfo.ownerId === appState.playerId && tile.type === 'prop') {
-          const myMp = ms.mPlayers[appState.playerId];
-          const hasMono = playerHasGroupMonopoly(ms, appState.playerId, tile.group);
-          const curStars = ownerInfo.stars || 0;
-          const realBuildCost = myMp?.heroId === 'architect' ? Math.round(hCost * 0.8) : hCost;
-
-          if (curStars < 5) {
-            const buildBtn = document.createElement('button');
-            buildBtn.type = 'button';
-            buildBtn.disabled = !hasMono || myMp.cash < realBuildCost;
-            buildBtn.className = 'w-full py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-club-bg font-display text-xs font-black uppercase';
-            buildBtn.textContent = !hasMono
-              ? 'Нужна полная монополия квартала 🔒'
-              : curStars === 4
-                ? `Построить Отель 👑 (${formatTenge(realBuildCost)})`
-                : `Построить дом +1★ (${formatTenge(realBuildCost)})`;
-
-            buildBtn.addEventListener('click', async () => {
-              const nextMs = JSON.parse(JSON.stringify(appState.roomData.monopolyState));
-              const p = nextMs.mPlayers[appState.playerId];
-              p.cash -= realBuildCost;
-              if (p.heroId === 'banker') p.cash += Math.round(realBuildCost * 0.15);
-              nextMs.owners[String(tileIdx)].stars = curStars + 1;
-              nextMs.log = appendMonoLog(nextMs, `🏗️ ${p.name} улучшил «${tile.name}» до ${curStars + 1 === 5 ? 'Отеля 👑' : `${curStars + 1}★`}!`);
-              SoundFX.lockIn();
-              document.getElementById('monoTileModal').classList.add('hidden');
-              await updateRoomFields(room.code, { monopolyState: nextMs });
-            });
-            actionsEl.appendChild(buildBtn);
-          }
-        }
-      } else {
-        statsEl.innerHTML = `<div class="text-slate-300">Специальная клетка тропинки: <strong>${escapeHtml(tile.name)}</strong>.</div>`;
-      }
-
-      document.getElementById('monoTileModal').classList.remove('hidden');
-    }
-
-    function openMonoPortfolioModal() {
-      const ms = appState.roomData?.monopolyState;
-      if (!ms || !ms.mPlayers) return;
-      const list = document.getElementById('monoPortfolioList');
-      list.innerHTML = '';
-
-      Object.values(ms.mPlayers).forEach(mp => {
-        const hero = MONOPOLY_HEROES.find(h => h.id === mp.heroId) || MONOPOLY_HEROES[0];
-        const owned = Object.entries(ms.owners || {})
-          .filter(([, info]) => info.ownerId === mp.id)
-          .map(([idxStr, info]) => {
-            const t = MONOPOLY_TILES[Number(idxStr)];
-            const st = info.stars === 5 ? '👑' : info.stars > 0 ? '★'.repeat(info.stars) : '';
-            return `${t.name} ${st}`.trim();
-          });
-
-        const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-2xl bg-club-bg border border-white/10 space-y-1.5 text-xs';
-        card.innerHTML = `
-          <div class="flex items-center justify-between">
-            <strong class="text-white text-sm">${hero.emoji} ${escapeHtml(mp.name)} (${hero.name})</strong>
-            <span class="font-mono font-bold text-club-gold">${formatTenge(mp.cash)}</span>
-          </div>
-          <div class="text-slate-300">
-            ${owned.length > 0 ? owned.map(x => `<span class="inline-block mr-1.5 mb-1 px-2 py-0.5 rounded bg-white/5 border border-white/10">${escapeHtml(x)}</span>`).join('') : '<i class="text-slate-500">Нет участков</i>'}
-          </div>
-        `;
-        list.appendChild(card);
-      });
-
-      document.getElementById('monoPortfolioModal').classList.remove('hidden');
-    }
-
-    function openMonoTradeModal() {
-      const ms = appState.roomData?.monopolyState;
-      if (!ms || !ms.mPlayers) return;
-
-      const others = Object.values(ms.mPlayers).filter(p => p.id !== appState.playerId && !p.bankrupt);
-      if (others.length === 0) {
-        showToast('Нет доступных игроков для обмена');
-        return;
-      }
-
-      appState.monoTradeMySelected.clear();
-      appState.monoTradeTheirSelected.clear();
-
-      const sel = document.getElementById('monoTradeTargetSelect');
-      sel.innerHTML = '';
-      others.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = `${p.name} (${formatTenge(p.cash)})`;
-        sel.appendChild(opt);
-      });
-
-      renderMonoTradeChecklists();
-      document.getElementById('monoTradeModal').classList.remove('hidden');
-    }
-
-    function renderMonoTradeChecklists() {
-      const ms = appState.roomData?.monopolyState;
-      if (!ms) return;
-      const targetId = document.getElementById('monoTradeTargetSelect').value;
-
-      const renderSide = (ownerId, containerId, selectedSet) => {
-        const box = document.getElementById(containerId);
-        box.innerHTML = '';
-        const owned = Object.entries(ms.owners || {}).filter(([, info]) => info.ownerId === ownerId);
-        if (owned.length === 0) {
-          box.innerHTML = `<div class="text-[11px] text-slate-500 italic">Нет участков</div>`;
-          return;
-        }
-        owned.forEach(([idxStr]) => {
-          const idx = Number(idxStr);
-          const tile = MONOPOLY_TILES[idx];
-          const label = document.createElement('label');
-          label.className = 'flex items-center gap-1.5 text-[11px] text-slate-200 cursor-pointer';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.checked = selectedSet.has(idx);
-          cb.addEventListener('change', () => {
-            if (cb.checked) selectedSet.add(idx);
-            else selectedSet.delete(idx);
-          });
-          label.appendChild(cb);
-          label.appendChild(document.createTextNode(`${tile.short} (${Math.round(getTileEffectivePrice(tile, ms) / 1000)}к)`));
-          box.appendChild(label);
-        });
-      };
-
-      renderSide(appState.playerId, 'monoTradeMyTilesList', appState.monoTradeMySelected);
-      renderSide(targetId, 'monoTradeTheirTilesList', appState.monoTradeTheirSelected);
-    }
-
-    async function handleMonoSendTrade() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms) return;
-
-      const targetId = document.getElementById('monoTradeTargetSelect').value;
-      const myCash = Math.max(0, Number(document.getElementById('monoTradeMyCashInput').value) || 0);
-      const theirCash = Math.max(0, Number(document.getElementById('monoTradeTheirCashInput').value) || 0);
-      const myTiles = [...appState.monoTradeMySelected];
-      const theirTiles = [...appState.monoTradeTheirSelected];
-
-      const myMp = ms.mPlayers[appState.playerId];
-      const theirMp = ms.mPlayers[targetId];
-      if (!myMp || !theirMp || myMp.cash < myCash || theirMp.cash < theirCash) {
-        showToast('Недостаточно средств у одной из сторон!');
-        return;
-      }
-
-      const myOfferVal = myCash + myTiles.reduce((acc, idx) => acc + getTileEffectivePrice(MONOPOLY_TILES[idx], ms), 0);
-      const theirOfferVal = theirCash + theirTiles.reduce((acc, idx) => acc + getTileEffectivePrice(MONOPOLY_TILES[idx], ms), 0);
-
-      if (myOfferVal === 0 && theirOfferVal === 0) {
-        showToast('Выбери хотя бы один участок или сумму!');
-        return;
-      }
-
-      // Проверка ценового коридора 90%–120%
-      if (theirOfferVal > 0) {
-        const ratio = myOfferVal / theirOfferVal;
-        if (ratio < 0.9 || ratio > 1.2) {
-          showToast(`Сделка вне честного коридора 90%–120% (сейчас ${Math.round(ratio * 100)}%)!`);
-          return;
-        }
-      }
-
-      SoundFX.lockIn();
-      document.getElementById('monoTradeModal').classList.add('hidden');
       await updateRoomFields(room.code, {
-        'monopolyState.pendingTrade': {
-          fromId: myMp.id,
-          fromName: myMp.name,
-          toId: theirMp.id,
-          toName: theirMp.name,
-          fromTiles: myTiles,
-          toTiles: theirTiles,
-          fromCash: myCash,
-          toCash: theirCash
-        }
+        'monoState.turnIdx': nextIdx,
+        'monoState.phase': 'roll',
+        'monoState.activeCardTitle': `Ход игрока: ${nextPlayer?.name || ''}`,
+        'monoState.activeCardDesc': 'Нажми «Бросить кубики 🎲» для продолжения маршрута.',
+        'monoState.activeCardMeta': ''
       });
-      showToast('Тайное предложение отправлено!');
-    }
-
-    async function handleMonoRespondTrade(accept) {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || !ms.pendingTrade || ms.pendingTrade.toId !== appState.playerId) return;
-
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      const pt = nextMs.pendingTrade;
-
-      if (accept) {
-        const pFrom = nextMs.mPlayers[pt.fromId];
-        const pTo = nextMs.mPlayers[pt.toId];
-        if (pFrom && pTo && pFrom.cash >= pt.fromCash && pTo.cash >= pt.toCash) {
-          pFrom.cash = pFrom.cash - pt.fromCash + pt.toCash;
-          pTo.cash = pTo.cash - pt.toCash + pt.fromCash;
-          (pt.fromTiles || []).forEach(idx => {
-            if (nextMs.owners[String(idx)]) nextMs.owners[String(idx)].ownerId = pTo.id;
-          });
-          (pt.toTiles || []).forEach(idx => {
-            if (nextMs.owners[String(idx)]) nextMs.owners[String(idx)].ownerId = pFrom.id;
-          });
-          nextMs.log = appendMonoLog(nextMs, `🤝 Состоялся тайный обмен между ${pFrom.name} и ${pTo.name}!`);
-          SoundFX.lockIn();
-        }
-      } else {
-        SoundFX.tap();
-      }
-
-      nextMs.pendingTrade = null;
-      await updateRoomFields(room.code, { monopolyState: nextMs });
-    }
-
-    async function handleMonoProposeInflation() {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || ms.activeInflationVote) return;
-      if (ms.inflationUsedBy?.[appState.playerId]) {
-        showToast('Ты уже выносил инфляцию на голосование в этой игре!');
-        return;
-      }
-
-      const myName = ms.mPlayers[appState.playerId]?.name || appState.playerName;
-      SoundFX.duelAlarm();
-      await updateRoomFields(room.code, {
-        [`monopolyState.inflationUsedBy.${appState.playerId}`]: true,
-        'monopolyState.activeInflationVote': {
-          proposerId: appState.playerId,
-          proposerName: myName,
-          votes: { [appState.playerId]: true }
-        }
-      });
-    }
-
-    async function handleMonoCastInflationVote(voteYes) {
-      const room = appState.roomData;
-      const ms = room?.monopolyState;
-      if (!ms || !ms.activeInflationVote) return;
-
-      const nextMs = JSON.parse(JSON.stringify(ms));
-      nextMs.activeInflationVote.votes[appState.playerId] = voteYes;
-
-      const alive = Object.values(nextMs.mPlayers).filter(p => !p.bankrupt);
-      const votesMap = nextMs.activeInflationVote.votes;
-      if (Object.keys(votesMap).length >= alive.length) {
-        const yesCount = Object.values(votesMap).filter(Boolean).length;
-        if (yesCount > alive.length / 2) {
-          nextMs.inflationPct = (nextMs.inflationPct || 0) + 5;
-          nextMs.log = appendMonoLog(nextMs, `📈 Большинство проголосовало ЗА! Все цены и рента выросли на +5% (итого +${nextMs.inflationPct}%).`);
-          SoundFX.champion();
-        } else {
-          nextMs.log = appendMonoLog(nextMs, `📊 Предложение об инфляции +5% отклонено голосованием.`);
-          SoundFX.tap();
-        }
-        nextMs.activeInflationVote = null;
-      }
-
-      await updateRoomFields(room.code, { monopolyState: nextMs });
     }
 
     // =========================================================================
-    // ЛОГИКА ИГРЫ 2: «ШКАЛА 1-10: АССОЦИАЦИИ» (УМНЫЙ ВЗВЕШЕННЫЙ РАНДОМ ВЕДУЩЕГО)
+    // ЛОГИКА ИГРЫ 2: «ШКАЛА 1-10: АССОЦИАЦИИ»
     // =========================================================================
     function pickWeightedScaleMaster(players, masterCountsMap, lastMasterId) {
       if (players.length === 1) return players[0];
       let pool = players.filter(p => p.id !== lastMasterId);
       if (pool.length === 0) pool = [...players];
-
-      const weights = pool.map(p => {
-        const times = masterCountsMap[p.id] || 0;
-        return 1 / (1 + times * times * 2);
-      });
-
+      const weights = pool.map(p => 1 / (1 + Math.pow(masterCountsMap[p.id] || 0, 2) * 2));
       const totalWeight = weights.reduce((a, b) => a + b, 0);
       let roll = Math.random() * totalWeight;
       for (let i = 0; i < pool.length; i++) {
@@ -4253,7 +3435,7 @@
           listEl.innerHTML = '';
 
           if (proposedEntries.length === 0) {
-            listEl.innerHTML = `<div class="text-xs text-slate-500 italic">Ждём, пока друзья накидают категории (или можешь взять идею ниже)…</div>`;
+            listEl.innerHTML = `<div class="text-xs text-slate-500 italic">Ждём, пока друзья накидают категории (или возьми случайную ниже)…</div>`;
           } else {
             proposedEntries.forEach(item => {
               const isSelected = appState.scaleSelectedCategory === item.category;
@@ -4522,13 +3704,9 @@
 
         let cls = 'w-full p-4 rounded-2xl border-2 text-left font-bold text-sm sm:text-base transition-all flex items-center justify-between gap-2 ';
         if (showResult) {
-          if (optIdx === qObj.ans) {
-            cls += 'bg-emerald-500/25 border-emerald-400 text-emerald-200';
-          } else if (myAnswer && myAnswer.choice === optIdx) {
-            cls += 'bg-rose-500/25 border-rose-500 text-rose-200';
-          } else {
-            cls += 'bg-club-bg/60 border-white/10 text-slate-500';
-          }
+          if (optIdx === qObj.ans) cls += 'bg-emerald-500/25 border-emerald-400 text-emerald-200';
+          else if (myAnswer && myAnswer.choice === optIdx) cls += 'bg-rose-500/25 border-rose-500 text-rose-200';
+          else cls += 'bg-club-bg/60 border-white/10 text-slate-500';
         } else if (myAnswer && myAnswer.choice === optIdx) {
           cls += 'bg-club-neon/30 border-club-neon text-white';
         } else {
@@ -4547,10 +3725,7 @@
           const elapsed = Math.max(0, Date.now() - (qs.questionStartedAt || Date.now()));
           const speedBonus = elapsed < 5000 ? 50 : elapsed < 10000 ? 25 : 0;
           await updateRoomFields(room.code, {
-            [`quizState.answers.${curIdx}.${appState.playerId}`]: {
-              choice: optIdx,
-              speedBonus
-            }
+            [`quizState.answers.${curIdx}.${appState.playerId}`]: { choice: optIdx, speedBonus }
           });
         });
 
@@ -4600,9 +3775,6 @@
       });
     }
 
-    // =========================================================================
-    // ОБЩАЯ АВТОПРОВЕРКА ПЕРЕХОДА ЭТАПОВ ДЛЯ ВСЕХ РЕЖИМОВ
-    // =========================================================================
     function checkAutoAdvanceRoom(room) {
       if (!room || appState.isAdvancingRound) return;
       const gType = room.gameType || 'top';
@@ -4610,17 +3782,12 @@
       if (gType === 'scale' && room.scaleState?.phase === 'guessing') {
         const st = room.scaleState;
         const guessers = Object.values(room.players || {}).filter(p => p.id !== st.masterId);
-        if (guessers.length > 0 && guessers.every(g => (st.guesses || {})[g.id] !== undefined)) {
-          if (isCurrentUserHost(room)) {
-            appState.isAdvancingRound = true;
-            setTimeout(async () => {
-              try {
-                if (appState.roomData?.scaleState?.phase === 'guessing') {
-                  await resolveScaleRoundResults(appState.roomData);
-                }
-              } finally { appState.isAdvancingRound = false; }
-            }, 350);
-          }
+        if (guessers.length > 0 && guessers.every(g => (st.guesses || {})[g.id] !== undefined) && isCurrentUserHost(room)) {
+          appState.isAdvancingRound = true;
+          setTimeout(async () => {
+            try { if (appState.roomData?.scaleState?.phase === 'guessing') await resolveScaleRoundResults(appState.roomData); }
+            finally { appState.isAdvancingRound = false; }
+          }, 350);
         }
         return;
       }
@@ -4630,17 +3797,12 @@
         const curIdx = qs.currentIdx || 0;
         const playerIds = Object.keys(room.players || {});
         const qAnswers = (qs.answers || {})[String(curIdx)] || {};
-        if (playerIds.length > 0 && playerIds.every(pid => qAnswers[pid] !== undefined)) {
-          if (isCurrentUserHost(room)) {
-            appState.isAdvancingRound = true;
-            setTimeout(async () => {
-              try {
-                if (appState.roomData?.quizState?.phase === 'question' && (appState.roomData.quizState.currentIdx || 0) === curIdx) {
-                  await revealQuizQuestionResult(appState.roomData);
-                }
-              } finally { appState.isAdvancingRound = false; }
-            }, 350);
-          }
+        if (playerIds.length > 0 && playerIds.every(pid => qAnswers[pid] !== undefined) && isCurrentUserHost(room)) {
+          appState.isAdvancingRound = true;
+          setTimeout(async () => {
+            try { if (appState.roomData?.quizState?.phase === 'question' && (appState.roomData.quizState.currentIdx || 0) === curIdx) await revealQuizQuestionResult(appState.roomData); }
+            finally { appState.isAdvancingRound = false; }
+          }, 350);
         }
         return;
       }
@@ -4652,8 +3814,7 @@
         const playerIds = Object.keys(room.players || {});
         if (playerIds.length === 0) return;
         const submissions = currentRound.submissions || {};
-        const allReady = playerIds.every(pid => Array.isArray(submissions[pid]) && submissions[pid].length > 0);
-        if (!allReady) return;
+        if (!playerIds.every(pid => Array.isArray(submissions[pid]) && submissions[pid].length > 0)) return;
 
         const delayMs = isCurrentUserHost(room) ? 120 : 650;
         appState.isAdvancingRound = true;
@@ -5267,7 +4428,7 @@
         const rKey = v.vote === 'agree' ? 'base' : v.vote;
         if (countsByReaction[rKey] !== undefined) countsByReaction[rKey]++;
         if (rKey === 'dispute') {
-          disputeArguments.push({ name: pName, direction: v.direction || 'higher', reason: v.reason || 'Спорная позиция!', ts: v.ts || 0 });
+          disputeArguments.push({ name: pName, direction: v.direction || 'higher', reason: v.reason || 'Спорная позиция!' });
         }
       });
 
@@ -5561,14 +4722,13 @@
         appState.soundEnabled = !appState.soundEnabled;
         document.getElementById('soundOnIcon').classList.toggle('hidden', !appState.soundEnabled);
         document.getElementById('soundOffIcon').classList.toggle('hidden', appState.soundEnabled);
-        if (appState.soundEnabled) SoundFX.tap();
       });
 
       // Клик по карточкам режимов на главном экране хаба
       document.querySelectorAll('.hub-game-card').forEach(card => {
         card.addEventListener('click', () => {
           SoundFX.tap();
-          openHostSetupForGame(card.getAttribute('data-select-game') || 'top');
+          openHostSetupForGame(card.getAttribute('data-select-game') || 'monopoly');
         });
       });
 
@@ -5615,7 +4775,8 @@
           SoundFX.tap();
           appState.setupCircles = Number(btn.getAttribute('data-circles')) || 1;
           document.querySelectorAll('.circle-select-btn').forEach(b => {
-            b.className = Number(b.getAttribute('data-circles')) === appState.setupCircles
+            const active = b === btn;
+            b.className = active
               ? 'circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all bg-club-gold text-club-bg shadow'
               : 'circle-select-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white';
           });
@@ -5627,7 +4788,8 @@
           SoundFX.tap();
           appState.setupMode = btn.getAttribute('data-mode') || 'top5';
           document.querySelectorAll('.mode-select-btn').forEach(b => {
-            b.className = b.getAttribute('data-mode') === appState.setupMode
+            const active = b === btn;
+            b.className = active
               ? 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all bg-club-neon text-white shadow'
               : 'mode-select-btn py-2.5 px-3 rounded-lg text-xs font-extrabold transition-all text-slate-400 hover:text-white';
           });
@@ -5639,7 +4801,8 @@
           SoundFX.tap();
           appState.setupQuizLength = Number(btn.getAttribute('data-quiz-len')) || 10;
           document.querySelectorAll('.quiz-len-btn').forEach(b => {
-            b.className = Number(b.getAttribute('data-quiz-len')) === appState.setupQuizLength
+            const active = b === btn;
+            b.className = active
               ? 'quiz-len-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all bg-club-neon text-white shadow'
               : 'quiz-len-btn py-2.5 rounded-lg font-mono text-xs font-extrabold transition-all text-slate-400 hover:text-white';
           });
@@ -5648,16 +4811,14 @@
 
       document.getElementById('createRoomBtn').addEventListener('click', handleCreateRoom);
 
-      // Экран входа друга по коду
+      // Вход друга
       document.getElementById('backFromNickScreenBtn').addEventListener('click', () => {
         SoundFX.tap();
-        appState.pendingFoundRoom = null;
-        updateUrlRoomHash('');
         showScreen('startScreen');
       });
       document.getElementById('friendJoinForm').addEventListener('submit', handleFriendJoinSubmit);
 
-      // Общее лобби
+      // Лобби
       document.getElementById('copyCodeOnlyBtn').addEventListener('click', () => {
         if (appState.roomCode) copyTextSafe(appState.roomCode, `Код ${appState.roomCode} скопирован!`);
       });
@@ -5671,7 +4832,7 @@
       document.getElementById('hostStartGameBtn').addEventListener('click', () => startSelectedGameFromLobby(appState.roomData));
       document.getElementById('hostSoloTestBtn').addEventListener('click', () => startSelectedGameFromLobby(appState.roomData));
 
-      // События Игры 1: «Топ Потока»
+      // ИГРА 1: Топ потока
       document.getElementById('gameInvitePill').addEventListener('click', shareInviteMessage);
       document.getElementById('chooseNormalFormatBtn').addEventListener('click', () => { appState.selectedRoundIsBlitz = false; updateRoundFormatToggleUI(); });
       document.getElementById('chooseBlitzFormatBtn').addEventListener('click', () => { appState.selectedRoundIsBlitz = true; updateRoundFormatToggleUI(); });
@@ -5681,17 +4842,14 @@
         const idea = NOMINATION_IDEAS[Math.floor(Math.random() * NOMINATION_IDEAS.length)];
         handleSendNomination(idea, false);
       });
-      document.getElementById('clearMyRankingDraftBtn').addEventListener('click', () => {
-        appState.draftRankedList = [];
-        const rIdx = appState.roomData?.currentRoundIdx || 0;
-        const rnd = (appState.roomData?.rounds || {})[String(rIdx)];
-        if (rnd) renderRankingStep(appState.roomData, rIdx, rnd);
-      });
-      document.getElementById('confirmMyRankingBtn').addEventListener('click', handleConfirmMyRanking);
       document.getElementById('blitzLeftBtn').addEventListener('click', () => pickBlitzWinner(document.getElementById('blitzLeftName').textContent));
       document.getElementById('blitzRightBtn').addEventListener('click', () => pickBlitzWinner(document.getElementById('blitzRightName').textContent));
+      document.getElementById('clearMyRankingDraftBtn').addEventListener('click', () => {
+        appState.draftRankedList = [];
+        syncUiWithRoomState();
+      });
+      document.getElementById('confirmMyRankingBtn').addEventListener('click', handleConfirmMyRanking);
       document.getElementById('hostForceRoundDoneBtn').addEventListener('click', handleHostForceSkipRoundWithRandom);
-
       document.getElementById('revealNextBtn').addEventListener('click', handleRevealNextPlace);
       document.getElementById('duelDefenderBtn').addEventListener('click', () => handleCastDuelVote('defender'));
       document.getElementById('duelChallengerBtn').addEventListener('click', () => handleCastDuelVote('challenger'));
@@ -5701,24 +4859,25 @@
       document.getElementById('playMoreCircleBtn').addEventListener('click', handlePlayAnotherCircle);
       document.getElementById('copyResultsChatBtn').addEventListener('click', copyResultsForChat);
 
-      // События Игры 2: «Шкала 1-10»
+      // ИГРА 2: Шкала 1-10
       document.getElementById('scaleInvitePill').addEventListener('click', shareInviteMessage);
       document.getElementById('scaleRandomCatBtn').addEventListener('click', () => {
-        SoundFX.tap();
         document.getElementById('scaleCategoryTextInput').value = SCALE_CATEGORY_IDEAS[Math.floor(Math.random() * SCALE_CATEGORY_IDEAS.length)];
+        SoundFX.tap();
       });
       document.getElementById('scaleSubmitCategoryBtn').addEventListener('click', async () => {
         const room = appState.roomData;
-        const cat = document.getElementById('scaleCategoryTextInput').value.trim().slice(0, 40);
-        if (!room || !cat) { showToast('Введи категорию или нажми 🎲 Идея'); return; }
+        const val = document.getElementById('scaleCategoryTextInput').value.trim();
+        if (!room || !val) { showToast('Введи категорию!'); return; }
         SoundFX.lockIn();
+        document.getElementById('scaleCategoryTextInput').value = '';
         await updateRoomFields(room.code, {
-          [`scaleState.proposedCategories.${appState.playerId}`]: { id: appState.playerId, name: appState.playerName, category: cat }
+          [`scaleState.proposedCategories.${appState.playerId}`]: { category: val, name: appState.playerName }
         });
       });
       document.getElementById('scaleSendClueBtn').addEventListener('click', async () => {
         const room = appState.roomData;
-        const clue = document.getElementById('scaleClueInput').value.trim().slice(0, 80);
+        const clue = document.getElementById('scaleClueInput').value.trim();
         if (!room || !appState.scaleSelectedCategory || !clue) { showToast('Выбери категорию и напиши подсказку!'); return; }
         SoundFX.lockIn();
         document.getElementById('scaleClueInput').value = '';
@@ -5743,24 +4902,28 @@
         const st = room?.scaleState;
         if (!st) return;
         const players = Object.values(room.players || {}).sort((a, b) => (st.scores?.[b.id] || 0) - (st.scores?.[a.id] || 0));
-        const lines = [`🎯 ШКАЛА 1–10 (Комната ${room.code})`, ...players.map((p, i) => `${i + 1}. ${p.name}: ${st.scores?.[p.id] || 0} очк.`)];
-        copyTextSafe(lines.join('\n'), 'Счёт скопирован!');
+        const lines = [`🎯 ШКАЛА 1–10 (Комната ${room.code})`, ...players.map((p, i) => `${i + 1}. ${p.name} — ${st.scores?.[p.id] || 0} очков`)];
+        copyTextSafe(lines.join('\n'), 'Таблица очков скопирована!');
       });
 
-      // События Игры 3: «Квиз-Баттл»
+      // ИГРА 3: Квиз-Баттл
       document.getElementById('quizInvitePill').addEventListener('click', shareInviteMessage);
       document.getElementById('quizNextQuestionBtn').addEventListener('click', async () => {
         const room = appState.roomData;
         const qs = room?.quizState;
         if (!qs) return;
         const nextIdx = (qs.currentIdx || 0) + 1;
-        const isDone = nextIdx >= (qs.questions || []).length;
-        SoundFX.tap();
-        await updateRoomFields(room.code, {
-          'quizState.currentIdx': nextIdx,
-          'quizState.phase': isDone ? 'finished' : 'question',
-          'quizState.questionStartedAt': Date.now()
-        });
+        if (nextIdx >= (qs.questions || []).length) {
+          SoundFX.champion();
+          await updateRoomFields(room.code, { 'quizState.phase': 'finished' });
+        } else {
+          SoundFX.tap();
+          await updateRoomFields(room.code, {
+            'quizState.currentIdx': nextIdx,
+            'quizState.phase': 'question',
+            'quizState.questionStartedAt': Date.now()
+          });
+        }
       });
       document.getElementById('quizPlayAgainBtn').addEventListener('click', () => startSelectedGameFromLobby(appState.roomData));
       document.getElementById('quizCopyFinalBtn').addEventListener('click', () => {
@@ -5768,59 +4931,27 @@
         const qs = room?.quizState;
         if (!qs) return;
         const players = Object.values(room.players || {}).sort((a, b) => (qs.scores?.[b.id] || 0) - (qs.scores?.[a.id] || 0));
-        const lines = [`🧠 КВИЗ-БАТТЛ (Комната ${room.code})`, ...players.map((p, i) => `${i + 1}. ${p.name}: ${qs.scores?.[p.id] || 0} очк.`)];
+        const lines = [`🧠 КВИЗ-БАТТЛ (Комната ${room.code})`, ...players.map((p, i) => `${i + 1}. ${p.name} — ${qs.scores?.[p.id] || 0} очков`)];
         copyTextSafe(lines.join('\n'), 'Результаты квиза скопированы!');
       });
 
-      // События Игры 4: «Монополия: По одной тропинке»
+      // ИГРА 4: Монополия «По одной тропинке»
       document.getElementById('monoInvitePill').addEventListener('click', shareInviteMessage);
-      document.getElementById('monoRollDiceBtn').addEventListener('click', handleMonoRollDice);
-      document.getElementById('monoRollJailBtn').addEventListener('click', handleMonoRollDice);
-      document.getElementById('monoPayJailBtn').addEventListener('click', async () => {
-        const room = appState.roomData;
-        const ms = room?.monopolyState;
-        if (!ms) return;
-        const nextMs = JSON.parse(JSON.stringify(ms));
-        const p = nextMs.mPlayers[appState.playerId];
-        if (!p || !p.inJail) return;
-        const bail = p.heroId === 'lawyer' ? 0 : MONOPOLY_JAIL_BAIL;
-        if (p.cash < bail) return;
-        p.cash -= bail;
-        p.inJail = false;
-        p.jailTurns = 0;
-        nextMs.log = appendMonoLog(nextMs, `🔓 ${p.name} оплатил залог ${formatTenge(bail)} и вышел из Изолятора.`);
-        SoundFX.tap();
-        await updateRoomFields(room.code, { monopolyState: nextMs });
-      });
-      document.getElementById('monoBuyNowBtn').addEventListener('click', handleMonoBuyTile);
-      document.getElementById('monoStartAuctionBtn').addEventListener('click', handleMonoStartAuction);
-      document.getElementById('monoAuctionRaiseBtn').addEventListener('click', handleMonoAuctionRaise);
-      document.getElementById('monoAuctionPassBtn').addEventListener('click', handleMonoAuctionPass);
-      document.getElementById('monoUseUltBtn').addEventListener('click', handleMonoUseUlt);
-      document.getElementById('monoEndTurnBtn').addEventListener('click', handleMonoEndTurn);
+      document.getElementById('monoUseUltimateBtn').addEventListener('click', handleMonopolyUseUltimate);
 
-      document.getElementById('closeMonoTileModalBtn').addEventListener('click', () => document.getElementById('monoTileModal').classList.add('hidden'));
-      document.getElementById('monoOpenPortfolioBtn').addEventListener('click', openMonoPortfolioModal);
-      document.getElementById('closeMonoPortfolioModalBtn').addEventListener('click', () => document.getElementById('monoPortfolioModal').classList.add('hidden'));
-      document.getElementById('monoOpenTradeBtn').addEventListener('click', openMonoTradeModal);
-      document.getElementById('closeMonoTradeModalBtn').addEventListener('click', () => document.getElementById('monoTradeModal').classList.add('hidden'));
-      document.getElementById('monoTradeTargetSelect').addEventListener('change', () => {
-        appState.monoTradeTheirSelected.clear();
-        renderMonoTradeChecklists();
-      });
-      document.getElementById('monoSendTradeBtn').addEventListener('click', handleMonoSendTrade);
-      document.getElementById('monoAcceptTradeBtn').addEventListener('click', () => handleMonoRespondTrade(true));
-      document.getElementById('monoDeclineTradeBtn').addEventListener('click', () => handleMonoRespondTrade(false));
-      document.getElementById('monoVoteInflationBtn').addEventListener('click', handleMonoProposeInflation);
-      document.getElementById('monoInfVoteYesBtn').addEventListener('click', () => handleMonoCastInflationVote(true));
-      document.getElementById('monoInfVoteNoBtn').addEventListener('click', () => handleMonoCastInflationVote(false));
-
-      // Автопереход по ?room=XXXXX или #room=XXXXX
-      const urlRoomCode = extractRoomCodeFromUrl();
-      if (urlRoomCode) {
-        await handleFindRoomByCode(urlRoomCode, true);
-      } else {
-        showScreen('startScreen');
+      // Проверка кода комнаты из URL или сохранённой сессии
+      const urlCode = extractRoomCodeFromUrl();
+      if (urlCode) {
+        await handleFindRoomByCode(urlCode, true);
+      } else if (session.roomCode) {
+        const savedRoom = await fetchRoomFromServer(session.roomCode);
+        if (savedRoom && savedRoom.players && savedRoom.players[appState.playerId]) {
+          appState.roomCode = session.roomCode;
+          appState.playerName = savedRoom.players[appState.playerId].name;
+          appState.roomData = savedRoom;
+          subscribeToRoomRealtime(session.roomCode);
+          syncUiWithRoomState();
+        }
       }
     });
   </script>
