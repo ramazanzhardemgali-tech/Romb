@@ -1987,6 +1987,7 @@
 
     const ROOM_COLLECTION = 'party_hub_rooms_v1';
     const SAVED_GIRLS_KEY = 'party_hub_saved_girls_v1';
+    const SAVED_NICK_KEY = 'party_hub_saved_nick_v1';
     const LOCAL_ROOMS_KEY = 'party_hub_local_fallback_v1';
 
     const GAME_META = {
@@ -2031,7 +2032,7 @@
       'Самая страстная натура по версии пацанов 🔥',
       'С кем бы сбежал с последней пары на море 🌊',
       'Кто умеет кружить голову без единого слова 🌀',
-      'Самая эффектнaя походка в коридоре 👠'
+      'Самая эффектная походка в коридоре 👠'
     ];
 
     const SCALE_CATEGORIES_POOL = [
@@ -2280,7 +2281,6 @@
       monoSelectedCellId: null,
       monoHighlightedOwnerId: null,
       monoAnimating: false,
-      monoVisualPos: {},
       monoLastSeenEventTs: 0,
       monoLastSeenUltTs: 0
     };
@@ -2637,6 +2637,11 @@
       $('setupScreenTitle').textContent = `Создание: ${meta.name}`;
       $('setupErrorBox').classList.add('hidden');
 
+      const savedNick = localStorage.getItem(SAVED_NICK_KEY);
+      if (savedNick && !$('hostNickInput').value) {
+        $('hostNickInput').value = savedNick;
+      }
+
       $('setupTopOnlyFields').classList.toggle('hidden', gameType !== 'top');
       $('setupQuizOnlyFields').classList.toggle('hidden', gameType !== 'quiz');
       $('setupScaleOnlyFields').classList.toggle('hidden', gameType !== 'scale');
@@ -2781,6 +2786,7 @@
         return;
       }
 
+      localStorage.setItem(SAVED_NICK_KEY, nick);
       if (state.selectedGameType === 'top') {
         localStorage.setItem(SAVED_GIRLS_KEY, JSON.stringify(state.setupGirls));
       }
@@ -2850,6 +2856,11 @@
         .map((p) => `<span class="px-2.5 py-1 rounded-lg bg-club-surface border border-club-border text-xs font-bold text-white">${p.name}</span>`)
         .join('');
 
+      const savedNick = localStorage.getItem(SAVED_NICK_KEY);
+      if (savedNick && !$('friendNickInput').value) {
+        $('friendNickInput').value = savedNick;
+      }
+
       if (room.players && room.players[state.playerId]) {
         state.roomData = room;
         subscribeToRoom(room.code);
@@ -2880,6 +2891,7 @@
         err.classList.remove('hidden');
         return;
       }
+      localStorage.setItem(SAVED_NICK_KEY, nick);
       const code = pendingFoundRoom.code;
       const fresh = (await fetchRoom(code)) || pendingFoundRoom;
       const pid = state.playerId;
@@ -3219,7 +3231,6 @@
           }
           usedHeroes.add(hid);
           const hero = MONOPOLY_HEROES.find((h) => h.id === hid) || MONOPOLY_HEROES[0];
-          // Стартовый капитал: 1 500 000 ₸ (у Думана — 1 550 000 ₸)
           const startCash = hero.id === 'duman' ? 1550000 : 1500000;
           monoPlayers[id] = {
             id,
@@ -3275,7 +3286,7 @@
             inflationRate: 0,
             inflationVote: null,
             players: monoPlayers,
-            owners: {}, // { [cellId]: { ownerId, stars: 0..5, mortgaged: false } }
+            owners: {},
             pendingCellId: null,
             auction: null,
             tradeOffer: null,
@@ -4156,19 +4167,19 @@
         }
       } else if (sc.phase === 'reveal') {
         $('scaleRevealCatLabel').textContent = (sc.selectedCategory || '').toUpperCase();
-        $('scaleRevealClueLabel').textContent = (sc.clue || '').toUpperCase();
+        $('scaleRevealClueLabel').textContent = sc.clue || '';
         $('scaleRevealSecretNumber').textContent = sc.secretNumber;
 
-        const guessers = players.filter((p) => p.id !== sc.masterId);
-        $('scaleRoundResultsList').innerHTML = guessers
+        $('scaleRoundResultsList').innerHTML = players
+          .filter((p) => p.id !== sc.masterId)
           .map((p) => {
             const g = sc.guesses?.[p.id];
             const diff = typeof g === 'number' ? Math.abs(g - sc.secretNumber) : 99;
             const pts = diff === 0 ? '+3 очка 🎯' : diff === 1 ? '+1 очко 🔥' : '0 очков';
             return `
               <div class="p-3 rounded-xl bg-club-bg border border-club-border flex items-center justify-between text-xs">
-                <span class="font-bold text-white">${p.name}: ответ <strong>${g ?? '—'}</strong></span>
-                <span class="font-mono font-bold ${diff === 0 ? 'text-club-gold' : diff === 1 ? 'text-emerald-300' : 'text-slate-400'}">${pts}</span>
+                <span class="font-bold text-white">${p.name}: поставил <strong class="text-pink-300">${g ?? '—'}</strong></span>
+                <span class="font-mono font-extrabold ${diff <= 1 ? 'text-emerald-400' : 'text-slate-500'}">${pts}</span>
               </div>`;
           })
           .join('');
@@ -4179,10 +4190,10 @@
         const sorted = [...players].sort((a, b) => (sc.scores?.[b.id] || 0) - (sc.scores?.[a.id] || 0));
         $('scaleFinalLeaderboard').innerHTML = sorted
           .map(
-            (p, i) => `
-            <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border flex items-center justify-between">
-              <span class="font-display text-sm font-black text-white">#${i + 1} ${p.name}</span>
-              <span class="font-mono text-base font-black text-club-gold">${sc.scores?.[p.id] || 0} очков</span>
+            (p, idx) => `
+            <div class="p-3.5 rounded-2xl bg-club-bg border ${idx === 0 ? 'border-club-gold' : 'border-club-border'} flex items-center justify-between">
+              <span class="font-display text-sm font-black text-white">#${idx + 1} ${p.name}</span>
+              <span class="font-mono text-sm font-extrabold text-club-gold">${sc.scores?.[p.id] || 0} очков</span>
             </div>`
           )
           .join('');
@@ -4194,69 +4205,53 @@
     // ИГРА 3: «КВИЗ-БАТТЛ: ЭРУДИЦИЯ И ЛОГИКА»
     // =========================================================================
     const STATIC_QUIZ_BANK = [
-      { cat: 'ГЕОГРАФИЯ', q: 'Какая самая длинная река в мире по общепризнанной мировой географии?', opts: ['Амазонка', 'Нил', 'Янцзы', 'Миссисипи'], ans: 0, exp: 'Амазонка с истоком Укаяли признана самой длинной и самой полноводной рекой планеты.' },
-      { cat: 'НАУКА', q: 'Какая планета Солнечной системы вращается вокруг своей оси в обратную сторону (с востока на запад)?', opts: ['Марс', 'Венера', 'Юпитер', 'Меркурий'], ans: 1, exp: 'Венера вращается ретроградно, а солнечные сутки на ней длятся дольше венерианского года.' },
-      { cat: 'ЛОГИКА', q: 'В комнате 3 лампочки, а снаружи 3 выключателя. Сколько минимум раз нужно зайти в комнату, чтобы точно определить, какой выключатель к какой лампочке?', opts: ['1 раз', '2 раза', '3 раза', 'Невозможно'], ans: 0, exp: 'Включаем 1-й на 5 минут, выключаем, включаем 2-й и заходим: горящая — №2, тёплая выключенная — №1, холодная — №3.' },
-      { cat: 'СПОРТ', q: 'Какая сборная выиграла больше всего чемпионатов мира по футболу (5 титулов)?', opts: ['Германия', 'Аргентина', 'Бразилия', 'Италия'], ans: 2, exp: 'Сборная Бразилии — единственная пятикратная чемпионка мира (1958, 1962, 1970, 1994, 2002).' },
-      { cat: 'КИНО И ИГРЫ', q: 'Как называется вымышленный металл, из которого сделан щит Капитана Америки?', opts: ['Адамантий', 'Вибраниум', 'Мифрил', 'Титан'], ans: 1, exp: 'Щит Капитана Америки выплавлен из вибраниума, поглощающего кинетическую энергию.' },
-      { cat: 'ИСТОРИЯ', q: 'В каком году человек впервые высадился на Луну?', opts: ['1965', '1969', '1972', '1961'], ans: 1, exp: '20 июля 1969 года экипаж «Аполлона-11» (Нил Армстронг и Базз Олдрин) совершил посадку на Луну.' },
-      { cat: 'ТЕХНОЛОГИИ', q: 'Сколько мегабайт в одном гигабайте по двоичной системе (1 ГиБ)?', opts: ['1000', '1024', '512', '2048'], ans: 1, exp: '2 в 10-й степени = 1024 мегабайта.' },
-      { cat: 'ПРИРОДА', q: 'Какое животное способно спать с одним открытым глазом и одним бодрствующим полушарием мозга?', opts: ['Дельфин', 'Медведь', 'Гепард', 'Жираф'], ans: 0, exp: 'Дельфины спят поочерёдно каждым полушарием, чтобы подниматься к поверхности за воздухом.' }
+      { cat: 'ГЕОГРАФИЯ', q: 'Какая река протекает через город Атырау и делит его на европейскую и азиатскую части?', opts: ['Урал (Жайык)', 'Иртыш', 'Сырдарья', 'Или'], ans: 0, exp: 'Река Урал (Жайык) проходит через центр Атырау и служит условной границей между Европой и Азией.' },
+      { cat: 'КОСМОС', q: 'Какая планета Солнечной системы имеет самые яркие и заметные кольца?', opts: ['Юпитер', 'Сатурн', 'Уран', 'Нептун'], ans: 1, exp: 'Система колец Сатурна состоит изо льда и пыли и видна даже в любительский телескоп.' },
+      { cat: 'ЛОГИКА', q: 'В комнате горело 7 свечей. 2 свечи задули. Сколько свечей останется к утру?', opts: ['5 свечей', '2 свечи', '7 свечей', 'Ни одной'], ans: 1, exp: 'Те 5 свечей, которые продолжали гореть, полностью сгорят дотла — останутся только 2 задутые.' },
+      { cat: 'КИНО И ИГРЫ', q: 'Как называется основная карта формата 5 на 5 в игре Mobile Legends: Bang Bang?', opts: ['Земли Рассвета', 'Ущелье Призывателей', 'Пыльная пустошь', 'Арена Титанов'], ans: 0, exp: 'Все сражения героев в MLBB проходят на карте «Земли Рассвета» (Land of Dawn).' },
+      { cat: 'НАУКА', q: 'Какой химический элемент обозначается символом Au в таблице Менделеева?', opts: ['Серебро', 'Алюминий', 'Золото', 'Аргон'], ans: 2, exp: 'Au — от латинского Aurum (Золото).' },
+      { cat: 'ИСТОРИЯ', q: 'В каком году человек впервые полетел в космос?', opts: ['1957', '1961', '1965', '1969'], ans: 1, exp: '12 апреля 1961 года Юрий Гагарин совершил первый орбитальный полёт на корабле «Восток-1».' },
+      { cat: 'АВТО', q: 'Какой японский автопроизводитель выпускает модель Camry?', opts: ['Honda', 'Nissan', 'Toyota', 'Mazda'], ans: 2, exp: 'Toyota Camry — один из самых популярных седанов бизнес-класса в Казахстане.' },
+      { cat: 'ЭРУДИЦИЯ', q: 'Сколько костей в скелете взрослого человека (примерно)?', opts: ['106', '206', '306', '406'], ans: 1, exp: 'У взрослого человека 206 костей (у новорождённого около 270, часть из них позже срастается).' }
     ];
 
-    function buildQuizDeck(count) {
-      const procedural = [];
+    function buildQuizDeck(len) {
+      const bank = shuffleArray(STATIC_QUIZ_BANK);
+      const generated = [];
       for (let i = 0; i < 6; i++) {
         const a = Math.floor(Math.random() * 14) + 12;
-        const b = Math.floor(Math.random() * 9) + 6;
-        const ansVal = a * b + 15;
-        const opts = shuffleArray([ansVal, ansVal + 10, ansVal - 12, ansVal + 24]).map(String);
-        procedural.push({
+        const b = Math.floor(Math.random() * 9) + 4;
+        const ansVal = a * b - (a + b);
+        const opts = shuffleArray([
+          String(ansVal),
+          String(ansVal + 10),
+          String(ansVal - 6),
+          String(a * b)
+        ]);
+        generated.push({
           cat: 'БЫСТРЫЙ СЧЁТ',
-          q: `Чему равно выражение: ${a} × ${b} + 15?`,
+          q: `Вычисли за 18 секунд: (${a} × ${b}) − (${a} + ${b}) = ?`,
           opts,
           ans: opts.indexOf(String(ansVal)),
-          exp: `${a} × ${b} = ${a * b}, плюс 15 = ${ansVal}.`
+          exp: `${a} × ${b} = ${a * b}, минус (${a + b}) = ${ansVal}.`
         });
       }
-      return shuffleArray([...STATIC_QUIZ_BANK, ...procedural]).slice(0, count);
+      return shuffleArray([...bank, ...generated]).slice(0, len);
     }
 
-    $('quizHostRevealBtn').addEventListener('click', async () => {
-      const room = state.roomData;
-      if (!room || !room.quiz || room.hostId !== state.playerId) return;
-      await revealQuizQuestion(room);
+    $('quizHostRevealBtn').addEventListener('click', () => {
+      updateRoomFields(state.roomCode, { 'quiz.revealed': true });
     });
-
-    async function revealQuizQuestion(room) {
-      const qz = room.quiz;
-      if (qz.revealed) return;
-      const curQ = qz.questions[qz.qIndex];
-      const newScores = { ...(qz.scores || {}) };
-      Object.entries(qz.answers || {}).forEach(([pid, picked]) => {
-        if (picked === curQ.ans) {
-          newScores[pid] = (newScores[pid] || 0) + 100;
-        }
-      });
-      await updateRoomFields(state.roomCode, {
-        'quiz.revealed': true,
-        'quiz.scores': newScores
-      });
-    }
 
     $('quizHostNextBtn').addEventListener('click', async () => {
       const room = state.roomData;
       if (!room || !room.quiz || room.hostId !== state.playerId) return;
-      const qz = room.quiz;
-      if (qz.qIndex + 1 >= qz.questions.length) {
-        await updateRoomFields(state.roomCode, { 'quiz.finished': true });
-      } else {
-        await updateRoomFields(state.roomCode, {
-          'quiz.qIndex': qz.qIndex + 1,
-          'quiz.answers': {},
-          'quiz.revealed': false
-        });
-      }
+      const nextIdx = (room.quiz.qIndex || 0) + 1;
+      await updateRoomFields(state.roomCode, {
+        'quiz.qIndex': nextIdx,
+        'quiz.answers': {},
+        'quiz.revealed': false
+      });
     });
 
     $('quizRestartBtn').addEventListener('click', () => startSelectedGame(false));
@@ -4267,6 +4262,8 @@
       if (!qz) return;
       const isHost = room.hostId === state.playerId;
       const players = Object.values(room.players || {});
+      const qIndex = qz.qIndex || 0;
+      const total = (qz.questions || []).length;
 
       $('quizInvitePill').textContent = `КОД: ${room.code} 📲`;
       $('quizScoreboardStrip').innerHTML = players
@@ -4279,7 +4276,7 @@
         )
         .join('');
 
-      if (qz.finished) {
+      if (qIndex >= total) {
         clearInterval(state.quizTimerId);
         $('quizQuestionCard').classList.add('hidden');
         $('quizFinalBox').classList.remove('hidden');
@@ -4287,9 +4284,9 @@
         $('quizFinalLeaderboard').innerHTML = sorted
           .map(
             (p, i) => `
-            <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border flex items-center justify-between">
+            <div class="p-3.5 rounded-2xl bg-club-bg border ${i === 0 ? 'border-club-gold' : 'border-club-border'} flex items-center justify-between">
               <span class="font-display text-sm font-black text-white">#${i + 1} ${p.name}</span>
-              <span class="font-mono text-base font-black text-club-gold">${qz.scores?.[p.id] || 0} очков</span>
+              <span class="font-mono text-sm font-extrabold text-club-gold">${qz.scores?.[p.id] || 0} баллов</span>
             </div>`
           )
           .join('');
@@ -4300,21 +4297,22 @@
       $('quizQuestionCard').classList.remove('hidden');
       $('quizFinalBox').classList.add('hidden');
 
-      const curQ = qz.questions[qz.qIndex];
-      const answeredCount = players.filter((p) => typeof qz.answers?.[p.id] === 'number').length;
-
-      $('quizProgressBadge').textContent = `ВОПРОС ${qz.qIndex + 1} ИЗ ${qz.questions.length}`;
-      $('quizCategoryPill').textContent = curQ.cat;
-      $('quizReadinessText').textContent = `Ответили: ${answeredCount} / ${players.length}`;
+      const curQ = qz.questions[qIndex];
+      $('quizProgressBadge').textContent = `ВОПРОС ${qIndex + 1} ИЗ ${total}`;
+      $('quizCategoryPill').textContent = curQ.cat || 'ЭРУДИЦИЯ';
       $('quizQuestionText').textContent = curQ.q;
 
+      const answers = qz.answers || {};
+      const answeredCount = players.filter((p) => typeof answers[p.id] === 'number').length;
+      $('quizReadinessText').textContent = `Ответили: ${answeredCount} / ${players.length}`;
+
       if (isHost && !qz.revealed && players.length > 0 && answeredCount >= players.length) {
-        revealQuizQuestion(room);
+        updateRoomFields(state.roomCode, { 'quiz.revealed': true });
         return;
       }
 
-      if (state.quizQuestionIdx !== qz.qIndex && !qz.revealed) {
-        state.quizQuestionIdx = qz.qIndex;
+      if (state.quizQuestionIdx !== qIndex) {
+        state.quizQuestionIdx = qIndex;
         let sec = 18;
         clearInterval(state.quizTimerId);
         $('quizTimerBadge').textContent = `⏱ ${sec} сек`;
@@ -4323,24 +4321,26 @@
           $('quizTimerBadge').textContent = `⏱ ${Math.max(0, sec)} сек`;
           if (sec <= 0) {
             clearInterval(state.quizTimerId);
-            if (room.hostId === state.playerId) revealQuizQuestion(room);
+            if (room.hostId === state.playerId && !state.roomData?.quiz?.revealed) {
+              updateRoomFields(state.roomCode, { 'quiz.revealed': true });
+            }
           }
         }, 1000);
       }
 
-      const myPick = qz.answers?.[state.playerId];
+      const myAns = answers[state.playerId];
       $('quizOptionsGrid').innerHTML = curQ.opts
         .map((opt, idx) => {
+          const isPicked = myAns === idx;
+          const isRight = qz.revealed && idx === curQ.ans;
+          const isWrongPicked = qz.revealed && isPicked && idx !== curQ.ans;
           let cls = 'bg-club-bg hover:bg-indigo-500/20 border-club-border text-white';
-          if (qz.revealed) {
-            if (idx === curQ.ans) cls = 'bg-emerald-500/25 border-emerald-400 text-emerald-200';
-            else if (idx === myPick) cls = 'bg-rose-500/25 border-rose-400 text-rose-200';
-            else cls = 'bg-club-bg/60 border-white/10 text-slate-400';
-          } else if (idx === myPick) {
-            cls = 'bg-indigo-500/30 border-indigo-400 text-white shadow-lg';
-          }
+          if (isRight) cls = 'bg-emerald-500/25 border-emerald-400 text-emerald-200';
+          else if (isWrongPicked) cls = 'bg-rose-500/25 border-rose-400 text-rose-200';
+          else if (isPicked) cls = 'bg-indigo-500/30 border-indigo-400 text-white';
+
           return `
-            <button type="button" data-quiz-opt="${idx}" ${qz.revealed || typeof myPick === 'number' ? 'disabled' : ''} class="p-4 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition-all ${cls}">
+            <button type="button" data-quiz-opt="${idx}" ${typeof myAns === 'number' || qz.revealed ? 'disabled' : ''} class="p-4 rounded-2xl border-2 text-left text-xs sm:text-sm font-bold transition-all ${cls}">
               <span class="font-mono text-club-gold mr-2">${['A', 'B', 'C', 'D'][idx]}.</span>${opt}
             </button>`;
         })
@@ -4349,18 +4349,27 @@
       $('quizOptionsGrid')
         .querySelectorAll('[data-quiz-opt]')
         .forEach((btn) => {
-          btn.addEventListener('click', () => {
-            updateRoomFields(state.roomCode, {
-              [`quiz.answers.${state.playerId}`]: Number(btn.dataset.quizOpt)
-            });
+          btn.addEventListener('click', async () => {
+            const idx = Number(btn.dataset.quizOpt);
+            const isCorrect = idx === curQ.ans;
+            const curScore = qz.scores?.[state.playerId] || 0;
+            const patch = {
+              [`quiz.answers.${state.playerId}`]: idx
+            };
+            if (isCorrect) {
+              patch[`quiz.scores.${state.playerId}`] = curScore + 100;
+            }
+            await updateRoomFields(state.roomCode, patch);
           });
         });
 
-      $('quizAnswerExplanationBox').classList.toggle('hidden', !qz.revealed);
       if (qz.revealed) {
         clearInterval(state.quizTimerId);
+        $('quizAnswerExplanationBox').classList.remove('hidden');
         $('quizCorrectOptionLabel').textContent = curQ.opts[curQ.ans];
-        $('quizExplanationText').textContent = curQ.exp;
+        $('quizExplanationText').textContent = curQ.exp || '';
+      } else {
+        $('quizAnswerExplanationBox').classList.add('hidden');
       }
 
       $('quizHostControls').classList.toggle('hidden', !isHost);
@@ -4369,157 +4378,114 @@
     }
 
     // =========================================================================
-    // ИГРА 4: «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ» (ПОЛНАЯ ЭКОНОМИКА + 11 ГЕРОЕВ)
+    // ИГРА 4: «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ» (ПОЛНАЯ ЭКОНОМИКА И МЕХАНИКИ)
     // =========================================================================
+    function getGridCoordsForCell(cellId) {
+      if (cellId <= 10) return { row: 11, col: 11 - cellId };
+      if (cellId <= 20) return { row: 11 - (cellId - 10), col: 1 };
+      if (cellId <= 30) return { row: 1, col: 1 + (cellId - 20) };
+      return { row: 1 + (cellId - 30), col: 11 };
+    }
 
-    // Координаты на сетке 11x11 для клеток 0..39:
-    // 0 (СТАРТ) = правый нижний угол (row 11, col 11)
-    // 1..9 = нижняя линия справа налево (row 11, col 10..2)
-    // 10 (Разборки на кухне) = левый нижний угол (row 11, col 1)
-    // 11..19 = левая линия снизу вверх (row 10..2, col 1)
-    // 20 (Ночная парковка) = левый верхний угол (row 1, col 1)
-    // 21..29 = верхняя линия слева направо (row 1, col 2..10)
-    // 30 (Спалился со сторис) = правый верхний угол (row 1, col 11)
-    // 31..39 = правая линия сверху вниз (row 2..10, col 11)
-    function getGridPositionForCell(idx) {
-      if (idx === 0) return { row: 11, col: 11 };
-      if (idx >= 1 && idx <= 9) return { row: 11, col: 11 - idx };
-      if (idx === 10) return { row: 11, col: 1 };
-      if (idx >= 11 && idx <= 19) return { row: 11 - (idx - 10), col: 1 };
-      if (idx === 20) return { row: 1, col: 1 };
-      if (idx >= 21 && idx <= 29) return { row: 1, col: 1 + (idx - 20) };
-      if (idx === 30) return { row: 1, col: 11 };
-      return { row: 1 + (idx - 30), col: 11 };
+    function getHeroById(heroId) {
+      return MONOPOLY_HEROES.find((h) => h.id === heroId) || MONOPOLY_HEROES[0];
     }
 
     function getInflationMultiplier(m) {
-      return 1 + (Number(m?.inflationRate) || 0) / 100;
+      return 1 + (Number(m.inflationRate) || 0) / 100;
     }
 
-    function getEffectiveBuyPrice(cell, buyerPlayer, m) {
-      let price = Math.round((cell.price || 0) * getInflationMultiplier(m));
-      // Пассивка Асулана: -15% на покупку локаций в районах Алматы (районы 5-8: red, yellow, green, darkblue)
-      if (
-        buyerPlayer?.heroId === 'asulan' &&
-        ['red', 'yellow', 'green', 'darkblue'].includes(cell.group)
-      ) {
+    function getEffectiveBuyPrice(cell, playerHeroId, m) {
+      let price = Math.round(cell.price * getInflationMultiplier(m));
+      if (playerHeroId === 'asulan' && cell.id >= 21 && cell.id <= 39) {
         price = Math.round(price * 0.85);
       }
       return price;
     }
 
+    function getGroupCells(group) {
+      return MONOPOLY_BOARD.filter((c) => c.group === group);
+    }
+
     function hasFullColorGroup(m, ownerId, group) {
       if (!group || group === 'rail' || group === 'util') return false;
-      const groupCells = MONOPOLY_BOARD.filter((c) => c.group === group);
-      if (!groupCells.length) return false;
-      return groupCells.every(
-        (c) => m.owners?.[c.id]?.ownerId === ownerId && !m.owners?.[c.id]?.mortgaged
+      const groupCells = getGroupCells(group);
+      return (
+        groupCells.length > 0 &&
+        groupCells.every((c) => m.owners?.[c.id]?.ownerId === ownerId && !m.owners?.[c.id]?.mortgaged)
       );
     }
 
-    // Проверка равномерной застройки района
-    function getStarBuildStatus(m, playerId, cell) {
-      if (!cell || cell.type !== 'prop') {
-        return { canBuild: false, reason: 'Звёзды строятся только на локациях районов.' };
-      }
-      const own = m.owners?.[cell.id];
-      if (!own || own.ownerId !== playerId) {
-        return { canBuild: false, reason: 'Ты не владеешь этой локацией.' };
-      }
-      if (own.mortgaged) {
-        return { canBuild: false, reason: 'Локация в залоге — сначала выкупи её из залога.' };
-      }
-      const groupCells = MONOPOLY_BOARD.filter((c) => c.group === cell.group);
-      const ownsAll = groupCells.every((c) => m.owners?.[c.id]?.ownerId === playerId);
-      if (!ownsAll) {
-        return {
-          canBuild: false,
-          reason: `Сначала собери весь район (${groupCells.length} кл.), без монополии строить звёзды ★ нельзя!`
-        };
-      }
-      const anyMortgaged = groupCells.some((c) => m.owners?.[c.id]?.mortgaged);
-      if (anyMortgaged) {
-        return {
-          canBuild: false,
-          reason: 'Одна из клеток района в залоге — сними залог со всех клеток района.'
-        };
-      }
+    function canBuildStarOnCell(m, playerId, cellId) {
+      const cell = MONOPOLY_BOARD[cellId];
+      if (!cell || cell.type !== 'prop') return false;
+      const own = m.owners?.[cellId];
+      if (!own || own.ownerId !== playerId || own.mortgaged) return false;
       const curStars = own.stars || 0;
-      if (curStars >= 5) {
-        return { canBuild: false, reason: 'Достигнут максимум: 5 ★ (Отель)!' };
-      }
+      if (curStars >= 5) return false;
+      if (!hasFullColorGroup(m, playerId, cell.group)) return false;
+
+      const groupCells = getGroupCells(cell.group);
       const minStarsInGroup = Math.min(...groupCells.map((c) => m.owners?.[c.id]?.stars || 0));
-      if (curStars > minStarsInGroup) {
-        return {
-          canBuild: false,
-          reason: `Равномерная застройка: сначала подними остальные клетки района до ${curStars} ★!`
-        };
-      }
-      const cost = Math.round((cell.starCost || 50000) * getInflationMultiplier(m));
-      const p = m.players?.[playerId];
-      if (!p || p.cash < cost) {
-        return { canBuild: false, reason: `Не хватает средств (нужно ${fmtMoney(cost)}).` };
-      }
-      return { canBuild: true, cost, nextStars: curStars + 1 };
+      return curStars === minStarsInGroup;
     }
 
-    function calculateCellRent(m, cell, payerPlayer, diceSum = 7) {
+    function canSellStarOnCell(m, playerId, cellId) {
+      const cell = MONOPOLY_BOARD[cellId];
+      if (!cell || cell.type !== 'prop') return false;
+      const own = m.owners?.[cellId];
+      if (!own || own.ownerId !== playerId) return false;
+      const curStars = own.stars || 0;
+      if (curStars <= 0) return false;
+
+      const groupCells = getGroupCells(cell.group);
+      const maxStarsInGroup = Math.max(...groupCells.map((c) => m.owners?.[c.id]?.stars || 0));
+      return curStars === maxStarsInGroup;
+    }
+
+    function computeCellRent(m, cell, payerPlayer, diceSum = 7) {
       const own = m.owners?.[cell.id];
-      if (!own || !own.ownerId || own.ownerId === payerPlayer.id || own.mortgaged) return 0;
-
+      if (!own || !own.ownerId || own.mortgaged) return 0;
       const owner = m.players?.[own.ownerId];
-      if (!owner) return 0;
+      if (!owner || owner.id === payerPlayer.id) return 0;
 
-      // Ульты «Второй шанс»:
-      // 1) Рамазан («Чёрный блокнот»): 3 хода не платит ренту сам
       if ((payerPlayer.ramazanSelfShieldTurns || 0) > 0) return 0;
-      // 2) Назерке («Тихий выход»): 1 полный круг не платит ренты и штрафы
       if (payerPlayer.nazerkeSafeCircle) return 0;
 
-      const inf = getInflationMultiplier(m);
+      const mult = getInflationMultiplier(m);
       let rent = 0;
 
       if (cell.type === 'prop') {
         const stars = own.stars || 0;
-        const isMonopoly = hasFullColorGroup(m, owner.id, cell.group);
-        if (stars === 0) {
-          rent = isMonopoly ? cell.rents[1] : cell.rents[0];
+        const fullGroup = hasFullColorGroup(m, owner.id, cell.group);
+        if (stars > 0) {
+          rent = cell.rents[stars + 1] || cell.rents[cell.rents.length - 1];
+        } else if (fullGroup) {
+          rent = cell.rents[1];
         } else {
-          rent = cell.rents[Math.min(6, stars + 1)] || cell.rents[0];
+          rent = cell.rents[0];
         }
-        rent = Math.round(rent * inf);
 
-        // Пассивка Думана: +15% к ренте на своих клетках в Алматы (районы 5-8: red, yellow, green, darkblue)
-        if (owner.heroId === 'duman' && ['red', 'yellow', 'green', 'darkblue'].includes(cell.group)) {
+        if (owner.heroId === 'duman' && cell.id >= 21 && cell.id <= 39) {
           rent = Math.round(rent * 1.15);
         }
-        // Пассивка Жамбыла: +20% к ренте в Районе Секрет Алматинских (darkblue: кл. 38, 40)
-        if (owner.heroId === 'zhambyl' && cell.group === 'darkblue') {
+        if (owner.heroId === 'zhambyl' && (cell.id === 37 || cell.id === 39)) {
           rent = Math.round(rent * 1.2);
         }
-        // Пассивка Еркежан: +15 000 ₸ сверху, когда кто-то встаёт на её клетку
-        if (owner.heroId === 'erkezhan') {
-          rent += 15000;
+        if ((owner.ramazanDoubleRentTurns || 0) > 0) {
+          rent *= 2;
         }
       } else if (cell.type === 'station') {
-        const ownedStations = MONOPOLY_BOARD.filter(
+        const stationsOwned = MONOPOLY_BOARD.filter(
           (c) => c.type === 'station' && m.owners?.[c.id]?.ownerId === owner.id && !m.owners?.[c.id]?.mortgaged
         ).length;
-        rent = Math.round((cell.rents[Math.max(0, ownedStations - 1)] || 25000) * inf);
+        rent = cell.rents[Math.max(0, stationsOwned - 1)] || 25000;
       } else if (cell.type === 'utility') {
-        const ownedUtils = MONOPOLY_BOARD.filter(
-          (c) => c.type === 'utility' && m.owners?.[c.id]?.ownerId === owner.id && !m.owners?.[c.id]?.mortgaged
-        ).length;
-        const mult = ownedUtils >= 2 ? 10000 : 4000;
-        rent = Math.round(diceSum * mult * inf);
+        rent = diceSum * 4000;
       }
 
-      // Ульта Рамазана («Чёрный блокнот»): соперники на его ячейках платят 2× ренту
-      if ((owner.ramazanDoubleRentTurns || 0) > 0) {
-        rent = rent * 2;
-      }
+      rent = Math.round(rent * mult);
 
-      // Пассивка Суйениша: платит на 20% меньше ренты на чужих локациях
       if (payerPlayer.heroId === 'suyenish') {
         rent = Math.round(rent * 0.8);
       }
@@ -4527,225 +4493,116 @@
       return Math.max(0, rent);
     }
 
-    // Помощник начисления дохода с учётом ульты Дильназ («Паразит» — 50% доходов на 2 раунда)
-    function creditPlayerIncome(m, recipientId, amount, logsArr) {
+    function creditPlayerWithParasiteCheck(m, receiverId, amount, logs) {
       if (amount <= 0) return;
-      const recipient = m.players?.[recipientId];
-      if (!recipient) return;
+      const receiver = m.players[receiverId];
+      if (!receiver) return;
 
-      const parasiteOwner = Object.values(m.players || {}).find(
-        (pl) =>
-          pl.heroId === 'dilnaz' &&
-          pl.dilnazParasiteTargetId === recipientId &&
-          (pl.dilnazParasiteRounds || 0) > 0
+      const parasiteOwner = Object.values(m.players).find(
+        (p) => p.heroId === 'dilnaz' && p.dilnazParasiteTargetId === receiverId && (p.dilnazParasiteRounds || 0) > 0
       );
-
-      if (parasiteOwner && parasiteOwner.id !== recipientId) {
-        const half = Math.round(amount * 0.5);
-        const rest = amount - half;
-        recipient.cash += rest;
+      if (parasiteOwner && parasiteOwner.id !== receiverId) {
+        const half = Math.floor(amount / 2);
+        receiver.cash += amount - half;
         parasiteOwner.cash += half;
-        if (logsArr) {
-          logsArr.push(
-            `🕷️ Паразит Дильназ перехватил 50% дохода ${recipient.name} (+${fmtMoney(half)})!`
-          );
-        }
+        logs.unshift({
+          ts: Date.now(),
+          text: `🦠 Паразит Дильназ забрал 50% дохода (${fmtMoney(half)}) у ${receiver.name}!`
+        });
       } else {
-        recipient.cash += amount;
+        receiver.cash += amount;
       }
     }
 
-    // Пассивка Дильназ: +10% от стоимости любой сделки или звезды ★ на её линии поля
-    function applyDilnazLineCommission(m, lineName, baseCost, logsArr) {
-      const dilnaz = Object.values(m.players || {}).find((pl) => pl.heroId === 'dilnaz');
-      if (!dilnaz) return;
-      const dilnazCell = MONOPOLY_BOARD[dilnaz.pos || 0];
-      if (dilnazCell && dilnazCell.line === lineName) {
-        const bonus = Math.round(baseCost * 0.1);
-        if (bonus > 0) {
-          dilnaz.cash += bonus;
-          if (logsArr) {
-            logsArr.push(`💅 Дильназ получила +${fmtMoney(bonus)} (10% со сделки/звезды на её линии)!`);
-          }
-        }
+    function addMonoLog(m, text) {
+      m.logs = [{ ts: Date.now(), text }, ...(m.logs || []).slice(0, 18)];
+    }
+
+    function checkMonopolyWinner(m) {
+      if ((m.turnOrder || []).length === 1) {
+        const winnerId = m.turnOrder[0];
+        const w = m.players?.[winnerId];
+        m.winnerId = winnerId;
+        m.turnPhase = 'finished';
+        addMonoLog(m, `👑 ПОБЕДА! ${w?.name || 'Игрок'} остаётся единственным монополистом на тропинке!`);
       }
     }
 
-    // Проверка на банкротство (если баланс < 0 и ульта «Второй шанс» уже потрачена или недоступна)
-    function checkMonopolyBankruptcyAndWinner(m, logsArr) {
-      for (const pid of [...m.turnOrder]) {
-        const p = m.players?.[pid];
-        if (!p) continue;
-        if (p.cash < 0) {
-          const canSaveWithUlt = !p.ultUsed && ((m.roundNumber || 1) >= 11 || p.cash < 0);
-          if (canSaveWithUlt && !p.isBot) {
-            logsArr.push(`⚠️ ${p.name} в минусе (${fmtMoney(p.cash)})! Активируй «⚡ Второй шанс» или признай поражение.`);
-          } else {
-            // Автовылет (или у бота срабатывает ульта, если доступна)
-            if (p.isBot && !p.ultUsed) {
-              p.ultUsed = true;
-              p.cash = 200000;
-              logsArr.push(`⚡ Бот ${p.name} использовал «Второй шанс» и спасся от банкротства!`);
-            } else {
-              removePlayerFromMonopolyState(
-                m,
-                pid,
-                `💀 ${p.name} обанкротился (${fmtMoney(p.cash)}) и выбыл из партии! Его локации вернулись в банк.`
-              );
-            }
-          }
+    function advanceMonopolyTurn(m) {
+      if ((m.turnOrder || []).length <= 1) {
+        checkMonopolyWinner(m);
+        return;
+      }
+      const prevId = m.turnOrder[m.currentTurnIndex];
+      const prevPlayer = m.players[prevId];
+      if (prevPlayer) {
+        if ((prevPlayer.ramazanSelfShieldTurns || 0) > 0) prevPlayer.ramazanSelfShieldTurns--;
+        if ((prevPlayer.ramazanDoubleRentTurns || 0) > 0) prevPlayer.ramazanDoubleRentTurns--;
+        if ((prevPlayer.dilnazParasiteRounds || 0) > 0) {
+          prevPlayer.dilnazParasiteRounds--;
+          if (prevPlayer.dilnazParasiteRounds <= 0) prevPlayer.dilnazParasiteTargetId = null;
         }
-      }
-    }
-
-    // =========================================================================
-    // ХОД ИГРОКА: БРОСОК КУБИКОВ И ПЕРЕМЕЩЕНИЕ ПО КРУГУ
-    // =========================================================================
-    window.monoRollDice = async function () {
-      const room = state.roomData;
-      const m = room?.monopoly;
-      if (!m || m.turnPhase !== 'roll' || state.monoAnimating) return;
-
-      const activeId = m.turnOrder[m.currentTurnIndex];
-      const activePlayer = m.players?.[activeId];
-      if (!activePlayer) return;
-
-      const isHost = room.hostId === state.playerId;
-      if (!activePlayer.isBot && activeId !== state.playerId) {
-        return showToast(`Сейчас ходит ${activePlayer.name}`);
-      }
-      if (activePlayer.isBot && !isHost) return;
-
-      const d1 = Math.floor(Math.random() * 6) + 1;
-      const d2 = Math.floor(Math.random() * 6) + 1;
-      const isDouble = d1 === d2;
-      const steps = d1 + d2;
-
-      playTone(440, 0.08);
-      setTimeout(() => playTone(620, 0.11), 85);
-
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[activeId];
-      const logs = [];
-
-      nextM.dice = [d1, d2];
-
-      // Если игрок в «Разборках на кухне» (кл. 11 -> idx 10)
-      if ((p.jailTurns || 0) > 0) {
-        if (isDouble) {
-          p.jailTurns = 0;
-          logs.push(`🎲 ${p.name} выбросил дубль (${d1}:${d2}) и вышел из «Разборок на кухне»!`);
-        } else {
-          p.jailTurns -= 1;
-          if (p.jailTurns <= 0) {
-            const fine = p.heroId === 'nazerke' ? 0 : 50000;
-            p.cash -= fine;
-            logs.push(
-              fine === 0
-                ? `🕊️ Назерке вышла из «Разборок на кухне» бесплатно!`
-                : `💸 ${p.name} отсидел 3 хода в «Разборках на кухне» и заплатил штраф 50 000 ₸.`
-            );
-          } else {
-            logs.push(`🚨 ${p.name} выбросил ${d1}:${d2} и остаётся в «Разборках на кухне» (осталось ходов: ${p.jailTurns}).`);
-            nextM.turnPhase = 'end';
-            nextM.logs = [{ ts: Date.now(), text: logs.join(' ') }, ...(nextM.logs || []).slice(0, 18)];
-            await updateRoomFields(state.roomCode, { monopoly: nextM });
-            return;
-          }
-        }
+        prevPlayer.turnsPlayed = (prevPlayer.turnsPlayed || 0) + 1;
       }
 
-      // Проверка 3 дублей подряд
-      if (isDouble) {
-        nextM.doublesStreak = (nextM.doublesStreak || 0) + 1;
-        if (nextM.doublesStreak >= 3) {
-          p.pos = 10;
-          p.jailTurns = 3;
-          nextM.doublesStreak = 0;
-          nextM.turnPhase = 'end';
-          // Пассивка Рамазана: +25 000 ₸ при попадании кого-то в «Разборки на кухне»
-          Object.values(nextM.players).forEach((pl) => {
-            if (pl.heroId === 'ramazan' && pl.id !== p.id) {
-              creditPlayerIncome(nextM, pl.id, 25000, logs);
-              logs.push(`👁️ Рамазан получил +25 000 ₸ за то, что ${p.name} угодил в «Разборки на кухне»!`);
-            }
-          });
-          logs.push(`🚨 ${p.name} выбросил 3 дубля подряд и отправляется в «Разборки на кухне» (кл. 11)!`);
-          nextM.logs = [{ ts: Date.now(), text: logs.join(' ') }, ...(nextM.logs || []).slice(0, 18)];
-          await updateRoomFields(state.roomCode, { monopoly: nextM });
-          return;
-        }
-      } else {
-        nextM.doublesStreak = 0;
-      }
-
-      const oldPos = p.pos || 0;
-      const newPos = (oldPos + steps) % 40;
-      const passedStart = oldPos + steps >= 40;
-
-      if (passedStart) {
-        const startBonus = p.heroId === 'alisher' ? 220000 : 200000;
-        creditPlayerIncome(nextM, p.id, startBonus, logs);
-        if (p.nazerkeSafeCircle) {
+      const nextIdx = (m.currentTurnIndex + 1) % m.turnOrder.length;
+      if (nextIdx === 0) {
+        m.roundNumber = (m.roundNumber || 1) + 1;
+        Object.values(m.players).forEach((p) => {
           p.nazerkeSafeCircle = false;
-          logs.push(`🕊️ Безопасный круг Назерке («Тихий выход») завершился на СТАРТе.`);
-        }
-        logs.push(`🏁 ${p.name} прошёл СТАРТ и получил +${fmtMoney(startBonus)}!`);
+        });
       }
-
-      p.pos = newPos;
-      await resolveLandingOnCell(nextM, p, newPos, steps, isDouble, logs);
-      checkMonopolyBankruptcyAndWinner(nextM, logs);
-
-      nextM.logs = [
-        { ts: Date.now(), text: `🎲 ${p.name} выбросил ${d1}:${d2} (${steps}) → ${MONOPOLY_BOARD[newPos].name}. ${logs.join(' ')}` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-    };
-
-    async function resolveLandingOnCell(m, p, cellIdx, diceSum, isDouble, logs) {
-      const cell = MONOPOLY_BOARD[cellIdx];
+      m.currentTurnIndex = nextIdx;
+      m.turnPhase = 'roll';
+      m.doublesStreak = 0;
       m.pendingCellId = null;
+      m.auction = null;
+    }
+
+    function resolveLandingOnCell(m, player, diceSum, isDouble) {
+      const cell = MONOPOLY_BOARD[player.pos];
+      addMonoLog(m, `📍 ${player.name} остановился на кл. ${cell.num} «${cell.name}».`);
 
       if (cell.type === 'start' || cell.type === 'freepark') {
-        m.turnPhase = isDouble ? 'roll' : 'end';
+        m.turnPhase = isDouble && player.jailTurns === 0 ? 'roll' : 'end_turn';
         return;
       }
 
       if (cell.type === 'jail') {
-        logs.push(`👀 ${p.name} заглянул в «Разборки на кухне» (просто в гостях).`);
-        m.turnPhase = isDouble ? 'roll' : 'end';
+        addMonoLog(m, `👀 ${player.name} зашёл в «Разборки на кухне» просто в гости.`);
+        m.turnPhase = isDouble ? 'roll' : 'end_turn';
         return;
       }
 
       if (cell.type === 'gotojail') {
-        p.pos = 10;
-        p.jailTurns = 3;
+        player.pos = 10;
+        player.jailTurns = 3;
         m.doublesStreak = 0;
-        m.turnPhase = 'end';
-        logs.push(`🚔 Спалился со сторис! ${p.name} отправлен в «Разборки на кухне» (кл. 11).`);
-        Object.values(m.players).forEach((pl) => {
-          if (pl.heroId === 'ramazan' && pl.id !== p.id) {
-            creditPlayerIncome(m, pl.id, 25000, logs);
-            logs.push(`👁️ Рамазан получил +25 000 ₸!`);
-          }
-        });
+        addMonoLog(m, `🚔 ${player.name} спалился со сторис и отправляется в «Разборки на кухне» (кл. 11)!`);
+        const ramazanPlayer = Object.values(m.players).find((p) => p.heroId === 'ramazan');
+        if (ramazanPlayer && ramazanPlayer.id !== player.id) {
+          creditPlayerWithParasiteCheck(m, ramazanPlayer.id, 25000, m.logs);
+          addMonoLog(m, `📓 Пассивка Рамазана: +25 000 ₸ за чужой залёт!`);
+        }
+        m.turnPhase = 'end_turn';
         return;
       }
 
       if (cell.type === 'tax') {
-        if (p.heroId === 'damira') {
-          logs.push(`🕶️ Дамира не платит налог на клетке «${cell.name}»!`);
-        } else if (p.nazerkeSafeCircle || (p.ramazanSelfShieldTurns || 0) > 0) {
-          logs.push(`🛡️ Щит ульты защитил ${p.name} от налога на клетке «${cell.name}»!`);
-        } else {
-          const tax = Math.round((cell.taxAmount || 100000) * getInflationMultiplier(m));
-          p.cash -= tax;
-          logs.push(`💸 ${p.name} заплатил налог −${fmtMoney(tax)} (${cell.name}).`);
+        if (player.heroId === 'damira') {
+          addMonoLog(m, `💃 Пассивка Дамиры: налог «${cell.name}» полностью аннулирован!`);
+          m.turnPhase = isDouble ? 'roll' : 'end_turn';
+          return;
         }
-        m.turnPhase = isDouble ? 'roll' : 'end';
+        if (player.nazerkeSafeCircle || (player.ramazanSelfShieldTurns || 0) > 0) {
+          addMonoLog(m, `🛡️ Щит спас ${player.name} от налога «${cell.name}»!`);
+          m.turnPhase = isDouble ? 'roll' : 'end_turn';
+          return;
+        }
+        const amount = Math.round(cell.taxAmount * getInflationMultiplier(m));
+        player.cash -= amount;
+        addMonoLog(m, `💸 ${player.name} оплатил «${cell.name}»: −${fmtMoney(amount)}.`);
+        m.turnPhase = isDouble ? 'roll' : 'end_turn';
         return;
       }
 
@@ -4753,392 +4610,404 @@
         const card = MONOPOLY_CHANCE_CARDS[Math.floor(Math.random() * MONOPOLY_CHANCE_CARDS.length)];
         m.lastEventBanner = {
           ts: Date.now(),
-          playerName: p.name,
+          emoji: '⚡',
+          tag: '⚡ СЮЖЕТ • ГЛАВЫ РОМАНА',
           title: card.title,
-          desc: card.desc
+          desc: `${player.name}: ${card.desc}`
         };
+        addMonoLog(m, `⚡ Сюжет (${player.name}): «${card.title}» — ${card.desc}`);
 
         if (typeof card.cash === 'number') {
           if (card.cash > 0) {
-            creditPlayerIncome(m, p.id, card.cash, logs);
-            logs.push(`⚡ Сюжет «${card.title}»: +${fmtMoney(card.cash)}.`);
-          } else if (p.nazerkeSafeCircle) {
-            logs.push(`🕊️ «Тихий выход» Назерке отменил списание по карточке «${card.title}»!`);
-          } else {
-            p.cash += card.cash;
-            logs.push(`⚡ Сюжет «${card.title}»: ${fmtMoney(card.cash)}.`);
+            creditPlayerWithParasiteCheck(m, player.id, card.cash, m.logs);
+          } else if (!player.nazerkeSafeCircle && (player.ramazanSelfShieldTurns || 0) <= 0) {
+            player.cash += card.cash;
           }
         } else if (typeof card.collectEach === 'number') {
           let totalCollected = 0;
           Object.values(m.players).forEach((other) => {
-            if (other.id !== p.id) {
+            if (other.id !== player.id) {
               other.cash -= card.collectEach;
               totalCollected += card.collectEach;
             }
           });
-          creditPlayerIncome(m, p.id, totalCollected, logs);
-          logs.push(`⚡ Сюжет «${card.title}»: собрано +${fmtMoney(totalCollected)}.`);
+          creditPlayerWithParasiteCheck(m, player.id, totalCollected, m.logs);
         } else if (typeof card.payEach === 'number') {
           Object.values(m.players).forEach((other) => {
-            if (other.id !== p.id) {
-              p.cash -= card.payEach;
-              creditPlayerIncome(m, other.id, card.payEach, logs);
+            if (other.id !== player.id) {
+              player.cash -= card.payEach;
+              creditPlayerWithParasiteCheck(m, other.id, card.payEach, m.logs);
             }
           });
-          logs.push(`⚡ Сюжет «${card.title}»: выплачено по ${fmtMoney(card.payEach)} каждому.`);
         } else if (card.goJail) {
-          p.pos = 10;
-          p.jailTurns = 3;
-          m.turnPhase = 'end';
-          logs.push(`⚡ Сюжет «${card.title}» → в «Разборки на кухне»!`);
+          player.pos = 10;
+          player.jailTurns = 3;
+          m.turnPhase = 'end_turn';
           return;
         } else if (typeof card.moveTo === 'number') {
-          if (card.moveTo < p.pos && card.moveTo !== 0) {
-            const startBonus = p.heroId === 'alisher' ? 220000 : 200000;
-            creditPlayerIncome(m, p.id, startBonus, logs);
-            logs.push(`🏁 Проход СТАРТа по сюжету: +${fmtMoney(startBonus)}!`);
-          } else if (card.moveTo === 0) {
-            const startBonus = p.heroId === 'alisher' ? 220000 : 200000;
-            creditPlayerIncome(m, p.id, startBonus, logs);
+          if (card.moveTo < player.pos && card.moveTo !== 10) {
+            const passBonus = player.heroId === 'alisher' ? 220000 : 200000;
+            creditPlayerWithParasiteCheck(m, player.id, passBonus, m.logs);
+            addMonoLog(m, `🏁 ${player.name} прошёл СТАРТ и получил +${fmtMoney(passBonus)}!`);
           }
-          p.pos = card.moveTo;
-          logs.push(`⚡ Сюжет перенёс на кл. ${card.moveTo + 1} («${MONOPOLY_BOARD[card.moveTo].name}»).`);
+          player.pos = card.moveTo;
           if (card.moveTo !== 0) {
-            await resolveLandingOnCell(m, p, card.moveTo, diceSum, isDouble, logs);
+            resolveLandingOnCell(m, player, diceSum, false);
             return;
           }
         }
-        m.turnPhase = isDouble ? 'roll' : 'end';
+        m.turnPhase = isDouble ? 'roll' : 'end_turn';
         return;
       }
 
-      // Покупаемые клетки: prop, station, utility
-      const own = m.owners?.[cell.id];
-      if (!own || !own.ownerId) {
-        if (p.isBot) {
-          const buyCost = getEffectiveBuyPrice(cell, p, m);
-          if (p.cash >= buyCost + 150000) {
-            p.cash -= buyCost;
-            m.owners[cell.id] = { ownerId: p.id, stars: 0, mortgaged: false };
-            applyDilnazLineCommission(m, cell.line, buyCost, logs);
-            logs.push(`🤖 ${p.name} купил «${cell.name}» за ${fmtMoney(buyCost)}.`);
-          } else {
-            logs.push(`🤖 ${p.name} воздержался от покупки «${cell.name}».`);
-          }
-          m.turnPhase = isDouble ? 'roll' : 'end';
-        } else {
+      if (cell.type === 'prop' || cell.type === 'station' || cell.type === 'utility') {
+        const own = m.owners?.[cell.id];
+        if (!own || !own.ownerId) {
           m.pendingCellId = cell.id;
-          m.turnPhase = 'decision';
-          logs.push(`🏠 Локация «${cell.name}» свободна — можно купить или выставить на аукцион!`);
+          m.turnPhase = 'buy_decision';
+          return;
         }
-        return;
-      }
+        if (own.ownerId === player.id) {
+          addMonoLog(m, `🏠 ${player.name} на своей территории «${cell.name}».`);
+          m.turnPhase = isDouble ? 'roll' : 'end_turn';
+          return;
+        }
+        if (own.mortgaged) {
+          addMonoLog(m, `🔒 Локация «${cell.name}» в залоге — рента не взимается.`);
+          m.turnPhase = isDouble ? 'roll' : 'end_turn';
+          return;
+        }
 
-      if (own.ownerId === p.id) {
-        logs.push(`🏡 ${p.name} на своей локации «${cell.name}».`);
-        m.turnPhase = isDouble ? 'roll' : 'end';
-        return;
-      }
+        const owner = m.players[own.ownerId];
+        const rent = computeCellRent(m, cell, player, diceSum);
+        if (rent > 0 && owner) {
+          player.cash -= rent;
+          creditPlayerWithParasiteCheck(m, owner.id, rent, m.logs);
+          addMonoLog(m, `💰 ${player.name} заплатил ренту ${fmtMoney(rent)} игроку ${owner.name} за «${cell.name}».`);
 
-      const rent = calculateCellRent(m, cell, p, diceSum);
-      const owner = m.players?.[own.ownerId];
-      if (rent > 0 && owner) {
-        p.cash -= rent;
-        creditPlayerIncome(m, owner.id, rent, logs);
-        logs.push(`💳 ${p.name} заплатил ренту ${fmtMoney(rent)} владельцу ${owner.name} за «${cell.name}»!`);
-      } else if (own.mortgaged) {
-        logs.push(`🔒 «${cell.name}» в залоге — рента не взимается.`);
-      } else {
-        logs.push(`🛡️ Щит ульты обнулил ренту на «${cell.name}»!`);
+          if (owner.heroId === 'erkezhan') {
+            creditPlayerWithParasiteCheck(m, owner.id, 15000, m.logs);
+            addMonoLog(m, `✨ Пассивка Еркежан: +15 000 ₸ сверху!`);
+          }
+        } else {
+          addMonoLog(m, `🛡️ ${player.name} избежал ренты на «${cell.name}» благодаря защите!`);
+        }
+        m.turnPhase = isDouble ? 'roll' : 'end_turn';
       }
-
-      m.turnPhase = isDouble ? 'roll' : 'end';
     }
 
-    // Покупка свободной локации
-    window.monoBuyPendingCell = async function () {
+    async function handleMonopolyRollDice() {
       const room = state.roomData;
       const m = room?.monopoly;
-      if (!m || m.turnPhase !== 'decision') return;
+      if (!m || state.monoAnimating) return;
+
       const activeId = m.turnOrder[m.currentTurnIndex];
-      if (activeId !== state.playerId) return;
+      const activePlayer = m.players[activeId];
+      if (!activePlayer) return;
 
-      const cell = MONOPOLY_BOARD[m.pendingCellId];
-      if (!cell) return;
+      const isMyTurn = activeId === state.playerId || (activePlayer.isBot && room.hostId === state.playerId);
+      if (!isMyTurn || m.turnPhase !== 'roll') return;
 
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[activeId];
-      const cost = getEffectiveBuyPrice(cell, p, nextM);
-      if (p.cash < cost) return showToast('Недостаточно средств для покупки!');
+      state.monoAnimating = true;
+      playTone(440, 0.08);
+      const d1El = $('monoDie1Box');
+      const d2El = $('monoDie2Box');
+      if (d1El) d1El.classList.add('dice-rolling');
+      if (d2El) d2El.classList.add('dice-rolling');
 
-      const logs = [];
-      p.cash -= cost;
-      nextM.owners[cell.id] = { ownerId: p.id, stars: 0, mortgaged: false };
+      await new Promise((res) => setTimeout(res, 480));
+      state.monoAnimating = false;
 
-      // Пассивка Асылжан: +10 000 ₸ каждый раз, когда кто-то из подруг (Еркежан, Дамира, Назерке, Дильназ) покупает локацию
-      if (['erkezhan', 'damira', 'nazerke', 'dilnaz'].includes(p.heroId)) {
-        Object.values(nextM.players).forEach((pl) => {
-          if (pl.heroId === 'asylzhan' && pl.id !== p.id) {
-            creditPlayerIncome(nextM, pl.id, 10000, logs);
-            logs.push(`💖 Асылжан получила +10 000 ₸ за покупку подруги (${p.name})!`);
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[activeId];
+      const d1 = Math.floor(Math.random() * 6) + 1;
+      const d2 = Math.floor(Math.random() * 6) + 1;
+      const isDouble = d1 === d2;
+      const sum = d1 + d2;
+      copy.dice = [d1, d2];
+
+      if ((p.jailTurns || 0) > 0) {
+        if (isDouble) {
+          p.jailTurns = 0;
+          addMonoLog(copy, `🎲 Дубль (${d1}:${d2})! ${p.name} выходит из «Разборок на кухне»!`);
+        } else if (p.heroId === 'nazerke') {
+          p.jailTurns = 0;
+          addMonoLog(copy, `🌸 Пассивка Назерке: бесплатный выход из «Разборок на кухне»!`);
+        } else {
+          p.jailTurns -= 1;
+          if (p.jailTurns <= 0) {
+            p.cash -= 50000;
+            addMonoLog(copy, `🚨 3-й ход в разборках: ${p.name} заплатил штраф 50 000 ₸ и вышел.`);
+          } else {
+            addMonoLog(copy, `🚨 ${p.name} выбросил ${d1}:${d2} и остаётся в «Разборках на кухне» (осталось ходов: ${p.jailTurns}).`);
+            copy.turnPhase = 'end_turn';
+            await updateRoomFields(state.roomCode, { monopoly: copy });
+            return;
           }
-        });
+        }
       }
 
-      // Пассивка Дильназ: +10% от сделки на её линии
-      applyDilnazLineCommission(nextM, cell.line, cost, logs);
+      if (isDouble) {
+        copy.doublesStreak = (copy.doublesStreak || 0) + 1;
+        if (copy.doublesStreak >= 3) {
+          p.pos = 10;
+          p.jailTurns = 3;
+          copy.doublesStreak = 0;
+          copy.turnPhase = 'end_turn';
+          addMonoLog(copy, `🚔 Три дубля подряд! ${p.name} отправляется в «Разборки на кухне»!`);
+          await updateRoomFields(state.roomCode, { monopoly: copy });
+          return;
+        }
+      } else {
+        copy.doublesStreak = 0;
+      }
 
-      playTone(720, 0.12);
-      nextM.pendingCellId = null;
-      nextM.turnPhase = (nextM.doublesStreak || 0) > 0 ? 'roll' : 'end';
-      nextM.logs = [
-        { ts: Date.now(), text: `✅ ${p.name} купил «${cell.name}» за ${fmtMoney(cost)}. ${logs.join(' ')}` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
+      const oldPos = p.pos;
+      const newPos = (oldPos + sum) % 40;
+      if (oldPos + sum >= 40) {
+        const passBonus = p.heroId === 'alisher' ? 220000 : 200000;
+        creditPlayerWithParasiteCheck(copy, p.id, passBonus, copy.logs);
+        addMonoLog(copy, `🏁 ${p.name} прошёл СТАРТ и получил +${fmtMoney(passBonus)}!`);
+      }
+      p.pos = newPos;
+      addMonoLog(copy, `🎲 ${p.name} выбросил ${d1} + ${d2} = ${sum}${isDouble ? ' (ДУБЛЬ!)' : ''}.`);
+      resolveLandingOnCell(copy, p, sum, isDouble);
 
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-    };
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+    }
 
-    // Отказ от покупки -> Живой Аукцион (старт от 1.2×)
-    window.monoStartAuctionForPending = async function () {
+    async function handleMonopolyPayJailFine() {
       const room = state.roomData;
       const m = room?.monopoly;
-      if (!m || m.turnPhase !== 'decision') return;
+      if (!m) return;
       const activeId = m.turnOrder[m.currentTurnIndex];
       if (activeId !== state.playerId) return;
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[activeId];
+      if ((p.jailTurns || 0) <= 0) return;
 
-      const cell = MONOPOLY_BOARD[m.pendingCellId];
-      if (!cell) return;
+      if (p.heroId !== 'nazerke') {
+        if (p.cash < 50000) return showToast('Недостаточно средств (нужно 50 000 ₸)!');
+        p.cash -= 50000;
+      }
+      p.jailTurns = 0;
+      addMonoLog(copy, `🔓 ${p.name} закрыл вопрос на кухне и готов бросать кубики!`);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+    }
 
-      const nextM = JSON.parse(JSON.stringify(m));
-      const baseWithInf = Math.round(cell.price * getInflationMultiplier(nextM));
-      const startBid = Math.round(baseWithInf * 1.2);
-
-      nextM.turnPhase = 'auction';
-      nextM.auction = {
-        cellId: cell.id,
-        basePrice: baseWithInf,
-        currentBid: startBid,
-        leaderId: null,
-        passedIds: []
-      };
-      nextM.logs = [
-        { ts: Date.now(), text: `🔨 «${cell.name}» выставлен на аукцион со стартовой ценой ${fmtMoney(startBid)} (1.2×)!` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-    };
-
-    window.monoPlaceAuctionBid = async function (increment) {
+    async function handleMonopolyBuyCell(cellId) {
       const room = state.roomData;
       const m = room?.monopoly;
-      if (!m || m.turnPhase !== 'auction' || !m.auction) return;
-      const me = m.players?.[state.playerId];
+      if (!m) return;
+      const activeId = m.turnOrder[m.currentTurnIndex];
+      const activePlayer = m.players[activeId];
+      const canAct = activeId === state.playerId || (activePlayer?.isBot && room.hostId === state.playerId);
+      if (!canAct) return;
+
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[activeId];
+      const cell = MONOPOLY_BOARD[cellId];
+      if (!cell || copy.owners?.[cellId]) return;
+
+      const price = getEffectiveBuyPrice(cell, p.heroId, copy);
+      if (p.cash < price) return showToast('Недостаточно денег на покупку!');
+
+      p.cash -= price;
+      copy.owners[cellId] = { ownerId: p.id, stars: 0, mortgaged: false };
+      copy.pendingCellId = null;
+      copy.turnPhase = copy.dice[0] === copy.dice[1] ? 'roll' : 'end_turn';
+      addMonoLog(copy, `🏢 ${p.name} купил «${cell.name}» за ${fmtMoney(price)}!`);
+      playTone(680, 0.12);
+
+      if (['erkezhan', 'damira', 'asylzhan', 'nazerke', 'dilnaz'].includes(p.heroId)) {
+        const asyl = Object.values(copy.players).find((pl) => pl.heroId === 'asylzhan');
+        if (asyl && asyl.id !== p.id) {
+          creditPlayerWithParasiteCheck(copy, asyl.id, 10000, copy.logs);
+          addMonoLog(copy, `💐 Пассивка Асылжан: +10 000 ₸ за покупку подруги!`);
+        }
+      }
+
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+    }
+
+    async function handleMonopolyStartAuction(cellId) {
+      const room = state.roomData;
+      const m = room?.monopoly;
+      if (!m) return;
+      const activeId = m.turnOrder[m.currentTurnIndex];
+      const activePlayer = m.players[activeId];
+      const canAct = activeId === state.playerId || (activePlayer?.isBot && room.hostId === state.playerId);
+      if (!canAct) return;
+
+      const copy = JSON.parse(JSON.stringify(m));
+      const cell = MONOPOLY_BOARD[cellId];
+      const startBid = Math.round(cell.price * 1.2 * getInflationMultiplier(copy));
+      copy.pendingCellId = null;
+      copy.turnPhase = 'auction';
+      copy.auction = {
+        cellId,
+        basePrice: cell.price,
+        currentBid: startBid,
+        leaderId: null,
+        passed: {}
+      };
+      addMonoLog(copy, `🔨 Отказ от покупки! «${cell.name}» выставлен на аукцион со стартом ${fmtMoney(startBid)} (1.2×)!`);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+    }
+
+    async function handleMonopolyAuctionBid(increment) {
+      const room = state.roomData;
+      const m = room?.monopoly;
+      if (!m || !m.auction) return;
+      const me = m.players[state.playerId];
       if (!me) return;
 
       const nextBid = m.auction.leaderId ? m.auction.currentBid + increment : m.auction.currentBid;
       if (me.cash < nextBid) return showToast('Не хватает средств на эту ставку!');
 
-      const nextM = JSON.parse(JSON.stringify(m));
-      nextM.auction.currentBid = nextBid;
-      nextM.auction.leaderId = state.playerId;
-      nextM.auction.passedIds = (nextM.auction.passedIds || []).filter((id) => id !== state.playerId);
-      playTone(660, 0.08);
+      const copy = JSON.parse(JSON.stringify(m));
+      copy.auction.currentBid = nextBid;
+      copy.auction.leaderId = state.playerId;
+      addMonoLog(copy, `💰 Аукцион: ${me.name} ставит ${fmtMoney(nextBid)}!`);
+      playTone(760, 0.08);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+    }
 
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-    };
+    $('monoBidPlus10Btn').addEventListener('click', () => handleMonopolyAuctionBid(10000));
+    $('monoBidPlus50Btn').addEventListener('click', () => handleMonopolyAuctionBid(50000));
 
     $('monoAuctionPassBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
-      if (!m || m.turnPhase !== 'auction' || !m.auction) return;
-      const nextM = JSON.parse(JSON.stringify(m));
-      const passed = new Set(nextM.auction.passedIds || []);
-      passed.add(state.playerId);
-      nextM.auction.passedIds = Array.from(passed);
-
-      const humanIds = nextM.turnOrder.filter((id) => !nextM.players[id]?.isBot);
-      if (passed.size >= humanIds.length) {
-        finishMonopolyAuctionLogic(nextM);
-      }
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      if (!m || !m.auction) return;
+      await updateRoomFields(state.roomCode, {
+        [`monopoly.auction.passed.${state.playerId}`]: true
+      });
     });
 
     $('monoHostFinishAuctionBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
-      if (!m || room.hostId !== state.playerId || !m.auction) return;
-      const nextM = JSON.parse(JSON.stringify(m));
-      finishMonopolyAuctionLogic(nextM);
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      if (!m || !m.auction || room.hostId !== state.playerId) return;
+
+      const copy = JSON.parse(JSON.stringify(m));
+      const auc = copy.auction;
+      const cell = MONOPOLY_BOARD[auc.cellId];
+
+      if (auc.leaderId && copy.players[auc.leaderId]) {
+        const winner = copy.players[auc.leaderId];
+        if (winner.cash >= auc.currentBid) {
+          winner.cash -= auc.currentBid;
+          copy.owners[auc.cellId] = { ownerId: winner.id, stars: 0, mortgaged: false };
+          addMonoLog(copy, `🔨 Продано! ${winner.name} забрал «${cell.name}» с аукциона за ${fmtMoney(auc.currentBid)}!`);
+        }
+      } else {
+        addMonoLog(copy, `🔨 Аукцион по «${cell.name}» закрыт без ставок — остаётся в банке.`);
+      }
+
+      copy.auction = null;
+      copy.turnPhase = copy.dice[0] === copy.dice[1] ? 'roll' : 'end_turn';
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
-    function finishMonopolyAuctionLogic(nextM) {
-      const auc = nextM.auction;
-      if (!auc) return;
-      const cell = MONOPOLY_BOARD[auc.cellId];
-      const logs = [];
-      if (auc.leaderId && nextM.players[auc.leaderId]) {
-        const winner = nextM.players[auc.leaderId];
-        winner.cash -= auc.currentBid;
-        nextM.owners[cell.id] = { ownerId: winner.id, stars: 0, mortgaged: false };
-        applyDilnazLineCommission(nextM, cell.line, auc.currentBid, logs);
-        logs.push(`🔨 Аукцион завершён! ${winner.name} забрал «${cell.name}» за ${fmtMoney(auc.currentBid)}.`);
-      } else {
-        logs.push(`🔨 Никто не сделал ставку — «${cell.name}» остаётся в банке.`);
+    async function handleMonopolyEndTurn() {
+      const room = state.roomData;
+      const m = room?.monopoly;
+      if (!m) return;
+      const activeId = m.turnOrder[m.currentTurnIndex];
+      const activePlayer = m.players[activeId];
+      const canAct = activeId === state.playerId || (activePlayer?.isBot && room.hostId === state.playerId);
+      if (!canAct) return;
+
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[activeId];
+      if (p && p.cash < 0) {
+        return showToast(`У ${p.name} отрицательный баланс (${fmtMoney(p.cash)})! Заложи локации или нажми «⚡ Второй шанс» / «🏳️ Сдаться».`);
       }
-      nextM.auction = null;
-      nextM.pendingCellId = null;
-      nextM.turnPhase = (nextM.doublesStreak || 0) > 0 ? 'roll' : 'end';
-      nextM.logs = [{ ts: Date.now(), text: logs.join(' ') }, ...(nextM.logs || []).slice(0, 18)];
+
+      advanceMonopolyTurn(copy);
+      const nextPlayer = copy.players[copy.turnOrder[copy.currentTurnIndex]];
+      if (nextPlayer) {
+        addMonoLog(copy, `➡️ Ход переходит к ${nextPlayer.name} (Раунд ${copy.roundNumber}).`);
+      }
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     }
 
-    // Постройка звезды ★ (строго при полном районе + равномерно)
-    window.monoBuildStarOnCell = async function (cellId) {
+    // Постройка и продажа звёзд ★ + Залог/выкуп в досье
+    window.monoBuildStar = async function (cellId) {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m) return;
+      if (!canBuildStarOnCell(m, state.playerId, cellId)) {
+        return showToast('Строить звёзды ★ можно только собрав весь район и строго равномерно!');
+      }
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[state.playerId];
       const cell = MONOPOLY_BOARD[cellId];
-      const status = getStarBuildStatus(m, state.playerId, cell);
-      if (!status.canBuild) {
-        return showToast(status.reason);
+      const cost = Math.round(cell.starCost * getInflationMultiplier(copy));
+      if (p.cash < cost) return showToast(`Недостаточно средств (нужно ${fmtMoney(cost)})!`);
+
+      p.cash -= cost;
+      copy.owners[cellId].stars = (copy.owners[cellId].stars || 0) + 1;
+      addMonoLog(copy, `⭐ ${p.name} построил ${copy.owners[cellId].stars}★ на «${cell.name}» за ${fmtMoney(cost)}!`);
+      playTone(840, 0.12);
+
+      const dilnaz = Object.values(copy.players).find((pl) => pl.heroId === 'dilnaz');
+      if (dilnaz && dilnaz.id !== p.id && MONOPOLY_BOARD[dilnaz.pos]?.line === cell.line) {
+        const fee = Math.round(cost * 0.1);
+        creditPlayerWithParasiteCheck(copy, dilnaz.id, fee, copy.logs);
+        addMonoLog(copy, `💎 Пассивка Дильназ: +${fmtMoney(fee)} (10% от стройки на её линии)!`);
       }
 
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[state.playerId];
-      const logs = [];
-      p.cash -= status.cost;
-      nextM.owners[cell.id].stars = status.nextStars;
-
-      applyDilnazLineCommission(nextM, cell.line, status.cost, logs);
-      playTone(820, 0.14);
-
-      const starLabel = status.nextStars === 5 ? '5 ★ (Отель)' : `${status.nextStars} ★`;
-      nextM.logs = [
-        { ts: Date.now(), text: `⭐ ${p.name} построил ${starLabel} на «${cell.name}» за ${fmtMoney(status.cost)}. ${logs.join(' ')}` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-      openMonoCellDossier(cellId);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+      openMonopolyCellDossier(cellId);
     };
 
-    // Залог / Выкуп из залога (50% при залоге, 55% при выкупе)
-    window.monoToggleMortgageCell = async function (cellId) {
+    window.monoSellStar = async function (cellId) {
       const room = state.roomData;
       const m = room?.monopoly;
-      if (!m) return;
+      if (!m || !canSellStarOnCell(m, state.playerId, cellId)) return;
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[state.playerId];
       const cell = MONOPOLY_BOARD[cellId];
-      const own = m.owners?.[cellId];
-      if (!cell || !own || own.ownerId !== state.playerId) return;
+      const refund = Math.round(cell.starCost * 0.5 * getInflationMultiplier(copy));
 
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[state.playerId];
-      const baseWithInf = Math.round(cell.price * getInflationMultiplier(nextM));
+      p.cash += refund;
+      copy.owners[cellId].stars -= 1;
+      addMonoLog(copy, `🔻 ${p.name} продал звезду ★ на «${cell.name}» за +${fmtMoney(refund)}.`);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+      openMonopolyCellDossier(cellId);
+    };
+
+    window.monoToggleMortgage = async function (cellId) {
+      const room = state.roomData;
+      const m = room?.monopoly;
+      const own = m?.owners?.[cellId];
+      if (!own || own.ownerId !== state.playerId) return;
+      if ((own.stars || 0) > 0) return showToast('Сначала продай все звёзды ★ на этой клетке!');
+
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[state.playerId];
+      const cell = MONOPOLY_BOARD[cellId];
+      const halfPrice = Math.round(cell.price * 0.5);
 
       if (!own.mortgaged) {
-        if ((own.stars || 0) > 0) {
-          return showToast('Нельзя заложить клетку, пока на ней построены звёзды ★!');
-        }
-        const gain = Math.round(baseWithInf * 0.5);
-        nextM.owners[cellId].mortgaged = true;
-        p.cash += gain;
-        nextM.logs = [
-          { ts: Date.now(), text: `🏦 ${p.name} заложил «${cell.name}» в банк за +${fmtMoney(gain)}.` },
-          ...(nextM.logs || []).slice(0, 18)
-        ];
+        copy.owners[cellId].mortgaged = true;
+        p.cash += halfPrice;
+        addMonoLog(copy, `🏦 ${p.name} заложил «${cell.name}» и получил +${fmtMoney(halfPrice)}.`);
       } else {
-        const redeemCost = Math.round(baseWithInf * 0.55);
-        if (p.cash < redeemCost) return showToast(`Нужно ${fmtMoney(redeemCost)} для выкупа из залога.`);
-        nextM.owners[cellId].mortgaged = false;
-        p.cash -= redeemCost;
-        nextM.logs = [
-          { ts: Date.now(), text: `🔓 ${p.name} выкупил «${cell.name}» из залога за ${fmtMoney(redeemCost)}.` },
-          ...(nextM.logs || []).slice(0, 18)
-        ];
+        const buyout = Math.round(halfPrice * 1.1);
+        if (p.cash < buyout) return showToast(`Для выкупа нужно ${fmtMoney(buyout)}!`);
+        p.cash -= buyout;
+        copy.owners[cellId].mortgaged = false;
+        addMonoLog(copy, `✅ ${p.name} выкупил «${cell.name}» из залога за ${fmtMoney(buyout)}.`);
       }
-
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-      openMonoCellDossier(cellId);
-    };
-
-    // Выход из «Разборок на кухне» (залог 50 000 ₸ или бесплатно для Назерке)
-    window.monoPayJailBail = async function () {
-      const room = state.roomData;
-      const m = room?.monopoly;
-      if (!m) return;
-      const activeId = m.turnOrder[m.currentTurnIndex];
-      if (activeId !== state.playerId) return;
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[activeId];
-      if ((p.jailTurns || 0) <= 0) return;
-
-      const bail = p.heroId === 'nazerke' ? 0 : 50000;
-      if (p.cash < bail) return showToast('Не хватает средств на выход из «Разборок на кухне»!');
-      p.cash -= bail;
-      p.jailTurns = 0;
-      nextM.logs = [
-        {
-          ts: Date.now(),
-          text:
-            bail === 0
-              ? `🕊️ Назерке свободно вышла из «Разборок на кухне» без штрафа!`
-              : `💸 ${p.name} заплатил 50 000 ₸ и вышел из «Разборок на кухне».`
-        },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-    };
-
-    // Завершение хода и передача следующему
-    window.monoEndTurn = async function () {
-      const room = state.roomData;
-      const m = room?.monopoly;
-      if (!m) return;
-      const activeId = m.turnOrder[m.currentTurnIndex];
-      const activePlayer = m.players?.[activeId];
-      const isHost = room.hostId === state.playerId;
-
-      if (!activePlayer?.isBot && activeId !== state.playerId && !isHost) return;
-
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[activeId];
-      if (p) {
-        p.turnsPlayed = (p.turnsPlayed || 0) + 1;
-        if ((p.ramazanSelfShieldTurns || 0) > 0) p.ramazanSelfShieldTurns -= 1;
-        if ((p.ramazanDoubleRentTurns || 0) > 0) p.ramazanDoubleRentTurns -= 1;
-      }
-
-      const nextIdx = (nextM.currentTurnIndex + 1) % nextM.turnOrder.length;
-      if (nextIdx === 0) {
-        nextM.roundNumber = (nextM.roundNumber || 1) + 1;
-        // Уменьшаем счётчик раундов паразита Дильназ
-        Object.values(nextM.players).forEach((pl) => {
-          if ((pl.dilnazParasiteRounds || 0) > 0) {
-            pl.dilnazParasiteRounds -= 1;
-            if (pl.dilnazParasiteRounds <= 0) {
-              pl.dilnazParasiteTargetId = null;
-            }
-          }
-        });
-      }
-
-      nextM.currentTurnIndex = nextIdx;
-      nextM.turnPhase = 'roll';
-      nextM.doublesStreak = 0;
-      nextM.pendingCellId = null;
-
-      const nextP = nextM.players[nextM.turnOrder[nextIdx]];
-      nextM.logs = [
-        { ts: Date.now(), text: `➡️ Ход переходит к ${nextP?.name || 'игроку'} (Раунд ${nextM.roundNumber}).` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+      openMonopolyCellDossier(cellId);
     };
 
     // =========================================================================
-    // УЛЬТА «ВТОРОЙ ШАНС» (1 РАЗ ЗА ИГРУ — С 11 РАУНДА ИЛИ ПРИ БАНКРОТСТВЕ)
+    // УЛЬТА «ВТОРОЙ ШАНС» (ДОСТУПНА С 11-ГО РАУНДА ИЛИ ПРИ БАНКРОТСТВЕ)
     // =========================================================================
     $('monoUseUltimateBtn').addEventListener('click', async () => {
       const room = state.roomData;
@@ -5146,535 +5015,484 @@
       if (!m) return;
       const me = m.players?.[state.playerId];
       if (!me) return;
-
       if (me.ultUsed) return showToast('Ты уже использовал «Второй шанс» в этой партии!');
-      const roundNum = m.roundNumber || 1;
-      const inCrisis = me.cash < 0;
-      if (roundNum < 11 && !inCrisis) {
-        return showToast(`«Второй шанс» откроется с 11-го раунда (сейчас раунд ${roundNum}) или при уходе в минус!`);
+
+      const isRoundReady = (m.roundNumber || 1) >= 11;
+      const isBankruptThreat = me.cash < 0;
+      if (!isRoundReady && !isBankruptThreat) {
+        return showToast(`«Второй шанс» откроется с 11-го раунда (сейчас раунд ${m.roundNumber || 1}) или при угрозе банкротства!`);
       }
 
-      const hero = MONOPOLY_HEROES.find((h) => h.id === me.heroId) || MONOPOLY_HEROES[0];
-      const nextM = JSON.parse(JSON.stringify(m));
-      const p = nextM.players[state.playerId];
+      const copy = JSON.parse(JSON.stringify(m));
+      const p = copy.players[state.playerId];
+      const hero = getHeroById(p.heroId);
       p.ultUsed = true;
-      const logs = [];
-      let bannerText = '';
+      let ultSummary = '';
 
       if (hero.id === 'alisher') {
-        // Камри 50 американец: списание долга + покупка свободной текущей/лучшей клетки задаром + телепорт на СТАРТ
         if (p.cash < 0) p.cash = 100000;
-        const curCell = MONOPOLY_BOARD[p.pos];
-        const freeCell =
-          ['prop', 'station', 'utility'].includes(curCell?.type) && !nextM.owners?.[curCell.id]
-            ? curCell
-            : MONOPOLY_BOARD.find((c) => ['prop', 'station', 'utility'].includes(c.type) && !nextM.owners?.[c.id]);
-        if (freeCell) {
-          nextM.owners[freeCell.id] = { ownerId: p.id, stars: 0, mortgaged: false };
-          bannerText = `Долги списаны, локация «${freeCell.name}» оформлена задаром, а Камри 50 домчала Алишера прямо на СТАРТ!`;
-        } else {
-          p.cash += 250000;
-          bannerText = `Долги списаны, начислено +250 000 ₸, и Камри 50 домчала Алишера прямо на СТАРТ!`;
-        }
         p.pos = 0;
-      } else if (hero.id === 'suyenish') {
-        // Вишнёвый Чапмэн: полная отмена долга/штрафа и защита от вылета (+200 000 ₸)
-        p.cash = Math.max(200000, p.cash + 200000);
-        p.jailTurns = 0;
-        bannerText = `Суйениш закурил «Вишнёвый Чапмэн»: штрафы и долги обнулены, баланс восстановлен до ${fmtMoney(p.cash)}!`;
-      } else if (hero.id === 'duman') {
-        // Камбэк на арене: +250 000 ₸ и закрытие минуса
-        if (p.cash < 0) p.cash = 0;
-        p.cash += 250000;
-        bannerText = `Думан оформил «Камбэк на арене»: кассовый разрыв закрыт и получен призовой банк +250 000 ₸!`;
-      } else if (hero.id === 'asulan') {
-        // Обаяние фембоя: переводит самую дорогую чужую локацию без звёзд обратно в нейтральную + закрывает долг 50/50
-        if (p.cash < 0) p.cash = Math.round(p.cash / 2) + 100000;
-        const enemyEntry = Object.entries(nextM.owners || {})
-          .filter(([cid, own]) => own.ownerId !== p.id && (own.stars || 0) === 0)
-          .sort((a, b) => (MONOPOLY_BOARD[b[0]]?.price || 0) - (MONOPOLY_BOARD[a[0]]?.price || 0))[0];
-        if (enemyEntry) {
-          const [cid] = enemyEntry;
-          delete nextM.owners[cid];
-          bannerText = `Асулан применил «Обаяние фембоя»: локация «${MONOPOLY_BOARD[cid].name}» снова стала нейтральной!`;
+        const freeCell = MONOPOLY_BOARD.find((c) => (c.type === 'prop' || c.type === 'station') && !copy.owners?.[c.id]);
+        if (freeCell) {
+          copy.owners[freeCell.id] = { ownerId: p.id, stars: 0, mortgaged: false };
+          ultSummary = `Камри 50 вывезла! Долг списан, бесплатная локация «${freeCell.name}» получена и перенос на СТАРТ!`;
         } else {
           p.cash += 200000;
-          bannerText = `Асулан применил «Обаяние фембоя» и получил +200 000 ₸ на счёт!`;
+          ultSummary = `Камри 50 вывезла! Долг списан, +200 000 ₸ и перенос на СТАРТ!`;
+        }
+      } else if (hero.id === 'suyenish') {
+        p.cash = Math.max(p.cash, 0) + 200000;
+        ultSummary = `Вишнёвый Чапмэн спас от вылета и принёс +200 000 ₸!`;
+      } else if (hero.id === 'duman') {
+        p.cash = Math.max(p.cash, 0) + 250000;
+        ultSummary = `Камбэк на арене! Кассовый разрыв закрыт, +250 000 ₸ на баланс!`;
+      } else if (hero.id === 'asulan') {
+        if (p.cash < 0) p.cash = Math.round(p.cash / 2) + 150000;
+        const enemyPropId = Object.keys(copy.owners || {}).find(
+          (cid) => copy.owners[cid]?.ownerId && copy.owners[cid]?.ownerId !== p.id && (copy.owners[cid]?.stars || 0) === 0
+        );
+        if (enemyPropId) {
+          const cellName = MONOPOLY_BOARD[Number(enemyPropId)]?.name || 'локация';
+          delete copy.owners[enemyPropId];
+          ultSummary = `Обаяние фембоя сработало! «${cellName}» снова стала нейтральной!`;
+        } else {
+          p.cash += 180000;
+          ultSummary = `Обаяние фембоя принесло +180 000 ₸!`;
         }
       } else if (hero.id === 'ramazan') {
-        // Чёрный блокнот: обнуляет все ренты на 3 хода для себя и 1 ход для остальных + перенос на СТАРТ + 2× рента на его ячейках
         p.ramazanSelfShieldTurns = 3;
         p.ramazanDoubleRentTurns = 3;
         p.pos = 0;
-        if (p.cash < 0) p.cash = 100000;
-        bannerText = `Рамазан открыл «Чёрный блокнот»: перенос на СТАРТ, 3 хода иммунитета к рентам, а соперники на его локациях платят 2× ренту!`;
+        if (p.cash < 0) p.cash = 50000;
+        ultSummary = `Чёрный блокнот открыт! 3 хода без рент, перенос на СТАРТ и 2× рента на твоих клетках!`;
       } else if (hero.id === 'zhambyl') {
-        // Вечер в хату: телепорт на кл. 40 («Хата Жамбыла») и сбор по 50 000 ₸ с каждого игрока
         p.pos = 39;
         let collected = 0;
-        Object.values(nextM.players).forEach((other) => {
+        Object.values(copy.players).forEach((other) => {
           if (other.id !== p.id) {
             other.cash -= 50000;
             collected += 50000;
           }
         });
-        p.cash = Math.max(0, p.cash) + collected;
-        bannerText = `Жамбыл объявил «Вечер в хату» на кл. 40 («Хата Жамбыла»): собрано +${fmtMoney(collected)} с гостей!`;
+        p.cash = Math.max(p.cash, 0) + collected;
+        ultSummary = `Вечер в хату! Телепорт на Хату Жамбыла и сбор по 50 000 ₸ с каждого (всего +${fmtMoney(collected)})!`;
       } else if (hero.id === 'erkezhan') {
-        // Жаркая ночь: делит долг или капитал 50/50 с самым богатым игроком
-        const richest = Object.values(nextM.players)
-          .filter((x) => x.id !== p.id)
+        const richest = Object.values(copy.players)
+          .filter((pl) => pl.id !== p.id)
           .sort((a, b) => b.cash - a.cash)[0];
         if (richest) {
-          const pooled = Math.max(0, p.cash + richest.cash);
-          const half = Math.round(pooled / 2);
-          p.cash = half;
-          richest.cash = half;
-          bannerText = `Еркежан устроила «Жаркую ночь»: общий баланс с ${richest.name} разделён поровну — по ${fmtMoney(half)} каждому!`;
+          const avg = Math.round((p.cash + richest.cash) / 2);
+          p.cash = avg;
+          richest.cash = avg;
+          ultSummary = `Жаркая ночь! Капитал поделён 50/50 с ${richest.name} (по ${fmtMoney(avg)} каждому)!`;
         } else {
           p.cash += 200000;
-          bannerText = `Еркежан получила +200 000 ₸!`;
+          ultSummary = `Жаркая ночь принесла +200 000 ₸!`;
         }
       } else if (hero.id === 'damira') {
-        // Скандал: переводит штраф 150 000 ₸ на самого богатого соперника и снимает свой долг
-        const target = Object.values(nextM.players)
-          .filter((x) => x.id !== p.id)
-          .sort((a, b) => b.cash - a.cash)[0];
-        if (p.cash < 0) p.cash = 50000;
+        const target = Object.values(copy.players).find((pl) => pl.id !== p.id);
         if (target) {
-          target.cash -= 150000;
-          p.cash += 150000;
-          bannerText = `Дамира закатила «Скандал»: удар на 150 000 ₸ переведён на ${target.name}!`;
+          const penalty = p.cash < 0 ? Math.abs(p.cash) : 150000;
+          if (p.cash < 0) p.cash = 50000;
+          target.cash -= penalty;
+          ultSummary = `Скандал! Удар на ${fmtMoney(penalty)} переведён на ${target.name}!`;
         }
       } else if (hero.id === 'asylzhan') {
-        // Подруги рядом: по 40 000 ₸ от каждого игрока
-        let total = 0;
-        Object.values(nextM.players).forEach((other) => {
+        let sum = 0;
+        Object.values(copy.players).forEach((other) => {
           if (other.id !== p.id) {
             other.cash -= 40000;
-            total += 40000;
+            sum += 40000;
           }
         });
-        p.cash = Math.max(0, p.cash) + total;
-        bannerText = `Асылжан активировала «Подруги рядом»: экстренная поддержка +${fmtMoney(total)}!`;
+        p.cash = Math.max(p.cash, 0) + sum;
+        ultSummary = `Подруги рядом! Экстренный сбор +${fmtMoney(sum)} от участников!`;
       } else if (hero.id === 'nazerke') {
-        // Тихий выход: пропуск опасного круга (защита от рент и штрафов на 1 круг) + сохранение локаций при банкротстве
         p.nazerkeSafeCircle = true;
-        if (p.cash < 0) p.cash = 100000;
-        bannerText = `Назерке выбрала «Тихий выход»: полная защита от всех рент и штрафов на 1 круг и сохранение всех локаций!`;
+        if (p.cash < 0) p.cash = 50000;
+        ultSummary = `Тихий выход! Полная защита от рент и штрафов на весь круг и сохранение всех локаций!`;
       } else if (hero.id === 'dilnaz') {
-        // Паразит: на 2 раунда цепляется к самому богатому сопернику, забирая 50% его доходов
-        const target = Object.values(nextM.players)
-          .filter((x) => x.id !== p.id)
+        const target = Object.values(copy.players)
+          .filter((pl) => pl.id !== p.id)
           .sort((a, b) => b.cash - a.cash)[0];
-        if (p.cash < 0) p.cash = 80000;
         if (target) {
           p.dilnazParasiteTargetId = target.id;
           p.dilnazParasiteRounds = 2;
-          bannerText = `Дильназ активировала «Паразит» на ${target.name}: на 2 раунда перехватывает 50% всех его доходов!`;
+          if (p.cash < 0) p.cash = 50000;
+          ultSummary = `Паразит прицепился к ${target.name} на 2 раунда (забираешь 50% его доходов)!`;
         }
       }
 
-      nextM.lastUltBanner = {
+      copy.lastUltBanner = {
         ts: Date.now(),
-        heroName: hero.name,
-        ultName: hero.ultName,
-        desc: bannerText
+        emoji: '🔥',
+        tag: `⚡ ВТОРОЙ ШАНС • ${hero.name.toUpperCase()}`,
+        title: hero.ultName,
+        desc: ultSummary
       };
-      nextM.logs = [
-        { ts: Date.now(), text: `⚡ ВТОРОЙ ШАНС! ${hero.name} (${hero.ultName}): ${bannerText}` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-
-      playTone(880, 0.22);
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      addMonoLog(copy, `⚡ УЛЬТА (${p.name} — ${hero.ultName}): ${ultSummary}`);
+      playTone(960, 0.22, 'sawtooth');
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
     // =========================================================================
-    // ДОБРОВОЛЬНАЯ СДАЧА («ПРИЗНАТЬ ПОРАЖЕНИЕ»)
+    // ДОБРОВОЛЬНАЯ СДАЧА / БАНКРОТСТВО (ВОЗВРАТ КЛЕТОК В БАНК)
     // =========================================================================
     $('monoSurrenderBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m || !m.players?.[state.playerId]) return;
       const me = m.players[state.playerId];
-      if (!window.confirm('Признать поражение и выйти из текущей партии? Все твои локации вернутся в банк.')) {
-        return;
-      }
-      const nextM = JSON.parse(JSON.stringify(m));
+
+      const copy = JSON.parse(JSON.stringify(m));
       removePlayerFromMonopolyState(
-        nextM,
+        copy,
         state.playerId,
-        `🏳️ ${me.name} добровольно признал поражение. Все его локации возвращены в банк.`
+        `🏳️ ${me.name} признал поражение и вышел из партии. Все его локации возвращены в банк!`
       );
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
-      showToast('Ты завершил партию. Активы возвращены в банк.');
+      checkMonopolyWinner(copy);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
+      showToast('Ты вышел из партии Монополии');
     });
 
     // =========================================================================
-    // ГОЛОСОВАНИЕ ЗА ИНФЛЯЦИЮ +5% (ТОЛЬКО ПРИ 100% ЕДИНОГЛАСИИ)
+    // ГОЛОСОВАНИЕ ЗА ИНФЛЯЦИЮ +5% (100% ЕДИНОГЛАСНО)
     // =========================================================================
     $('monoInflationVoteBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m || !m.players?.[state.playerId]) return;
       if (m.inflationVote) return showToast('Голосование за инфляцию уже идёт!');
-      const me = m.players[state.playerId];
-      await updateRoomFields(state.roomCode, {
-        'monopoly.inflationVote': {
-          initiatorName: me.name,
-          votes: { [state.playerId]: true }
-        }
+
+      const copy = JSON.parse(JSON.stringify(m));
+      copy.inflationVote = {
+        initiatorId: state.playerId,
+        initiatorName: copy.players[state.playerId].name,
+        votes: { [state.playerId]: true }
+      };
+      Object.values(copy.players).forEach((p) => {
+        if (p.isBot) copy.inflationVote.votes[p.id] = true;
       });
+      addMonoLog(copy, `📈 ${copy.players[state.playerId].name} предложил инфляцию +5% (нужно 100% согласие).`);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
     $('monoVoteInflationYesBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m || !m.inflationVote) return;
-      const nextM = JSON.parse(JSON.stringify(m));
-      nextM.inflationVote.votes[state.playerId] = true;
+      const copy = JSON.parse(JSON.stringify(m));
+      copy.inflationVote.votes[state.playerId] = true;
 
-      const humanIds = nextM.turnOrder.filter((id) => !nextM.players[id]?.isBot);
-      const allAgreed = humanIds.every((id) => nextM.inflationVote.votes[id] === true);
+      const activeIds = copy.turnOrder || [];
+      const allAgreed = activeIds.every((id) => copy.inflationVote.votes[id] === true);
       if (allAgreed) {
-        nextM.inflationRate = (nextM.inflationRate || 0) + 5;
-        nextM.inflationVote = null;
-        nextM.logs = [
-          { ts: Date.now(), text: `📈 Единогласным решением игроков инфляция повышена до +${nextM.inflationRate}%!` },
-          ...(nextM.logs || []).slice(0, 18)
-        ];
+        copy.inflationRate = (copy.inflationRate || 0) + 5;
+        copy.inflationVote = null;
+        addMonoLog(copy, `📈 ЕДИНОГЛАСНО! Инфляция выросла до +${copy.inflationRate}%!`);
       }
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
     $('monoVoteInflationNoBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m || !m.inflationVote) return;
-      const me = m.players?.[state.playerId];
-      const nextM = JSON.parse(JSON.stringify(m));
-      nextM.inflationVote = null;
-      nextM.logs = [
-        { ts: Date.now(), text: `✋ ${me?.name || 'Игрок'} отклонил повышение инфляции (требуется 100% единогласие).` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      const copy = JSON.parse(JSON.stringify(m));
+      const decliner = copy.players[state.playerId]?.name || 'Игрок';
+      copy.inflationVote = null;
+      addMonoLog(copy, `✋ ${decliner} заблокировал инфляцию +5% (требовалось 100% согласие).`);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
     // =========================================================================
-    // ТАЙНЫЙ ТРЕЙДИНГ В СВОЙ ХОД (КОРИДОР 90%–120% ОТ СЕБЕСТОИМОСТИ)
+    // ТАЙНЫЙ ТРЕЙДИНГ (ТОЛЬКО В СВОЙ ХОД, ЖЁСТКИЙ КОРИДОР 90%–120%)
     // =========================================================================
-    window.openMonopolyTradeWithTarget = function (preselectedTargetId = null) {
+    function updateTradeFairnessUI() {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m) return;
-      const activeId = m.turnOrder[m.currentTurnIndex];
-      if (activeId !== state.playerId) {
-        return showToast('Предложить трейд можно только в свой ход!');
-      }
-      if (m.tradeOffer) {
-        return showToast('Сейчас уже ожидает ответа другая сделка.');
-      }
 
-      const others = m.turnOrder
-        .filter((id) => id !== state.playerId && m.players[id])
-        .map((id) => m.players[id]);
-      if (!others.length) return showToast('Нет других игроков для обмена.');
-
-      $('monoTradeTargetSelect').innerHTML = others
-        .map(
-          (o) =>
-            `<option value="${o.id}" ${o.id === preselectedTargetId ? 'selected' : ''}>${o.name} (${fmtMoney(o.cash)})</option>`
-        )
-        .join('');
-
-      refreshTradeModalOptions();
-      $('monoTradeModal').classList.remove('hidden');
-    };
-
-    $('monoOpenTradeModalBtn').addEventListener('click', () => window.openMonopolyTradeWithTarget(null));
-    $('closeMonoTradeModalBtn').addEventListener('click', () => $('monoTradeModal').classList.add('hidden'));
-
-    function refreshTradeModalOptions() {
-      const m = state.roomData?.monopoly;
-      if (!m) return;
-      const targetId = $('monoTradeTargetSelect').value;
-
-      const myProps = MONOPOLY_BOARD.filter(
-        (c) => m.owners?.[c.id]?.ownerId === state.playerId && (m.owners[c.id].stars || 0) === 0
-      );
-      const theirProps = MONOPOLY_BOARD.filter(
-        (c) => m.owners?.[c.id]?.ownerId === targetId && (m.owners[c.id].stars || 0) === 0
-      );
-
-      $('monoTradeGivePropSelect').innerHTML =
-        `<option value="">— Без локации (0 ₸) —</option>` +
-        myProps.map((c) => `<option value="${c.id}">${c.name} (ном. ${fmtMoney(c.price)})</option>`).join('');
-
-      $('monoTradeWantPropSelect').innerHTML =
-        `<option value="">— Без локации (0 ₸) —</option>` +
-        theirProps.map((c) => `<option value="${c.id}">${c.name} (ном. ${fmtMoney(c.price)})</option>`).join('');
-
-      validateTradeFairnessCorridor();
-    }
-
-    function validateTradeFairnessCorridor() {
-      const m = state.roomData?.monopoly;
-      if (!m) return;
       const givePropId = $('monoTradeGivePropSelect').value;
       const wantPropId = $('monoTradeWantPropSelect').value;
       const giveCash = Math.max(0, Number($('monoTradeGiveCashInput').value) || 0);
       const wantCash = Math.max(0, Number($('monoTradeWantCashInput').value) || 0);
 
-      const givePropVal = givePropId !== '' ? MONOPOLY_BOARD[Number(givePropId)]?.price || 0 : 0;
-      const wantPropVal = wantPropId !== '' ? MONOPOLY_BOARD[Number(wantPropId)]?.price || 0 : 0;
+      const givePropVal = givePropId !== '' ? MONOPOLY_BOARD[Number(givePropId)].price : 0;
+      const wantPropVal = wantPropId !== '' ? MONOPOLY_BOARD[Number(wantPropId)].price : 0;
 
-      const totalGive = givePropVal + giveCash;
-      const totalWant = wantPropVal + wantCash;
+      const sideA = givePropVal + giveCash;
+      const sideB = wantPropVal + wantCash;
 
       const box = $('monoTradeFairnessBox');
       const btn = $('monoSendTradeOfferBtn');
 
-      if (totalGive === 0 || totalWant === 0) {
-        box.textContent = 'Укажи активы/деньги с обеих сторон, чтобы проверить коридор 90%–120%.';
+      if (sideA === 0 && sideB === 0) {
+        box.textContent = 'Выбери локации или суммы для расчёта коридора 90%–120%...';
         btn.disabled = true;
         return;
       }
 
-      const ratio = totalGive / totalWant;
-      const pct = Math.round(ratio * 100);
-      const isFair = ratio >= 0.9 && ratio <= 1.2;
+      if (sideA === 0 || sideB === 0) {
+        box.innerHTML = `<span class="text-rose-300">❌ Нельзя дарить локации или деньги в одну сторону! Обе стороны должны участвовать в пределах 90%–120%.</span>`;
+        btn.disabled = true;
+        return;
+      }
 
-      box.innerHTML = isFair
-        ? `<span class="text-emerald-300">✅ Сделка в коридоре 90%–120% (соотношение ${pct}%: отдаёшь ${fmtMoney(totalGive)} за ${fmtMoney(totalWant)}).</span>`
-        : `<span class="text-rose-300">⛔ Вне коридора 90%–120% (сейчас ${pct}%: отдаёшь ${fmtMoney(totalGive)} за ${fmtMoney(totalWant)}). Подравняй сумму!</span>`;
-      btn.disabled = !isFair;
+      const ratio = sideA / sideB;
+      const ok = ratio >= 0.9 && ratio <= 1.2;
+      const pct = Math.round(ratio * 100);
+
+      if (ok) {
+        box.innerHTML = `<span class="text-emerald-300">✅ Сделка в коридоре 90%–120% (${pct}%): отдаёшь ${fmtMoney(sideA)} ↔ получаешь ${fmtMoney(sideB)}.</span>`;
+        btn.disabled = false;
+      } else {
+        box.innerHTML = `<span class="text-rose-300">❌ Вне коридора 90%–120% (сейчас ${pct}%): отдаёшь ${fmtMoney(sideA)} ↔ получаешь ${fmtMoney(sideB)}. Скорректируй сумму!</span>`;
+        btn.disabled = true;
+      }
     }
 
-    $('monoTradeTargetSelect').addEventListener('change', refreshTradeModalOptions);
-    $('monoTradeGivePropSelect').addEventListener('change', validateTradeFairnessCorridor);
-    $('monoTradeWantPropSelect').addEventListener('change', validateTradeFairnessCorridor);
-    $('monoTradeGiveCashInput').addEventListener('input', validateTradeFairnessCorridor);
-    $('monoTradeWantCashInput').addEventListener('input', validateTradeFairnessCorridor);
+    function openMonopolyTradeModal() {
+      const room = state.roomData;
+      const m = room?.monopoly;
+      if (!m) return;
+      const activeId = m.turnOrder[m.currentTurnIndex];
+      if (activeId !== state.playerId) {
+        return showToast('Предлагать трейд можно только в свой ход!');
+      }
+
+      const others = (m.turnOrder || [])
+        .filter((id) => id !== state.playerId)
+        .map((id) => m.players[id])
+        .filter(Boolean);
+      if (!others.length) return showToast('Нет доступных игроков для сделки!');
+
+      $('monoTradeTargetSelect').innerHTML = others
+        .map((p) => `<option value="${p.id}">${p.name} (${fmtMoney(p.cash)})</option>`)
+        .join('');
+
+      const fillPropSelects = () => {
+        const targetId = $('monoTradeTargetSelect').value;
+        const myProps = Object.entries(m.owners || {})
+          .filter(([, o]) => o.ownerId === state.playerId && (o.stars || 0) === 0)
+          .map(([cid]) => MONOPOLY_BOARD[Number(cid)]);
+        const theirProps = Object.entries(m.owners || {})
+          .filter(([, o]) => o.ownerId === targetId && (o.stars || 0) === 0)
+          .map(([cid]) => MONOPOLY_BOARD[Number(cid)]);
+
+        $('monoTradeGivePropSelect').innerHTML =
+          `<option value="">— Без локации —</option>` +
+          myProps.map((c) => `<option value="${c.id}">${c.name} (${fmtMoney(c.price)})</option>`).join('');
+
+        $('monoTradeWantPropSelect').innerHTML =
+          `<option value="">— Без локации —</option>` +
+          theirProps.map((c) => `<option value="${c.id}">${c.name} (${fmtMoney(c.price)})</option>`).join('');
+
+        updateTradeFairnessUI();
+      };
+
+      $('monoTradeTargetSelect').onchange = fillPropSelects;
+      $('monoTradeGivePropSelect').onchange = updateTradeFairnessUI;
+      $('monoTradeWantPropSelect').onchange = updateTradeFairnessUI;
+      $('monoTradeGiveCashInput').oninput = updateTradeFairnessUI;
+      $('monoTradeWantCashInput').oninput = updateTradeFairnessUI;
+
+      fillPropSelects();
+      $('monoTradeModal').classList.remove('hidden');
+    }
+
+    $('monoOpenTradeModalBtn').addEventListener('click', openMonopolyTradeModal);
+    $('closeMonoTradeModalBtn').addEventListener('click', () => $('monoTradeModal').classList.add('hidden'));
 
     $('monoSendTradeOfferBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m) return;
-      const targetId = $('monoTradeTargetSelect').value;
+      const toId = $('monoTradeTargetSelect').value;
       const givePropId = $('monoTradeGivePropSelect').value === '' ? null : Number($('monoTradeGivePropSelect').value);
       const wantPropId = $('monoTradeWantPropSelect').value === '' ? null : Number($('monoTradeWantPropSelect').value);
       const giveCash = Math.max(0, Number($('monoTradeGiveCashInput').value) || 0);
       const wantCash = Math.max(0, Number($('monoTradeWantCashInput').value) || 0);
 
-      const me = m.players[state.playerId];
-      if (!me || me.cash < giveCash) return showToast('У тебя недостаточно наличных для этой сделки!');
-
-      const offer = {
+      const copy = JSON.parse(JSON.stringify(m));
+      copy.tradeOffer = {
         fromId: state.playerId,
-        fromName: me.name,
-        toId: targetId,
+        fromName: copy.players[state.playerId].name,
+        toId,
         givePropId,
         wantPropId,
         giveCash,
         wantCash
       };
-
       $('monoTradeModal').classList.add('hidden');
-      await updateRoomFields(state.roomCode, { 'monopoly.tradeOffer': offer });
+      await updateRoomFields(state.roomCode, { monopoly: copy });
       showToast('Тайное предложение отправлено 🔒');
     });
 
     $('monoAcceptTradeBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
-      const offer = m?.tradeOffer;
-      if (!offer || offer.toId !== state.playerId) return;
+      const tr = m?.tradeOffer;
+      if (!tr || tr.toId !== state.playerId) return;
 
-      const nextM = JSON.parse(JSON.stringify(m));
-      const sender = nextM.players[offer.fromId];
-      const receiver = nextM.players[offer.toId];
-      if (!sender || !receiver) return;
+      const copy = JSON.parse(JSON.stringify(m));
+      const fromP = copy.players[tr.fromId];
+      const toP = copy.players[tr.toId];
+      if (!fromP || !toP) return;
 
-      if (sender.cash < offer.giveCash || receiver.cash < offer.wantCash) {
-        nextM.tradeOffer = null;
-        await updateRoomFields(state.roomCode, { monopoly: nextM });
-        return showToast('У одной из сторон не хватило средств — сделка аннулирована.');
+      if (fromP.cash < tr.giveCash || toP.cash < tr.wantCash) {
+        copy.tradeOffer = null;
+        await updateRoomFields(state.roomCode, { monopoly: copy });
+        return showToast('У одной из сторон не хватает денег для завершения сделки!');
       }
 
-      sender.cash = sender.cash - offer.giveCash + offer.wantCash;
-      receiver.cash = receiver.cash - offer.wantCash + offer.giveCash;
+      fromP.cash = fromP.cash - tr.giveCash + tr.wantCash;
+      toP.cash = toP.cash - tr.wantCash + tr.giveCash;
 
-      const logs = [];
-      if (offer.givePropId !== null && nextM.owners[offer.givePropId]) {
-        nextM.owners[offer.givePropId].ownerId = receiver.id;
-        applyDilnazLineCommission(nextM, MONOPOLY_BOARD[offer.givePropId].line, MONOPOLY_BOARD[offer.givePropId].price, logs);
+      if (tr.givePropId !== null && copy.owners[tr.givePropId]) {
+        copy.owners[tr.givePropId].ownerId = toP.id;
       }
-      if (offer.wantPropId !== null && nextM.owners[offer.wantPropId]) {
-        nextM.owners[offer.wantPropId].ownerId = sender.id;
-        applyDilnazLineCommission(nextM, MONOPOLY_BOARD[offer.wantPropId].line, MONOPOLY_BOARD[offer.wantPropId].price, logs);
+      if (tr.wantPropId !== null && copy.owners[tr.wantPropId]) {
+        copy.owners[tr.wantPropId].ownerId = fromP.id;
       }
 
-      nextM.tradeOffer = null;
-      nextM.logs = [
-        { ts: Date.now(), text: `🤝 Сделка между ${sender.name} и ${receiver.name} успешно закрыта! ${logs.join(' ')}` },
-        ...(nextM.logs || []).slice(0, 18)
-      ];
-      playTone(760, 0.15);
-      await updateRoomFields(state.roomCode, { monopoly: nextM });
+      copy.tradeOffer = null;
+      addMonoLog(copy, `🤝 Сделка между ${fromP.name} и ${toP.name} успешно закрыта!`);
+      playTone(880, 0.14);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
     $('monoDeclineTradeBtn').addEventListener('click', async () => {
       const room = state.roomData;
       const m = room?.monopoly;
       if (!m?.tradeOffer) return;
-      await updateRoomFields(state.roomCode, { 'monopoly.tradeOffer': null });
-      showToast('Сделка отклонена');
+      const copy = JSON.parse(JSON.stringify(m));
+      copy.tradeOffer = null;
+      addMonoLog(copy, `✕ ${copy.players[state.playerId]?.name || 'Игрок'} отклонил предложение сделки.`);
+      await updateRoomFields(state.roomCode, { monopoly: copy });
     });
 
     // =========================================================================
-    // ДОСЬЕ КЛЕТКИ (КЛИК ПО ЛЮБОЙ ЯЧЕЙКЕ НА ПОЛЕ ИЛИ В СПИСКЕ ВЛАДЕНИЙ)
+    // ДОСЬЕ КЛЕТКИ (НАЖАТИЕ НА ЛЮБУЮ ИЗ 40 ЯЧЕЕК) И ПОРТФЕЛЬ АКТИВОВ
     // =========================================================================
-    window.openMonoCellDossier = function (cellId) {
+    function openMonopolyCellDossier(cellId) {
       const room = state.roomData;
       const m = room?.monopoly;
-      const cell = MONOPOLY_BOARD[cellId];
-      if (!cell || !m) return;
+      if (!m) return;
       state.monoSelectedCellId = cellId;
+      const cell = MONOPOLY_BOARD[cellId];
+      if (!cell) return;
 
-      $('monoDossierColorHeader').style.backgroundColor = cell.color || '#6366F1';
+      $('monoDossierColorHeader').style.background = cell.color || '#6366F1';
       $('monoDossierDistrictLabel').textContent = `${cell.district} • КЛЕТКА #${cell.num}`;
       $('monoDossierTitle').textContent = cell.name;
       $('monoDossierDesc').textContent = cell.desc;
 
-      const own = m.owners?.[cell.id];
+      const own = m.owners?.[cellId];
       const ownerPlayer = own?.ownerId ? m.players?.[own.ownerId] : null;
-      const isBuyable = ['prop', 'station', 'utility'].includes(cell.type);
-
-      if (!isBuyable) {
-        $('monoDossierOwnerBox').classList.add('hidden');
-        $('monoDossierRentTable').classList.add('hidden');
-        $('monoDossierActions').innerHTML = '';
-        $('monoCellDossierModal').classList.remove('hidden');
-        return;
-      }
-
-      $('monoDossierOwnerBox').classList.remove('hidden');
-      $('monoDossierRentTable').classList.remove('hidden');
       $('monoDossierOwnerName').textContent = ownerPlayer
-        ? `${ownerPlayer.name}${own.mortgaged ? ' (В ЗАЛОГЕ 🔒)' : ''}`
-        : 'Свободно (Банк)';
+        ? `${ownerPlayer.name}${own.mortgaged ? ' (В залоге)' : ''}`
+        : cell.price > 0
+        ? 'Свободно (Банк)'
+        : 'Общественная зона';
 
-      const inf = getInflationMultiplier(m);
-      $('monoDossierBasePrice').textContent = fmtMoney(Math.round(cell.price * inf));
+      const rentTable = $('monoDossierRentTable');
+      const actionsBox = $('monoDossierActions');
+      actionsBox.innerHTML = '';
 
       if (cell.type === 'prop') {
-        $('monoDossierBaseRent').textContent = fmtMoney(Math.round(cell.rents[0] * inf));
-        $('monoDossierMonoRent').textContent = fmtMoney(Math.round(cell.rents[1] * inf));
-        const starCost = Math.round((cell.starCost || 50000) * inf);
-        $('monoDossierStarsBreakdown').innerHTML = `
-          <div class="flex justify-between"><span>1 ★ (цена звезды ${fmtShortK(starCost)}):</span><span class="font-mono text-club-gold">${fmtMoney(Math.round(cell.rents[2] * inf))}</span></div>
-          <div class="flex justify-between"><span>2 ★:</span><span class="font-mono text-club-gold">${fmtMoney(Math.round(cell.rents[3] * inf))}</span></div>
-          <div class="flex justify-between"><span>3 ★:</span><span class="font-mono text-club-gold">${fmtMoney(Math.round(cell.rents[4] * inf))}</span></div>
-          <div class="flex justify-between"><span>4 ★:</span><span class="font-mono text-club-gold">${fmtMoney(Math.round(cell.rents[5] * inf))}</span></div>
-          <div class="flex justify-between font-bold text-white"><span>5 ★ (Отель):</span><span class="font-mono text-emerald-300">${fmtMoney(Math.round(cell.rents[6] * inf))}</span></div>
-        `;
+        rentTable.classList.remove('hidden');
+        const mult = getInflationMultiplier(m);
+        $('monoDossierBasePrice').textContent = fmtMoney(Math.round(cell.price * mult));
+        $('monoDossierBaseRent').textContent = fmtMoney(Math.round(cell.rents[0] * mult));
+        $('monoDossierMonoRent').textContent = fmtMoney(Math.round(cell.rents[1] * mult));
+
+        const starLabels = ['1 ★', '2 ★★', '3 ★★★', '4 ★★★★', '5 ★★★★★ (Отель)'];
+        $('monoDossierStarsBreakdown').innerHTML = starLabels
+          .map(
+            (lbl, i) => `
+            <div class="flex justify-between ${(own?.stars || 0) === i + 1 ? 'text-club-gold font-extrabold' : ''}">
+              <span>${lbl}:</span>
+              <span class="font-mono">${fmtMoney(Math.round(cell.rents[i + 2] * mult))}</span>
+            </div>`
+          )
+          .join('');
       } else if (cell.type === 'station') {
-        $('monoDossierBaseRent').textContent = fmtMoney(Math.round(25000 * inf));
-        $('monoDossierMonoRent').textContent = '50k / 100k / 200k ₸ (за 2 / 3 / 4 шт.)';
-        $('monoDossierStarsBreakdown').innerHTML = `<div class="text-slate-400">Звёзды на транспорте не строятся.</div>`;
+        rentTable.classList.remove('hidden');
+        const mult = getInflationMultiplier(m);
+        $('monoDossierBasePrice').textContent = fmtMoney(Math.round(cell.price * mult));
+        $('monoDossierBaseRent').textContent = fmtMoney(Math.round(25000 * mult));
+        $('monoDossierMonoRent').textContent = fmtMoney(Math.round(200000 * mult)) + ' (за 4 шт.)';
+        $('monoDossierStarsBreakdown').innerHTML = `<div>2 транспорта: ${fmtMoney(Math.round(50000 * mult))} • 3 транспорта: ${fmtMoney(Math.round(100000 * mult))}</div>`;
       } else {
-        $('monoDossierBaseRent').textContent = 'Сумма кубиков × 4 000 ₸';
-        $('monoDossierMonoRent').textContent = 'Сумма кубиков × 10 000 ₸';
-        $('monoDossierStarsBreakdown').innerHTML = `<div class="text-slate-400">Рента зависит от броска кубиков.</div>`;
+        rentTable.classList.add('hidden');
       }
 
-      const actionsEl = $('monoDossierActions');
       if (own && own.ownerId === state.playerId) {
-        let html = '';
+        const starCost = cell.starCost ? Math.round(cell.starCost * getInflationMultiplier(m)) : 0;
+        const canBuild = canBuildStarOnCell(m, state.playerId, cellId);
+        const canSell = canSellStarOnCell(m, state.playerId, cellId);
+        const hasFullGroup = cell.type === 'prop' && hasFullColorGroup(m, state.playerId, cell.group);
+
+        let btns = '';
         if (cell.type === 'prop') {
-          const buildInfo = getStarBuildStatus(m, state.playerId, cell);
-          html += buildInfo.canBuild
-            ? `<button type="button" onclick="window.monoBuildStarOnCell(${cell.id})" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-club-gold to-amber-500 text-club-bg font-display text-xs font-black uppercase">
-                ⭐ Построить ${buildInfo.nextStars === 5 ? '5 ★ (Отель)' : buildInfo.nextStars + ' ★'} за ${fmtMoney(buildInfo.cost)}
-              </button>`
-            : `<div class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] text-amber-200">
-                🔒 ${buildInfo.reason}
-              </div>`;
+          if (canBuild) {
+            btns += `<button type="button" onclick="window.monoBuildStar(${cellId})" class="w-full py-3 px-4 rounded-xl bg-club-gold text-club-bg font-display text-xs font-black uppercase">⭐ Построить звезду (${fmtMoney(starCost)})</button>`;
+          } else if (!hasFullGroup) {
+            btns += `<div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-400/30 text-[11px] text-amber-200">ℹ️ Для постройки звёзд ★ собери все клетки этого района.</div>`;
+          } else if ((own.stars || 0) < 5) {
+            btns += `<div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-400/30 text-[11px] text-amber-200">⚖️ Правило равномерной застройки: сначала подтяни звёзды ★ на остальных клетках района.</div>`;
+          }
+          if (canSell) {
+            btns += `<button type="button" onclick="window.monoSellStar(${cellId})" class="w-full py-2.5 px-4 rounded-xl bg-white/10 text-slate-200 font-display text-xs font-black uppercase">🔻 Продать звезду (+${fmtMoney(Math.round(starCost * 0.5))})</button>`;
+          }
         }
-        const mortLabel = own.mortgaged
-          ? `🔓 Выкупить из залога за ${fmtMoney(Math.round(cell.price * inf * 0.55))}`
-          : `🏦 Заложить в банк за +${fmtMoney(Math.round(cell.price * inf * 0.5))}`;
-        html += `<button type="button" onclick="window.monoToggleMortgageCell(${cell.id})" class="w-full py-2.5 px-4 rounded-xl bg-club-bg hover:bg-white/10 border border-club-border text-xs font-bold text-slate-200">
-          ${mortLabel}
-        </button>`;
-        actionsEl.innerHTML = html;
-      } else {
-        actionsEl.innerHTML = '';
+        btns += `<button type="button" onclick="window.monoToggleMortgage(${cellId})" class="w-full py-2.5 px-4 rounded-xl bg-rose-500/20 border border-rose-400/45 text-rose-200 font-display text-xs font-black uppercase">${
+          own.mortgaged ? '✅ Выкупить из залога' : `🏦 Заложить в банк (+${fmtMoney(Math.round(cell.price * 0.5))})`
+        }</button>`;
+        actionsBox.innerHTML = btns;
       }
 
       $('monoCellDossierModal').classList.remove('hidden');
-    };
+    }
 
     $('closeMonoDossierBtn').addEventListener('click', () => $('monoCellDossierModal').classList.add('hidden'));
     $('closeMonoEventModalBtn').addEventListener('click', () => $('monoEventBannerModal').classList.add('hidden'));
 
-    // Подсветка всех ячеек игрока на поле при клике на его карточку
-    window.toggleHighlightMonopolyOwner = function (ownerId) {
-      if (state.monoHighlightedOwnerId === ownerId) {
-        state.monoHighlightedOwnerId = null;
-      } else {
-        state.monoHighlightedOwnerId = ownerId;
-      }
-      if (state.roomData) renderMonopolyGame(state.roomData);
-    };
-
-    $('monoClearHighlightBtn').addEventListener('click', () => {
-      state.monoHighlightedOwnerId = null;
-      if (state.roomData) renderMonopolyGame(state.roomData);
-    });
-
-    // Портфель активов
     $('monoOpenPortfolioBtn').addEventListener('click', () => {
       const m = state.roomData?.monopoly;
       if (!m) return;
-      $('monoPortfolioList').innerHTML = m.turnOrder
-        .map((pid) => {
-          const p = m.players[pid];
-          if (!p) return '';
-          const hero = MONOPOLY_HEROES.find((h) => h.id === p.heroId) || MONOPOLY_HEROES[0];
-          const props = MONOPOLY_BOARD.filter((c) => m.owners?.[c.id]?.ownerId === pid);
-          const assetsVal = props.reduce((sum, c) => sum + c.price + (m.owners[c.id].stars || 0) * (c.starCost || 0), 0);
+      const list = (m.turnOrder || []).map((id) => m.players[id]).filter(Boolean);
+      $('monoPortfolioList').innerHTML = list
+        .map((p) => {
+          const hero = getHeroById(p.heroId);
+          const ownedCells = Object.entries(m.owners || {})
+            .filter(([, o]) => o.ownerId === p.id)
+            .map(([cid, o]) => {
+              const c = MONOPOLY_BOARD[Number(cid)];
+              return `${c.name}${o.stars ? ` (${o.stars}★)` : ''}${o.mortgaged ? ' [залог]' : ''}`;
+            });
           return `
-            <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border space-y-2">
+            <div class="p-3.5 rounded-2xl bg-club-bg border border-club-border space-y-1.5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                  <span class="w-7 h-7 rounded-lg flex items-center justify-center font-display text-[11px] font-black text-white" style="background:${hero.color}">${hero.initials}</span>
+                  <span class="w-7 h-7 rounded-lg flex items-center justify-center font-display text-[10px] font-black text-white" style="background:${hero.color}">${hero.initials}</span>
                   <div>
-                    <div class="font-display text-xs font-black text-white">${p.name} (${hero.name})</div>
-                    <div class="text-[10px] text-slate-400">Общий капитал: ${fmtMoney(p.cash + assetsVal)}</div>
+                    <div class="text-xs font-extrabold text-white">${p.name} (${hero.name})</div>
+                    <div class="text-[10px] text-slate-400">Клетка #${p.pos + 1}: ${MONOPOLY_BOARD[p.pos]?.name}</div>
                   </div>
                 </div>
                 <span class="font-mono text-xs font-extrabold text-club-gold">${fmtMoney(p.cash)}</span>
               </div>
-              <div class="flex flex-wrap gap-1">
-                ${
-                  props.length
-                    ? props
-                        .map((c) => {
-                          const st = m.owners[c.id].stars || 0;
-                          return `<span class="px-2 py-0.5 rounded bg-club-surface border border-white/10 text-[10px] text-slate-200">${c.name}${st ? ` (${st}★)` : ''}</span>`;
-                        })
-                        .join('')
-                    : `<span class="text-[11px] text-slate-500">Нет купленных локаций</span>`
-                }
+              <div class="text-[11px] text-slate-300">
+                <strong>Активы (${ownedCells.length}):</strong> ${ownedCells.length ? ownedCells.join(', ') : 'пока нет'}
               </div>
             </div>`;
         })
         .join('');
       $('monoPortfolioModal').classList.remove('hidden');
     });
+
     $('closeMonoPortfolioBtn').addEventListener('click', () => $('monoPortfolioModal').classList.add('hidden'));
 
     $('monoToggleSoundBtn').addEventListener('click', () => {
@@ -5682,8 +5500,18 @@
       $('monoToggleSoundBtn').textContent = state.monoSoundOn ? '🔊' : '🔇';
     });
 
+    $('monoClearHighlightBtn').addEventListener('click', () => {
+      state.monoHighlightedOwnerId = null;
+      if (state.roomData) renderMonopolyGame(state.roomData);
+    });
+
+    window.toggleHighlightMonoOwner = function (playerId) {
+      state.monoHighlightedOwnerId = state.monoHighlightedOwnerId === playerId ? null : playerId;
+      if (state.roomData) renderMonopolyGame(state.roomData);
+    };
+
     // =========================================================================
-    // ОТРИСОВКА ЭКРАНА «МОНОПОЛИЯ: ПО ОДНОЙ ТРОПИНКЕ»
+    // ОТРИСОВКА КВАДРАТНОГО ПОЛЯ 11x11 (40 КЛЕТОК) И ЦЕНТРАЛЬНОГО ШТАБА
     // =========================================================================
     function renderMonopolyGame(room) {
       showScreen('monopolyGameScreen');
@@ -5693,356 +5521,342 @@
       const isHost = room.hostId === state.playerId;
       const activeId = m.turnOrder[m.currentTurnIndex];
       const activePlayer = m.players?.[activeId];
-      const isMyTurn = activeId === state.playerId;
       const me = m.players?.[state.playerId];
+      const isMyTurn = activeId === state.playerId;
 
       $('monoRoundBadge').textContent = `РАУНД ${m.roundNumber || 1}`;
-      $('monoTurnBadge').textContent = `ХОД: ${(activePlayer?.name || 'ИГРОК').toUpperCase()}`;
+      $('monoTurnBadge').textContent = activePlayer ? `ХОД: ${activePlayer.name.toUpperCase()}` : 'ФИНАЛ';
       $('monoInflationRateText').textContent = `${m.inflationRate || 0}%`;
 
-      // Авто-ход бота (выполняет хост с небольшой паузой)
-      if (isHost && activePlayer?.isBot && m.turnPhase === 'roll') {
-        setTimeout(() => {
-          if (state.roomData?.monopoly?.turnPhase === 'roll' && state.roomData.monopoly.turnOrder[state.roomData.monopoly.currentTurnIndex] === activeId) {
-            window.monoRollDice();
-          }
-        }, 900);
-      } else if (isHost && activePlayer?.isBot && m.turnPhase === 'end') {
-        setTimeout(() => {
-          if (state.roomData?.monopoly?.turnPhase === 'end' && state.roomData.monopoly.turnOrder[state.roomData.monopoly.currentTurnIndex] === activeId) {
-            window.monoEndTurn();
-          }
-        }, 700);
-      }
-
-      // Всплывающие карточки Сюжета / Ульты для всех участников
-      if (m.lastEventBanner && m.lastEventBanner.ts > state.monoLastSeenEventTs) {
+      // Всплывающее событие / ульта
+      if (m.lastUltBanner && m.lastUltBanner.ts > state.monoLastSeenUltTs) {
+        state.monoLastSeenUltTs = m.lastUltBanner.ts;
+        $('monoEventEmoji').textContent = m.lastUltBanner.emoji || '🔥';
+        $('monoEventTag').textContent = m.lastUltBanner.tag;
+        $('monoEventTitle').textContent = m.lastUltBanner.title;
+        $('monoEventDesc').textContent = m.lastUltBanner.desc;
+        $('monoEventBannerModal').classList.remove('hidden');
+      } else if (m.lastEventBanner && m.lastEventBanner.ts > state.monoLastSeenEventTs) {
         state.monoLastSeenEventTs = m.lastEventBanner.ts;
-        $('monoEventEmoji').textContent = '⚡';
-        $('monoEventTag').textContent = `⚡ СЮЖЕТ • ${m.lastEventBanner.playerName.toUpperCase()}`;
+        $('monoEventEmoji').textContent = m.lastEventBanner.emoji || '⚡';
+        $('monoEventTag').textContent = m.lastEventBanner.tag;
         $('monoEventTitle').textContent = m.lastEventBanner.title;
         $('monoEventDesc').textContent = m.lastEventBanner.desc;
         $('monoEventBannerModal').classList.remove('hidden');
       }
-      if (m.lastUltBanner && m.lastUltBanner.ts > state.monoLastSeenUltTs) {
-        state.monoLastSeenUltTs = m.lastUltBanner.ts;
-        $('monoEventEmoji').textContent = '🔥';
-        $('monoEventTag').textContent = `⚡ ВТОРОЙ ШАНС • ${m.lastUltBanner.heroName.toUpperCase()}`;
-        $('monoEventTitle').textContent = m.lastUltBanner.ultName;
-        $('monoEventDesc').textContent = m.lastUltBanner.desc;
-        $('monoEventBannerModal').classList.remove('hidden');
-      }
 
-      // Полоска игроков сверху (клик подсвечивает ячейки игрока на поле)
-      $('monoPlayersStrip').innerHTML = m.turnOrder
-        .map((pid) => {
-          const p = m.players[pid];
-          if (!p) return '';
-          const hero = MONOPOLY_HEROES.find((h) => h.id === p.heroId) || MONOPOLY_HEROES[0];
-          const active = pid === activeId;
-          const highlighted = state.monoHighlightedOwnerId === pid;
-          return `
-            <div
-              onclick="window.toggleHighlightMonopolyOwner('${pid}')"
-              class="shrink-0 px-3 py-2 rounded-2xl border cursor-pointer transition-all flex items-center gap-2 ${
-                highlighted
-                  ? 'bg-sky-500/20 border-sky-400 shadow-lg shadow-sky-500/20'
-                  : active
-                  ? 'bg-emerald-500/15 border-emerald-400'
-                  : 'bg-club-surface border-club-border hover:border-white/30'
-              }"
-            >
-              <span class="w-7 h-7 rounded-xl flex items-center justify-center font-display text-[11px] font-black text-white" style="background:${hero.color}">
-                ${hero.initials}
-              </span>
-              <div class="text-xs">
-                <div class="font-extrabold text-white flex items-center">
-                  <span>${p.name}</span>
-                  ${renderKickButtonHtml(pid, p.isBot)}
-                </div>
-                <div class="font-mono text-[11px] font-bold ${p.cash < 0 ? 'text-rose-400' : 'text-club-gold'}">
-                  ${fmtMoney(p.cash)}
-                </div>
-              </div>
-            </div>`;
-        })
-        .join('');
-
-      // Входящая тайная сделка (видна только получателю)
+      // Тайная сделка (видна только получателю)
       const incomingBanner = $('monoIncomingTradeBanner');
       if (m.tradeOffer && m.tradeOffer.toId === state.playerId) {
-        const off = m.tradeOffer;
+        const tr = m.tradeOffer;
         const giveStr = [
-          off.givePropId !== null ? `«${MONOPOLY_BOARD[off.givePropId].name}»` : null,
-          off.giveCash > 0 ? fmtMoney(off.giveCash) : null
+          tr.givePropId !== null ? `«${MONOPOLY_BOARD[tr.givePropId].name}»` : '',
+          tr.giveCash > 0 ? fmtMoney(tr.giveCash) : ''
         ]
           .filter(Boolean)
           .join(' + ');
         const wantStr = [
-          off.wantPropId !== null ? `«${MONOPOLY_BOARD[off.wantPropId].name}»` : null,
-          off.wantCash > 0 ? fmtMoney(off.wantCash) : null
+          tr.wantPropId !== null ? `«${MONOPOLY_BOARD[tr.wantPropId].name}»` : '',
+          tr.wantCash > 0 ? fmtMoney(tr.wantCash) : ''
         ]
           .filter(Boolean)
           .join(' + ');
-        $('monoIncomingTradeText').textContent = `${off.fromName} предлагает тебе ${giveStr} взамен на ${wantStr}.`;
+        $('monoIncomingTradeText').textContent = `${tr.fromName} предлагает тебе: ${giveStr} взамен на твои ${wantStr}.`;
         incomingBanner.classList.remove('hidden');
       } else {
         incomingBanner.classList.add('hidden');
       }
 
-      // Баннер голосования за инфляцию +5%
+      // Голосование за инфляцию
       const infBanner = $('monoInflationVoteBanner');
       if (m.inflationVote) {
-        const humanIds = m.turnOrder.filter((id) => !m.players[id]?.isBot);
-        const yesCount = humanIds.filter((id) => m.inflationVote.votes?.[id]).length;
-        $('monoInflationVoteCount').textContent = `${yesCount} / ${humanIds.length}`;
-        $('monoInflationVoteDesc').textContent = `${m.inflationVote.initiatorName} предлагает поднять инфляцию до +${(m.inflationRate || 0) + 5}%. Нужно согласие 100% игроков!`;
-        $('monoInflationVoteActions').classList.toggle('hidden', Boolean(m.inflationVote.votes?.[state.playerId]));
         infBanner.classList.remove('hidden');
+        const activeIds = m.turnOrder || [];
+        const yesCount = activeIds.filter((id) => m.inflationVote.votes?.[id] === true).length;
+        $('monoInflationVoteCount').textContent = `${yesCount} / ${activeIds.length}`;
+        $('monoInflationVoteDesc').textContent = `${m.inflationVote.initiatorName} предлагает поднять цены и ренту на +5%. Нужно 100% согласие!`;
+        const alreadyVoted = m.inflationVote.votes?.[state.playerId] === true;
+        $('monoInflationVoteActions').classList.toggle('hidden', alreadyVoted || !me);
       } else {
         infBanner.classList.add('hidden');
       }
 
-      // Рендер квадратного поля 11x11 (40 клеток + центральный штаб)
-      const boardEl = $('monoBoardContainer');
-      const activePos = activePlayer?.pos ?? 0;
-
-      let cellsHtml = MONOPOLY_BOARD.map((cell) => {
-        const { row, col } = getGridPositionForCell(cell.id);
-        const own = m.owners?.[cell.id];
-        const ownerPlayer = own?.ownerId ? m.players?.[own.ownerId] : null;
-        const ownerHero = ownerPlayer ? MONOPOLY_HEROES.find((h) => h.id === ownerPlayer.heroId) : null;
-        const isHighlighted = state.monoHighlightedOwnerId && own?.ownerId === state.monoHighlightedOwnerId;
-        const isActiveCell = cell.id === activePos;
-        const stars = own?.stars || 0;
-        const starsText = stars === 5 ? '👑' : stars > 0 ? '★'.repeat(stars) : '';
-
-        const tokensHere = m.turnOrder
-          .filter((pid) => m.players[pid] && (m.players[pid].pos ?? 0) === cell.id)
-          .map((pid) => {
-            const pl = m.players[pid];
-            const h = MONOPOLY_HEROES.find((x) => x.id === pl.heroId) || MONOPOLY_HEROES[0];
-            return `<span class="mono-token-badge" style="background:${h.color}" title="${pl.name}">${h.initials}</span>`;
-          })
-          .join('');
-
-        const ownerBarStyle = ownerHero
-          ? `background:${ownerHero.color}; box-shadow: inset 0 0 0 1px #fff;`
-          : `background:${cell.color || '#334155'};`;
-
-        const priceTag =
-          cell.price > 0
-            ? fmtShortK(Math.round(cell.price * getInflationMultiplier(m)))
-            : `#${cell.num}`;
-
-        return `
-          <div
-            onclick="window.openMonoCellDossier(${cell.id})"
-            style="grid-row:${row}; grid-column:${col};"
-            class="mono-cell ${isActiveCell ? 'is-active-cell' : ''} ${isHighlighted ? 'is-highlighted-owner' : ''} ${
-          own?.mortgaged ? 'is-mortgaged' : ''
-        }"
-            title="${cell.num}. ${cell.name}"
-          >
-            <div class="mono-color-bar" style="${ownerBarStyle}"></div>
-            ${starsText ? `<div class="mono-stars-row">${starsText}</div>` : ''}
-            <div class="mono-cell-title">${cell.name}</div>
-            <div class="mono-cell-price">${priceTag}</div>
-            <div class="mono-tokens-wrap">${tokensHere}</div>
-          </div>`;
-      }).join('');
-
-      // Центральный штаб внутри поля (2..10 x 2..10)
-      const [d1, d2] = m.dice || [1, 1];
-      const pendingCell = m.pendingCellId !== null && m.pendingCellId !== undefined ? MONOPOLY_BOARD[m.pendingCellId] : null;
-      const pendingBuyCost = pendingCell && activePlayer ? getEffectiveBuyPrice(pendingCell, activePlayer, m) : 0;
-
-      let centerActionHtml = '';
-      if (m.turnOrder.length === 1) {
-        const winner = m.players[m.turnOrder[0]];
-        centerActionHtml = `
-          <div class="p-3 rounded-2xl bg-club-gold/20 border border-club-gold text-center space-y-1">
-            <div class="font-display text-xs sm:text-base font-black text-club-gold uppercase">🏆 ПОБЕДИТЕЛЬ ПАРТИИ!</div>
-            <div class="text-xs sm:text-sm font-extrabold text-white">${winner?.name} забрал весь маршрут Атырау — Алматы!</div>
-          </div>`;
-      } else if (isMyTurn && m.turnPhase === 'roll') {
-        const inJail = (me?.jailTurns || 0) > 0;
-        const bailCost = me?.heroId === 'nazerke' ? 0 : 50000;
-        centerActionHtml = `
-          <div class="flex flex-col gap-1.5 w-full">
-            <button type="button" onclick="window.monoRollDice()" class="w-full py-2.5 sm:py-3 px-3 rounded-xl font-display text-[11px] sm:text-sm font-black uppercase text-club-bg bg-gradient-to-r from-club-gold to-amber-500 shadow-lg active:scale-95 transition-all">
-              🎲 Бросить кубики
-            </button>
-            ${
-              inJail
-                ? `<button type="button" onclick="window.monoPayJailBail()" class="w-full py-1.5 px-2 rounded-lg bg-rose-500/20 border border-rose-400/50 text-[10px] sm:text-xs font-bold text-rose-200">
-                    ${bailCost === 0 ? '🕊️ Выйти бесплатно (Назерке)' : '💸 Выйти за 50 000 ₸'}
-                  </button>`
-                : ''
-            }
-          </div>`;
-      } else if (isMyTurn && m.turnPhase === 'decision' && pendingCell) {
-        const canAfford = (me?.cash || 0) >= pendingBuyCost;
-        centerActionHtml = `
-          <div class="w-full space-y-1.5">
-            <div class="text-[10px] sm:text-xs font-bold text-center text-white truncate">
-              Купить «${pendingCell.name}» за <span class="text-club-gold">${fmtMoney(pendingBuyCost)}</span>?
-            </div>
-            <div class="grid grid-cols-2 gap-1.5">
-              <button type="button" onclick="window.monoBuyPendingCell()" ${canAfford ? '' : 'disabled'} class="py-2 px-2 rounded-xl bg-emerald-500 disabled:opacity-35 text-club-bg font-display text-[10px] sm:text-xs font-black uppercase">
-                Купить ✅
-              </button>
-              <button type="button" onclick="window.monoStartAuctionForPending()" class="py-2 px-2 rounded-xl bg-amber-500/25 border border-amber-400/50 text-club-gold font-display text-[10px] sm:text-xs font-black uppercase">
-                Аукцион 🔨
-              </button>
-            </div>
-          </div>`;
-      } else if (isMyTurn && m.turnPhase === 'end') {
-        centerActionHtml = `
-          <button type="button" onclick="window.monoEndTurn()" class="w-full py-2.5 sm:py-3 px-3 rounded-xl font-display text-[11px] sm:text-sm font-black uppercase text-white bg-gradient-to-r from-indigo-500 to-purple-600 shadow-lg active:scale-95 transition-all">
-            Завершить ход ➡️
-          </button>`;
-      } else {
-        centerActionHtml = `
-          <div class="text-center text-[10px] sm:text-xs font-bold text-slate-300">
-            ⏳ Сейчас ходит <strong class="text-club-gold">${activePlayer?.name || 'игрок'}</strong>…
-            ${isHost && !activePlayer?.isBot ? `<button type="button" onclick="window.monoEndTurn()" class="block mx-auto mt-1 px-2 py-0.5 rounded bg-white/10 text-[10px] text-amber-300">Передать ход (Хост)</button>` : ''}
-          </div>`;
-      }
-
-      const logsHtml = (m.logs || [])
-        .slice(0, 6)
-        .map((l) => `<div class="text-[9px] sm:text-[11px] text-slate-300 leading-tight border-b border-white/5 pb-1">${l.text}</div>`)
+      // Полоска карточек игроков сверху
+      $('monoPlayersStrip').innerHTML = (m.turnOrder || [])
+        .map((pid) => {
+          const p = m.players[pid];
+          if (!p) return '';
+          const hero = getHeroById(p.heroId);
+          const isTurn = pid === activeId;
+          const isHighlighted = state.monoHighlightedOwnerId === pid;
+          return `
+            <div
+              onclick="window.toggleHighlightMonoOwner('${pid}')"
+              class="shrink-0 px-3 py-2 rounded-2xl border-2 cursor-pointer transition-all flex items-center gap-2 ${
+                isHighlighted
+                  ? 'bg-sky-950/70 border-sky-400'
+                  : isTurn
+                  ? 'bg-emerald-950/60 border-emerald-400 shadow-lg shadow-emerald-500/15'
+                  : 'bg-club-surface border-club-border'
+              }"
+            >
+              <span class="w-7 h-7 rounded-xl flex items-center justify-center font-display text-[10px] font-black text-white" style="background:${hero.color}">${hero.initials}</span>
+              <div>
+                <div class="text-xs font-extrabold text-white flex items-center gap-1">
+                  <span>${p.name}</span>
+                  ${p.jailTurns > 0 ? '<span title="В разборках на кухне">🚨</span>' : ''}
+                  ${renderKickButtonHtml(pid, p.isBot)}
+                </div>
+                <div class="font-mono text-[11px] font-bold ${p.cash < 0 ? 'text-rose-400' : 'text-club-gold'}">${fmtMoney(p.cash)}</div>
+              </div>
+            </div>`;
+        })
         .join('');
 
-      cellsHtml += `
-        <div class="mono-center-hub">
-          <div class="flex items-center justify-between gap-1">
-            <span class="font-display text-[9px] sm:text-xs font-black uppercase text-club-gold tracking-wider">
-              ПО ОДНОЙ ТРОПИНКЕ
-            </span>
-            <div class="flex items-center gap-1">
-              <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-white text-club-bg font-display text-xs sm:text-base font-black flex items-center justify-center shadow">${d1}</span>
-              <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-white text-club-bg font-display text-xs sm:text-base font-black flex items-center justify-center shadow">${d2}</span>
-            </div>
-          </div>
+      // Кнопки действий в центральном штабе
+      let centerControlsHtml = '';
+      if (m.turnPhase === 'finished') {
+        const w = m.players?.[m.winnerId];
+        centerControlsHtml = `
+          <div class="p-2.5 rounded-2xl bg-club-gold/20 border border-club-gold text-center space-y-1">
+            <div class="font-display text-xs sm:text-sm font-black uppercase text-club-gold">🏆 ПОБЕДИТЕЛЬ ПАРТИИ</div>
+            <div class="text-xs font-extrabold text-white">${w?.name || 'Чемпион'} (${fmtMoney(w?.cash || 0)})</div>
+          </div>`;
+      } else if (m.turnPhase === 'roll') {
+        if (isMyTurn) {
+          centerControlsHtml = `
+            <div class="flex flex-col gap-1.5">
+              <button id="monoRollDiceBtn" type="button" class="w-full py-2.5 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase text-club-bg bg-gradient-to-r from-club-gold to-club-amber hover:opacity-95 shadow-lg active:scale-95 transition-all">
+                🎲 Бросить кубики
+              </button>
+              ${
+                (me?.jailTurns || 0) > 0
+                  ? `<button id="monoPayJailBtn" type="button" class="w-full py-1.5 px-3 rounded-xl bg-rose-500/25 border border-rose-400/50 text-[11px] font-extrabold text-rose-200">
+                      ${me.heroId === 'nazerke' ? '🌸 Выйти бесплатно (Пассивка)' : '🔓 Выйти за 50 000 ₸'}
+                    </button>`
+                  : ''
+              }
+            </div>`;
+        } else if (activePlayer?.isBot && isHost) {
+          centerControlsHtml = `
+            <button id="monoRollDiceBtn" type="button" class="w-full py-2.5 px-3 rounded-xl font-display text-xs font-black uppercase text-white bg-indigo-500 hover:bg-indigo-400">
+              🤖 Сделать ход за бота (${activePlayer.name})
+            </button>`;
+        } else {
+          centerControlsHtml = `<div class="text-center text-[11px] font-bold text-slate-300">⏳ Ждём бросок: <strong class="text-club-gold">${activePlayer?.name || ''}</strong></div>`;
+        }
+      } else if (m.turnPhase === 'buy_decision' && m.pendingCellId !== null) {
+        const cell = MONOPOLY_BOARD[m.pendingCellId];
+        const buyPrice = getEffectiveBuyPrice(cell, activePlayer?.heroId, m);
+        const canControl = isMyTurn || (activePlayer?.isBot && isHost);
+        if (canControl) {
+          centerControlsHtml = `
+            <div class="space-y-1.5">
+              <div class="text-center text-[11px] font-extrabold text-white truncate">«${cell.name}» — ${fmtMoney(buyPrice)}</div>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button id="monoBuyCellBtn" type="button" ${(activePlayer?.cash || 0) < buyPrice ? 'disabled' : ''} class="py-2 px-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-35 text-club-bg font-display text-[11px] font-black uppercase">
+                  Купить ✅
+                </button>
+                <button id="monoAuctionCellBtn" type="button" class="py-2 px-2 rounded-xl bg-amber-500/25 hover:bg-amber-500/35 border border-amber-400/50 text-amber-200 font-display text-[11px] font-black uppercase">
+                  Аукцион 🔨
+                </button>
+              </div>
+            </div>`;
+        } else {
+          centerControlsHtml = `<div class="text-center text-[11px] font-bold text-amber-200">🤔 ${activePlayer?.name} решает, покупать ли «${cell.name}» (${fmtMoney(buyPrice)})…</div>`;
+        }
+      } else if (m.turnPhase === 'end_turn') {
+        const canControl = isMyTurn || (activePlayer?.isBot && isHost);
+        if (canControl) {
+          centerControlsHtml = `
+            <button id="monoEndTurnBtn" type="button" class="w-full py-2.5 px-3 rounded-xl font-display text-xs sm:text-sm font-black uppercase text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-95 shadow-lg active:scale-95 transition-all">
+              Завершить ход ➡️
+            </button>`;
+        } else {
+          centerControlsHtml = `<div class="text-center text-[11px] font-bold text-slate-300">⏳ ${activePlayer?.name} завершает действия хода…</div>`;
+        }
+      } else if (m.turnPhase === 'auction') {
+        centerControlsHtml = `<div class="text-center text-[11px] font-black text-club-gold animate-pulse">🔨 Идёт живой аукцион!</div>`;
+      }
 
-          <div class="my-1">${centerActionHtml}</div>
-
-          <div class="flex-1 overflow-y-auto no-scrollbar bg-black/35 rounded-xl p-1.5 sm:p-2 space-y-1 border border-white/5">
-            ${logsHtml}
-          </div>
-        </div>`;
-
-      boardEl.innerHTML = cellsHtml;
-
-      // Модалка живого аукциона
+      // Модальное окно аукциона
       const aucModal = $('monoAuctionModal');
       if (m.turnPhase === 'auction' && m.auction) {
         const aucCell = MONOPOLY_BOARD[m.auction.cellId];
-        const leaderName = m.auction.leaderId ? m.players?.[m.auction.leaderId]?.name : 'Никто (старт 1.2×)';
-        $('monoAuctionBaseHint').textContent = `База: ${fmtMoney(m.auction.basePrice)}`;
-        $('monoAuctionCellTitle').textContent = aucCell?.name || 'Локация';
+        const leaderName = m.auction.leaderId ? m.players?.[m.auction.leaderId]?.name || 'Игрок' : 'Никто (старт 1.2×)';
+        $('monoAuctionCellTitle').textContent = `${aucCell.name} (${aucCell.district})`;
+        $('monoAuctionBaseHint').textContent = `База: ${fmtShortK(aucCell.price)} ₸`;
         $('monoAuctionCurrentBid').textContent = fmtMoney(m.auction.currentBid);
         $('monoAuctionLeaderName').textContent = leaderName;
-        $('monoBidPlus10Btn').onclick = () => window.monoPlaceAuctionBid(10000);
-        $('monoBidPlus50Btn').onclick = () => window.monoPlaceAuctionBid(50000);
         $('monoHostFinishAuctionBtn').classList.toggle('hidden', !isHost);
         aucModal.classList.remove('hidden');
       } else {
         aucModal.classList.add('hidden');
       }
 
-      // Нижняя панель личного героя и кнопка «Второй шанс»
+      // Рендер 40 клеток по периметру 11x11 + центральный штаб
+      const boardEl = $('monoBoardContainer');
+      const activePos = activePlayer?.pos ?? -1;
+
+      const cellsHtml = MONOPOLY_BOARD.map((cell) => {
+        const { row, col } = getGridCoordsForCell(cell.id);
+        const own = m.owners?.[cell.id];
+        const ownerPlayer = own?.ownerId ? m.players?.[own.ownerId] : null;
+        const ownerHero = ownerPlayer ? getHeroById(ownerPlayer.heroId) : null;
+        const isHighlighted = state.monoHighlightedOwnerId && own?.ownerId === state.monoHighlightedOwnerId;
+        const isActiveCell = cell.id === activePos;
+
+        const tokensHere = (m.turnOrder || [])
+          .map((pid) => m.players[pid])
+          .filter((p) => p && p.pos === cell.id);
+
+        const starsStr = own?.stars ? '★'.repeat(own.stars) : '';
+        const priceLabel = cell.price > 0 ? fmtShortK(Math.round(cell.price * getInflationMultiplier(m))) : '';
+
+        return `
+          <div
+            data-mono-cell="${cell.id}"
+            style="grid-row:${row}; grid-column:${col}; ${ownerHero ? `border-color:${ownerHero.color};` : ''}"
+            class="mono-cell ${isActiveCell ? 'is-active-cell' : ''} ${isHighlighted ? 'is-highlighted-owner' : ''} ${own?.mortgaged ? 'is-mortgaged' : ''}"
+            title="#${cell.num} ${cell.name}"
+          >
+            <div class="mono-color-bar" style="background:${cell.color || '#334155'}"></div>
+            <div class="mono-cell-title">${cell.name}</div>
+            ${starsStr ? `<div class="mono-stars-row">${starsStr}</div>` : ''}
+            ${priceLabel ? `<div class="mono-cell-price" style="${ownerHero ? `color:${ownerHero.color};` : ''}">${priceLabel}</div>` : '<div class="h-1"></div>'}
+            <div class="mono-tokens-wrap">
+              ${tokensHere
+                .map((tp) => {
+                  const h = getHeroById(tp.heroId);
+                  return `<span class="mono-token-badge" style="background:${h.color}" title="${tp.name}">${h.initials}</span>`;
+                })
+                .join('')}
+            </div>
+          </div>`;
+      }).join('');
+
+      const logsHtml = (m.logs || [])
+        .slice(0, 6)
+        .map((l) => `<div class="text-[9.5px] sm:text-[11px] leading-snug text-slate-300 border-b border-white/5 pb-1">${l.text}</div>`)
+        .join('');
+
+      const centerHtml = `
+        <div class="mono-center-hub">
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-display text-[9px] sm:text-xs font-black uppercase tracking-wider text-club-gold">
+              ПО ОДНОЙ ТРОПИНКЕ
+            </span>
+            <div class="flex items-center gap-1">
+              <div id="monoDie1Box" class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-club-surface border border-club-gold/50 flex items-center justify-center font-display text-xs sm:text-sm font-black text-white shadow">
+                ${m.dice?.[0] || 1}
+              </div>
+              <div id="monoDie2Box" class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg bg-club-surface border border-club-gold/50 flex items-center justify-center font-display text-xs sm:text-sm font-black text-white shadow">
+                ${m.dice?.[1] || 1}
+              </div>
+            </div>
+          </div>
+
+          <div class="my-1">${centerControlsHtml}</div>
+
+          <div class="flex-1 overflow-y-auto no-scrollbar bg-club-bg/75 border border-white/10 rounded-xl p-1.5 sm:p-2 space-y-1">
+            ${logsHtml}
+          </div>
+        </div>`;
+
+      boardEl.innerHTML = cellsHtml + centerHtml;
+
+      boardEl.querySelectorAll('[data-mono-cell]').forEach((el) => {
+        el.addEventListener('click', () => openMonopolyCellDossier(Number(el.dataset.monoCell)));
+      });
+
+      $('monoRollDiceBtn')?.addEventListener('click', handleMonopolyRollDice);
+      $('monoPayJailBtn')?.addEventListener('click', handleMonopolyPayJailFine);
+      $('monoBuyCellBtn')?.addEventListener('click', () => handleMonopolyBuyCell(m.pendingCellId));
+      $('monoAuctionCellBtn')?.addEventListener('click', () => handleMonopolyStartAuction(m.pendingCellId));
+      $('monoEndTurnBtn')?.addEventListener('click', handleMonopolyEndTurn);
+
+      // Нижняя панель личного героя и ульты «Второй шанс»
       if (me) {
-        const myHero = MONOPOLY_HEROES.find((h) => h.id === me.heroId) || MONOPOLY_HEROES[0];
+        $('monoMyHeroDock').classList.remove('hidden');
+        const myHero = getHeroById(me.heroId);
         $('monoMyHeroAvatar').style.background = myHero.color;
         $('monoMyHeroAvatar').textContent = myHero.initials;
         $('monoMyHeroName').textContent = `${me.name} • ${myHero.name}`;
         $('monoMyBalanceBig').textContent = fmtMoney(me.cash);
-        $('monoMyPassiveDesc').textContent = myHero.passive;
+        $('monoMyPassiveDesc').textContent = `Пассивка: ${myHero.passive}`;
         $('monoMyUltDesc').textContent = `${myHero.ultName} — ${myHero.ultDesc}`;
 
         const ultBtn = $('monoUseUltimateBtn');
-        const roundReady = (m.roundNumber || 1) >= 11 || me.cash < 0;
         if (me.ultUsed) {
+          ultBtn.textContent = '✓ Использовано';
           ultBtn.disabled = true;
-          ultBtn.textContent = '✓ Второй шанс использован';
           ultBtn.classList.add('opacity-40');
-        } else if (!roundReady) {
-          ultBtn.disabled = false;
-          ultBtn.textContent = `🔒 Второй шанс (с 11 раунда)`;
-          ultBtn.classList.add('opacity-70');
         } else {
+          const ready = (m.roundNumber || 1) >= 11 || me.cash < 0;
+          ultBtn.textContent = ready ? '⚡ Второй шанс!' : `⚡ Второй шанс (с 11 р.)`;
           ultBtn.disabled = false;
-          ultBtn.textContent = `⚡ Второй шанс (${myHero.ultName})`;
-          ultBtn.classList.remove('opacity-40', 'opacity-70');
+          ultBtn.classList.toggle('opacity-55', !ready);
         }
+      } else {
+        $('monoMyHeroDock').classList.add('hidden');
       }
 
-      // Панель «Кто чем владеет» (карточки игроков с подсветкой и кнопкой трейда + список ячеек)
-      $('monoClearHighlightBtn').classList.toggle('hidden', !state.monoHighlightedOwnerId);
+      // Панель «Кто чем владеет» (все 27 покупаемых клеток: 22 района + 4 транспорта + 1 комп клуб)
       const ownedEntries = Object.entries(m.owners || {}).filter(([, o]) => o && o.ownerId);
-      $('monoOwnedCounterBadge').textContent = `${ownedEntries.length} / 28 куплено`;
+      $('monoOwnedCounterBadge').textContent = `${ownedEntries.length} / 27 куплено`;
+      $('monoClearHighlightBtn').classList.toggle('hidden', !state.monoHighlightedOwnerId);
 
-      $('monoPlayerDossiersRow').innerHTML = m.turnOrder
+      $('monoPlayerDossiersRow').innerHTML = (m.turnOrder || [])
         .map((pid) => {
           const p = m.players[pid];
           if (!p) return '';
-          const hero = MONOPOLY_HEROES.find((h) => h.id === p.heroId) || MONOPOLY_HEROES[0];
+          const h = getHeroById(p.heroId);
           const count = ownedEntries.filter(([, o]) => o.ownerId === pid).length;
-          const isHl = state.monoHighlightedOwnerId === pid;
           return `
-            <div class="p-2.5 rounded-xl bg-club-bg border ${
-              isHl ? 'border-sky-400 bg-sky-500/10' : 'border-club-border'
-            } flex items-center justify-between gap-2">
-              <button type="button" onclick="window.toggleHighlightMonopolyOwner('${pid}')" class="flex items-center gap-2 text-left min-w-0 flex-1">
-                <span class="w-6 h-6 rounded-lg flex items-center justify-center font-display text-[10px] font-black text-white shrink-0" style="background:${hero.color}">${hero.initials}</span>
-                <div class="min-w-0">
-                  <div class="text-xs font-extrabold text-white truncate">${p.name} (${hero.name})</div>
-                  <div class="text-[10px] text-slate-400">Локаций: ${count} • ${fmtMoney(p.cash)}</div>
-                </div>
-              </button>
-              ${
-                pid !== state.playerId
-                  ? `<button type="button" onclick="window.openMonopolyTradeWithTarget('${pid}')" class="px-2 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/35 border border-indigo-400/45 text-[10px] font-bold text-indigo-200 shrink-0">
-                      🤝 Трейд
-                    </button>`
-                  : `<span class="text-[10px] font-mono text-emerald-400 shrink-0">ЭТО ТЫ</span>`
-              }
-            </div>`;
+            <button type="button" onclick="window.toggleHighlightMonoOwner('${pid}')" class="p-2.5 rounded-xl bg-club-bg hover:bg-white/5 border border-club-border flex items-center justify-between text-left text-xs">
+              <span class="font-bold text-white flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded-full inline-block" style="background:${h.color}"></span>
+                <span>${p.name} (${h.name})</span>
+              </span>
+              <span class="font-mono text-[11px] text-slate-300">${count} акт. • <strong class="text-club-gold">${fmtShortK(p.cash)}</strong></span>
+            </button>`;
         })
         .join('');
 
-      if (!ownedEntries.length) {
-        $('monoOwnershipFeed').innerHTML = `<div class="text-xs text-slate-500 col-span-2">Пока никто не купил ни одной локации.</div>`;
-      } else {
-        $('monoOwnershipFeed').innerHTML = ownedEntries
-          .map(([cid, own]) => {
-            const c = MONOPOLY_BOARD[Number(cid)];
-            const ownerP = m.players[own.ownerId];
-            if (!c || !ownerP) return '';
-            const st = own.stars || 0;
-            const stLabel = st === 5 ? ' • 5★ (Отель)' : st > 0 ? ` • ${st}★` : '';
-            return `
-              <button type="button" onclick="window.openMonoCellDossier(${c.id})" class="p-2 rounded-xl bg-club-bg hover:bg-white/5 border border-white/10 flex items-center justify-between text-left text-xs">
-                <span class="font-bold text-white truncate">
-                  <span class="inline-block w-2.5 h-2.5 rounded-full mr-1.5" style="background:${c.color}"></span>
-                  ${c.name}${stLabel}
-                </span>
-                <span class="font-mono text-[10px] text-club-gold shrink-0 ml-2">${ownerP.name}</span>
-              </button>`;
-          })
-          .join('');
-      }
+      $('monoOwnershipFeed').innerHTML = ownedEntries.length
+        ? ownedEntries
+            .map(([cid, o]) => {
+              const c = MONOPOLY_BOARD[Number(cid)];
+              const owner = m.players?.[o.ownerId];
+              const h = owner ? getHeroById(owner.heroId) : null;
+              return `
+                <button type="button" data-open-owned-cell="${cid}" class="p-2 rounded-xl bg-club-bg/80 hover:bg-white/10 border border-white/10 flex items-center justify-between text-left text-[11px]">
+                  <span class="font-bold text-white truncate">
+                    <span class="inline-block w-2 h-2 rounded-full mr-1" style="background:${c.color}"></span>
+                    ${c.name} ${o.stars ? `<span class="text-club-gold">${'★'.repeat(o.stars)}</span>` : ''}
+                  </span>
+                  <span class="font-mono text-[10px] font-bold shrink-0 ml-2" style="color:${h?.color || '#fff'}">${owner?.name || ''}</span>
+                </button>`;
+            })
+            .join('')
+        : `<div class="text-xs text-slate-500 col-span-2">Пока ни одна локация не куплена — нажимай на любую клетку поля для просмотра её ренты.</div>`;
+
+      $('monoOwnershipFeed')
+        .querySelectorAll('[data-open-owned-cell]')
+        .forEach((b) => {
+          b.addEventListener('click', () => openMonopolyCellDossier(Number(b.dataset.openOwnedCell)));
+        });
     }
 
     // =========================================================================
-    // ЕДИНЫЙ РОУТЕР ЭКРАНОВ КОМНАТЫ
+    // ГЛАВНЫЙ РОУТЕР ЭКРАНОВ КОМНАТЫ
     // =========================================================================
     function renderCurrentRoom() {
       const room = state.roomData;
-      if (!room) return;
+      if (!room) {
+        showScreen('startScreen');
+        return;
+      }
 
       if (room.status === 'waiting') {
         renderWaitingRoom(room);
@@ -6050,8 +5864,11 @@
       }
 
       if (room.gameType === 'top') {
-        if (room.status === 'reveal') renderTopReveal(room);
-        else renderTopGameplay(room);
+        if (room.status === 'reveal') {
+          renderTopReveal(room);
+        } else {
+          renderTopGameplay(room);
+        }
       } else if (room.gameType === 'scale') {
         renderScaleGame(room);
       } else if (room.gameType === 'quiz') {
@@ -6064,7 +5881,7 @@
     // =========================================================================
     // ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
     // =========================================================================
-    (async function initHub() {
+    async function boot() {
       state.playerId = getOrCreatePlayerId();
       try {
         const cred = await signInAnonymously(auth);
@@ -6077,13 +5894,17 @@
       const urlRoom = params.get('room');
       if (urlRoom) {
         const clean = urlRoom.trim().toUpperCase();
-        $('autoUrlCodeLabel').textContent = clean;
         $('autoUrlSearchBanner').classList.remove('hidden');
+        $('autoUrlCodeLabel').textContent = clean;
         $('startRoomCodeInput').value = clean;
         await searchAndOpenNickScreen(clean);
         $('autoUrlSearchBanner').classList.add('hidden');
+      } else {
+        showScreen('startScreen');
       }
-    })();
+    }
+
+    boot();
   </script>
 </body>
 </html>
